@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   LegalGuardianDTO,
   StudentInscriptionDTO,
@@ -119,6 +121,7 @@ export function PartnerPrepInscriptionStep3({
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -175,107 +178,104 @@ export function PartnerPrepInscriptionStep3({
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
+      noValidate
       className="w-full flex flex-col gap-4 md:gap-2 mt-4 md:mt-8 mb-8 md:mb-16"
     >
       <p className="text-body text-foreground mb-6 text-center">{description}</p>
-      <InputFactory
-        id="fullName"
-        label="Nome Completo Responsável*"
-        type="text"
-        error={errors.fullName}
-        defaultValue={currentData?.legalGuardian?.fullName}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("fullName", e.target.value)}
-      />
-      <InputFactory
-        id="family_relationship"
-        label="Parentesco*"
-        type="select"
-        options={parentescoOptions.map((parentesco) => ({
-          label: parentesco,
-          value: parentesco,
-        }))}
-        error={errors.family_relationship}
-        defaultValue={currentData?.legalGuardian?.family_relationship}
-        value={currentData?.legalGuardian?.family_relationship}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          const value = e.target.value;
-          setValue("family_relationship", value);
-          setFRelationOther(value === "Outro");
-          if (value !== "Outro") {
-            setValue("family_relationship_input", undefined);
-          }
-        }}
-      />
-      {fRelationOther && (
-        <InputFactory
-          id="family_relationship_input"
-          label="Parentesco*"
+      <FormLegend />
+      <Field label="Nome Completo Responsável" required error={errors.fullName?.message}>
+        <Input
+          id="fullName"
           type="text"
-          error={errors.family_relationship_input}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => {
-            setValue("family_relationship_input", e.target.value);
+          autoComplete="off"
+          defaultValue={currentData?.legalGuardian?.fullName}
+          onChange={(e) => setValue("fullName", e.target.value)}
+        />
+      </Field>
+      <Field label="Parentesco" required error={errors.family_relationship?.message}>
+        <SelectOpcoes
+          id="family_relationship"
+          options={parentescoOptions.map((parentesco) => ({
+            label: parentesco,
+            value: parentesco,
+          }))}
+          value={
+            watch("family_relationship") ??
+            currentData?.legalGuardian?.family_relationship
+          }
+          onValueChange={(value) => {
+            setValue("family_relationship", value);
+            setFRelationOther(value === "Outro");
+            if (value !== "Outro") {
+              setValue("family_relationship_input", undefined);
+            }
           }}
         />
+      </Field>
+      {fRelationOther && (
+        <Field
+          label="Parentesco"
+          required
+          error={errors.family_relationship_input?.message}
+        >
+          <Input
+            id="family_relationship_input"
+            type="text"
+            onChange={(e) => {
+              setValue("family_relationship_input", e.target.value);
+            }}
+          />
+        </Field>
       )}
-      <InputFactory
-        id="phone"
-        label="Telefone do Responsável*"
-        type="text"
-        error={errors.phone}
-        value={phone}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          const value = phoneMask(e.target.value);
-          setPhone(value);
-          setValue("phone", value);
-        }}
-      />
+      <Field label="Telefone do Responsável" required error={errors.phone?.message}>
+        <Input
+          id="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          value={phone}
+          onChange={(e) => {
+            const value = phoneMask(e.target.value);
+            setPhone(value);
+            setValue("phone", value);
+          }}
+        />
+      </Field>
       <div className="flex gap-4">
         <div className="flex-1">
-          <InputFactory
-            id="rg"
-            label="RG do Responsável"
-            type="text"
-            defaultValue={currentData?.legalGuardian?.rg}
-            error={errors.rg}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(e: any) => setValue("rg", e.target.value)}
-          />
+          <Field label="RG do Responsável" error={errors.rg?.message}>
+            <Input
+              id="rg"
+              type="text"
+              defaultValue={currentData?.legalGuardian?.rg}
+              onChange={(e) => setValue("rg", e.target.value)}
+            />
+          </Field>
         </div>
         <div className="w-24">
-          <InputFactory
-            id="uf"
-            label="UF"
-            type="select"
-            options={
-              stateOptions.map((state) => ({
-                label: state.value,
-                value: state.value,
-              })) as {
-                label: string;
-                value: string;
-              }[]
-            }
-            defaultValue={currentData?.legalGuardian?.uf}
-            value={currentData?.legalGuardian?.uf}
-            error={errors.uf}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(e: any) => setValue("uf", e.value)}
-          />
+          <Field label="UF" error={errors.uf?.message}>
+            <SelectOpcoes
+              id="uf"
+              options={stateOptions.map((state) => ({
+                label: state.value as string,
+                value: state.value as string,
+              }))}
+              value={watch("uf") ?? currentData?.legalGuardian?.uf}
+              onValueChange={(value) => setValue("uf", value)}
+            />
+          </Field>
         </div>
       </div>
-      <InputFactory
-        id="cpf"
-        label="CPF do responsável*"
-        type="text"
-        error={errors.cpf}
-        value={cpf}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => handleCPFChange(e.target.value)}
-      />
+      <Field label="CPF do responsável" required error={errors.cpf?.message}>
+        <Input
+          id="cpf"
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          value={cpf}
+          onChange={(e) => handleCPFChange(e.target.value)}
+        />
+      </Field>
       <div className="flex flex-col-reverse sm:flex-row gap-4">
         <Button className="w-full" variant="primary" size="lg" type="button" onClick={handleBackStep}>
           Voltar

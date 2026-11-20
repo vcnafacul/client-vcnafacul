@@ -4,7 +4,7 @@ import { useToastAsync } from "../../../hooks/useToastAsync";
 import { DASH } from "../../../routes/path";
 import Login from "../../../services/auth/login";
 import { useAuthStore } from "../../../store/auth";
-import { FormFieldInput } from "../../molecules/formField";
+import type { FormFieldInput } from "@/components/formulario/tipos";
 import FormSubmit from "../formSubmit";
 
 export interface LoginFormProps {

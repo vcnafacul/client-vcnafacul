@@ -1,4 +1,6 @@
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { iconPresets, imagePresets } from "@/config/materiaPresets";
 import { MateriaDto } from "@/services/content/getMaterias";
@@ -99,6 +101,7 @@ function ManagerMateria({ handleClose, materia, onSubmit, isOpen }: Props) {
 
   const selectedIcon = watch("icon");
   const selectedImage = watch("image");
+  const enemArea = watch("enemArea");
 
   useEffect(() => {
     register("nome");
@@ -132,29 +135,27 @@ function ManagerMateria({ handleClose, materia, onSubmit, isOpen }: Props) {
           <form
             id="form-manager-materia"
             onSubmit={handleSubmit(submit)}
+            noValidate
             className="flex flex-col gap-4"
           >
-            <InputFactory
-              id="nome"
-              type="text"
-              label="Nome"
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) => setValue("nome", e.target.value)}
-              error={errors.nome}
-              defaultValue={materia?.nome}
-            />
+            <FormLegend />
+            <Field label="Nome" required error={errors.nome?.message}>
+              <Input
+                id="nome"
+                type="text"
+                defaultValue={materia?.nome}
+                onChange={(e) => setValue("nome", e.target.value)}
+              />
+            </Field>
 
-            <InputFactory
-              id="enemArea"
-              type="select"
-              label="Área ENEM"
-              options={enemAreaOptions}
-              defaultValue={materia?.enemArea ?? "Linguagens"}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) =>
-                setValue("enemArea", e.target.value ?? e.value)
-              }
-            />
+            <Field label="Área ENEM" required error={errors.enemArea?.message}>
+              <SelectOpcoes
+                id="enemArea"
+                options={enemAreaOptions}
+                value={enemArea}
+                onValueChange={(valor) => setValue("enemArea", valor)}
+              />
+            </Field>
 
             <div>
               <p className="text-body font-medium text-foreground mb-2 block">

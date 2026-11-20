@@ -1,8 +1,8 @@
-import { FormFieldOption } from "../../components/molecules/formField";
+import type { OpcaoDoCampo } from "@/components/formulario/select-opcoes";
 import { RegisterFormProps } from "../../components/organisms/registerForm";
 import { Gender } from "../../store/auth";
 
-export const stateOptions: FormFieldOption[] = [
+export const stateOptions: OpcaoDoCampo<string>[] = [
   { value: "AC", label: "Acre" },
   { value: "AL", label: "Alagoas" },
   { value: "AP", label: "Amapá" },
@@ -32,7 +32,7 @@ export const stateOptions: FormFieldOption[] = [
   { value: "TO", label: "Tocantins" },
 ];
 
-export const optionsGender: FormFieldOption[] = [
+export const optionsGender: OpcaoDoCampo<Gender>[] = [
   { value: Gender.Male, label: "Masculino" },
   { value: Gender.Female, label: "Feminino" },
   { value: Gender.Other, label: "Outro" },

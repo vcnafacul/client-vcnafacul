@@ -1,4 +1,5 @@
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { Field } from "@/components/ui/field";
 import { FrenteDto, SubjectDto } from "@/dtos/content/contentDtoInput";
 import {
   CreateSubjectDtoInput,
@@ -388,16 +389,14 @@ function SettingsFrente({ isOpen, handleClose }: Props) {
                   value="frentes"
                   className="mt-0 flex flex-col gap-6"
                 >
-                  <InputFactory
-                    id="materia"
-                    type="select"
-                    appendTo="self"
-                    label="Matéria"
-                    options={materiasOptions}
-                    value={materiaSelected}
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    onChange={(e: any) => setMateriaSelected(e.target.value)}
-                  />
+                  <Field label="Matéria">
+                    <SelectOpcoes
+                      id="materia"
+                      options={materiasOptions}
+                      value={materiaSelected}
+                      onValueChange={(valor) => setMateriaSelected(valor)}
+                    />
+                  </Field>
                   <div className="h-full">
                     <PanelFrente
                       frentes={frentes}

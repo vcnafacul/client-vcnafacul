@@ -1,6 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
 import {
   linkSocialName,
@@ -173,54 +175,45 @@ export function PartnerPrepInscriptionStep1({
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
+      noValidate
       className="w-full flex flex-col gap-4 md:gap-2 mt-4 md:mt-8 mb-8 md:mb-16"
     >
       <p className="text-body text-foreground mb-6 text-center">{description}</p>
-      <InputFactory
-        id="firstName"
-        label="Nome*"
-        type="text"
-        error={errors.firstName}
-        defaultValue={currentData?.firstName}
-         
-        onChange={(e: any) => setValue("firstName", e.target.value)}
-        maxLength={50}
-      />
-      <InputFactory
-        id="lastName"
-        label="Sobrenome*"
-        type="text"
-        error={errors.lastName}
-        defaultValue={currentData?.lastName}
-         
-        onChange={(e: any) => setValue("lastName", e.target.value)}
-        maxLength={100}
-      />
-      <InputFactory
-        id="socialName"
-        label="Nome Social"
-        type="text"
-        defaultValue={currentData?.socialName}
-        error={errors.socialName}
-         
-        onChange={(e: any) => setValue("socialName", e.target.value)}
-        maxLength={50}
-        disabled={!isCheckboxChecked}
-      />
+      <FormLegend />
+      <Field label="Nome" required maxLength={50} error={errors.firstName?.message}>
+        <Input
+          id="firstName"
+          type="text"
+          autoComplete="given-name"
+          defaultValue={currentData?.firstName}
+          onChange={(e) => setValue("firstName", e.target.value)}
+        />
+      </Field>
+      <Field label="Sobrenome" required maxLength={100} error={errors.lastName?.message}>
+        <Input
+          id="lastName"
+          type="text"
+          autoComplete="family-name"
+          defaultValue={currentData?.lastName}
+          onChange={(e) => setValue("lastName", e.target.value)}
+        />
+      </Field>
+      <Field label="Nome Social" maxLength={50} error={errors.socialName?.message}>
+        <Input
+          id="socialName"
+          type="text"
+          defaultValue={currentData?.socialName}
+          disabled={!isCheckboxChecked}
+          onChange={(e) => setValue("socialName", e.target.value)}
+        />
+      </Field>
       <div className="flex flex-col w-full items-start justify-start">
         <div>
-          <InputFactory
+          <Checkbox
             id="socialNameCheckbox"
-            label=""
-            type="checkbox"
-            checkboxs={["Desejo utilizar o Nome Social"]}
-            defaultValue={
-              currentData?.socialName ? ["Desejo utilizar o Nome Social"] : []
-            }
-            error={errors.socialName}
-            onCheckedChange={(values: string[]) => {
-              setIsCheckboxChecked(values.length > 0);
-            }}
+            label="Desejo utilizar o Nome Social"
+            defaultChecked={!!currentData?.socialName}
+            onCheckedChange={(marcado) => setIsCheckboxChecked(marcado === true)}
           />
         </div>
         <div className="text-body text-muted-foreground">
@@ -239,43 +232,49 @@ export function PartnerPrepInscriptionStep1({
         Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
         {getDisplayName()}
       </span>
-      <InputFactory
-        id="email"
-        label="Email*"
-        type="email"
-        disabled={true}
-        value={currentData?.email}
-         
-        onChange={(e: any) => setValue("email", e.target.value)}
-        className="bg-muted tracking-wider"
-        maxLength={100}
-      />
-      <InputFactory
-        id="whatsapp"
-        label="WhatsApp*"
-        type="text"
-        error={errors.whatsapp}
-        value={whatsapp}
-         
-        onChange={(e: any) => {
-          const value = phoneMask(e.target.value);
-          setWhatsapp(value);
-          setValue("whatsapp", value);
-        }}
-      />
-      <InputFactory
-        id="urgencyPhone"
-        label="Telefone para Emergências*"
-        type="text"
-        error={errors.urgencyPhone}
-        value={phone}
-         
-        onChange={(e: any) => {
-          const value = phoneMask(e.target.value);
-          setPhone(value);
-          setValue("urgencyPhone", value);
-        }}
-      />
+      <Field label="Email" required maxLength={100}>
+        <Input
+          id="email"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          disabled
+          value={currentData?.email}
+          onChange={(e) => setValue("email", e.target.value)}
+        />
+      </Field>
+      <Field label="WhatsApp" required error={errors.whatsapp?.message}>
+        <Input
+          id="whatsapp"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          value={whatsapp}
+          onChange={(e) => {
+            const value = phoneMask(e.target.value);
+            setWhatsapp(value);
+            setValue("whatsapp", value);
+          }}
+        />
+      </Field>
+      <Field
+        label="Telefone para Emergências"
+        required
+        error={errors.urgencyPhone?.message}
+      >
+        <Input
+          id="urgencyPhone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          value={phone}
+          onChange={(e) => {
+            const value = phoneMask(e.target.value);
+            setPhone(value);
+            setValue("urgencyPhone", value);
+          }}
+        />
+      </Field>
       <div className="card flex justify-content-center h-16 border hover:border-cta pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-raised">
         <label
           className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
@@ -308,51 +307,40 @@ export function PartnerPrepInscriptionStep1({
       </div>
       <div className="flex gap-4">
         <div className="flex-1">
-          <InputFactory
-            id="rg"
-            label="RG"
-            type="text"
-            error={errors.rg}
-            defaultValue={currentData?.rg}
-             
-            onChange={(e: any) => setValue("rg", e.target.value)}
-            className="w-full flex flex-1"
-            maxLength={15}
-          />
+          <Field label="RG" maxLength={15} error={errors.rg?.message}>
+            <Input
+              id="rg"
+              type="text"
+              defaultValue={currentData?.rg}
+              onChange={(e) => setValue("rg", e.target.value)}
+            />
+          </Field>
         </div>
         <div className="w-24">
-          <InputFactory
-            id="uf"
-            label="UF"
-            type="select"
-            options={
-              stateOptions.map((state) => ({
-                label: state.value,
-                value: state.value,
-              })) as {
-                label: string;
-                value: string;
-              }[]
-            }
-            error={errors.uf}
-            defaultValue={currentData?.uf}
-            value={currentData?.uf}
-            onChange={(e: any) => {
-              setValue("uf", e.value);
-            }}
-          />
+          <Field label="UF" error={errors.uf?.message}>
+            <SelectOpcoes
+              id="uf"
+              options={stateOptions.map((state) => ({
+                label: state.value as string,
+                value: state.value as string,
+              }))}
+              value={watch("uf") ?? currentData?.uf}
+              onValueChange={(valor) => setValue("uf", valor)}
+            />
+          </Field>
         </div>
       </div>
 
-      <InputFactory
-        id="cpf"
-        label="CPF*"
-        type="text"
-        error={errors.cpf}
-        value={cpf}
-         
-        onChange={(e: any) => handleCPFChange(e.target.value)}
-      />
+      <Field label="CPF" required error={errors.cpf?.message}>
+        <Input
+          id="cpf"
+          type="text"
+          inputMode="numeric"
+          autoComplete="off"
+          value={cpf}
+          onChange={(e) => handleCPFChange(e.target.value)}
+        />
+      </Field>
       <Button className="w-full" variant="primary" size="lg" type="submit">Continuar</Button>
     </form>
   );

@@ -49,6 +49,7 @@ function Step1Geo({
         {subtitle}
       </p>
       <form
+        noValidate
         className="w-full max-w-lg mx-auto"
         onSubmit={handleSubmit(handleForm)}
       >

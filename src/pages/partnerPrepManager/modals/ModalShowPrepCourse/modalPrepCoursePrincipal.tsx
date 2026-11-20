@@ -1,4 +1,5 @@
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -435,33 +436,33 @@ export const ModalPrepCoursePrincipal = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Coluna esquerda */}
         <div className="space-y-4">
-          <InputFactory
-            id="prepCourseName"
-            label="Nome do Cursinho"
-            type="text"
-            value={formData.prepCourseName}
-            onChange={handleInputChange("prepCourseName")}
-            disabled
-            className="bg-muted border-border h-14"
-          />
-          <InputFactory
-            id="city"
-            label="Cidade"
-            type="text"
-            value={formData.city}
-            onChange={handleInputChange("city")}
-            disabled
-            className="bg-muted border-border h-14"
-          />
-          <InputFactory
-            id="state"
-            label="Estado"
-            type="text"
-            value={formData.state}
-            onChange={handleInputChange("state")}
-            disabled
-            className="bg-muted border-border h-14"
-          />
+          <Field label="Nome do Cursinho">
+            <Input
+              id="prepCourseName"
+              type="text"
+              value={formData.prepCourseName}
+              onChange={handleInputChange("prepCourseName")}
+              disabled
+            />
+          </Field>
+          <Field label="Cidade">
+            <Input
+              id="city"
+              type="text"
+              value={formData.city}
+              onChange={handleInputChange("city")}
+              disabled
+            />
+          </Field>
+          <Field label="Estado">
+            <Input
+              id="state"
+              type="text"
+              value={formData.state}
+              onChange={handleInputChange("state")}
+              disabled
+            />
+          </Field>
         </div>
 
         {/* Coluna direita */}
@@ -513,24 +514,28 @@ export const ModalPrepCoursePrincipal = ({
               </div>
             )}
           </div>
-          <InputFactory
-            id="coordinatorEmail"
-            label="Email do Coordenador"
-            type="email"
-            value={formData.coordinatorEmail}
-            onChange={handleInputChange("coordinatorEmail")}
-            disabled
-            className="bg-muted border-border h-14"
-          />
-          <InputFactory
-            id="coordinatorPhone"
-            label="Telefone do Coordenador"
-            type="text"
-            value={formData.coordinatorPhone}
-            onChange={handleInputChange("coordinatorPhone")}
-            disabled
-            className="bg-muted border-border h-14"
-          />
+          <Field label="Email do Coordenador">
+            <Input
+              id="coordinatorEmail"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={formData.coordinatorEmail}
+              onChange={handleInputChange("coordinatorEmail")}
+              disabled
+            />
+          </Field>
+          <Field label="Telefone do Coordenador">
+            <Input
+              id="coordinatorPhone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              value={formData.coordinatorPhone}
+              onChange={handleInputChange("coordinatorPhone")}
+              disabled
+            />
+          </Field>
         </div>
       </div>
 

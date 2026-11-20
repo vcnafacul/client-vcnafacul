@@ -12,7 +12,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import PropValue from "@/components/molecules/PropValue";
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogBody,
@@ -287,16 +288,14 @@ export function ShowInfo({
             </div>
           )}
           <div className="sm:col-span-2 flex flex-col sm:flex-row gap-2">
-            <InputFactory
-              id="description"
-              label="Descrição"
-              type="text"
-              value={description}
-              className="h-12 flex-1"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                setDescription(e.target.value)
-              }
-            />
+            <Field label="Descrição" className="flex-1">
+              <Input
+                id="description"
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+            </Field>
             <Button variant="primary" size="lg"
               onClick={() => {
                 setLoading("Atualizando...");

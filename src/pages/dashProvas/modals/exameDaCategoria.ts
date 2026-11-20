@@ -1,4 +1,4 @@
-import type { FormFieldOption } from "../../../components/molecules/formField";
+import type { OpcaoDoCampo } from "@/components/formulario/select-opcoes";
 import type { ICategoria } from "../../../dtos/categoria/categoria";
 
 /**
@@ -7,7 +7,7 @@ import type { ICategoria } from "../../../dtos/categoria/categoria";
  */
 export function opcoesDeExame(
   categorias: Pick<ICategoria, "exame">[],
-): FormFieldOption[] {
+): OpcaoDoCampo[] {
   const porId = new Map<string, string>();
   for (const c of categorias) {
     if (c.exame?._id) porId.set(c.exame._id, c.exame.nome);

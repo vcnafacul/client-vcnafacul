@@ -4,7 +4,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { useState } from "react";
 import { createGeolocation } from "../../../services/geolocation/createGeolocation";
 import { CreateGeolocation } from "../../../types/geolocation/geolocation";
-import { FormFieldInput } from "../../molecules/formField";
+import type { FormFieldInput } from "@/components/formulario/tipos";
 import Step1Geo from "./steps/step1";
 import Step2Geo from "./steps/step2";
 import Step3Geo from "./steps/step3";

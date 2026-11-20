@@ -1,5 +1,6 @@
 import Toggle from "@/components/atoms/toggle";
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -76,37 +77,34 @@ export function EditStudentRecordModal({
           />
         </div>
 
-        <div className="flex flex-col gap-1">
-          <InputFactory
+        <FormLegend />
+        <Field
+          label="Observação"
+          required
+          maxLength={255}
+          hint="Descreva o motivo da alteração."
+        >
+          <Input
             id="observation"
-            label="Observação*"
             type="text"
             value={observation}
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            onChange={(e: any) => setObservation(e.target.value)}
-            maxLength={255}
+            onChange={(e) => setObservation(e.target.value)}
           />
-          <p className="text-caption text-muted-foreground">
-            Descreva o motivo da alteração.
-          </p>
-        </div>
+        </Field>
 
         {!present && (
-          <div className="flex flex-col gap-1">
-            <InputFactory
+          <Field
+            label="Justificativa"
+            maxLength={255}
+            hint="Opcional. Preencha se o aluno justificou a falta (ex.: atestado). Deixe em branco para falta sem justificativa."
+          >
+            <Input
               id="justification"
-              label="Justificativa"
               type="text"
               value={justification}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) => setJustification(e.target.value)}
-              maxLength={255}
+              onChange={(e) => setJustification(e.target.value)}
             />
-            <p className="text-caption text-muted-foreground">
-              Opcional. Preencha se o aluno justificou a falta (ex.: atestado).
-              Deixe em branco para falta sem justificativa.
-            </p>
-          </div>
+          </Field>
         )}
 
         <DialogFooter>

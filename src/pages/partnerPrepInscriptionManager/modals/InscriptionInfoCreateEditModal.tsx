@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -109,37 +111,44 @@ export function InscriptionInfoCreateEditModal({
 
         <form
           id="form-processo-seletivo"
+          noValidate
           className="grid grid-cols-1 sm:grid-cols-2 gap-6"
           onSubmit={handleSubmit(resolver)}
         >
-          <InputFactory
-            id="name"
-            label="Título"
-            type="text"
-            defaultValue={inscription?.name}
-            error={errors.name}
-            onChange={(e: any) => setValue("name", e.target.value)}
-          />
+          <FormLegend className="sm:col-span-2" />
+          <Field label="Título" required error={errors.name?.message}>
+            <Input
+              id="name"
+              type="text"
+              defaultValue={inscription?.name}
+              onChange={(e) => setValue("name", e.target.value)}
+            />
+          </Field>
 
-          <InputFactory
-            id="openingsCount"
+          <Field
             label="Número de Vagas"
-            type="number"
-            defaultValue={inscription?.openingsCount}
-            error={errors.openingsCount}
-            onChange={(e: any) =>
-              setValue("openingsCount", parseInt(e.target.value))
-            }
-          />
+            required
+            error={errors.openingsCount?.message}
+          >
+            <Input
+              id="openingsCount"
+              type="number"
+              inputMode="numeric"
+              defaultValue={inscription?.openingsCount}
+              onChange={(e) =>
+                setValue("openingsCount", parseInt(e.target.value))
+              }
+            />
+          </Field>
 
           <div className="sm:col-span-2">
-            <InputFactory
-              id="description"
-              label="Descrição"
-              type="textarea"
-              defaultValue={inscription?.description}
-              onChange={(e: any) => setValue("description", e.target.value)}
-            />
+            <Field label="Descrição">
+              <Textarea
+                id="description"
+                defaultValue={inscription?.description}
+                onChange={(e) => setValue("description", e.target.value)}
+              />
+            </Field>
           </div>
 
           <div className="sm:col-span-2">

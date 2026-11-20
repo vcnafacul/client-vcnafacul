@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { ICategoria } from "../../../dtos/categoria/categoria";
 
 const createProva = vi.hoisted(() =>
@@ -44,14 +44,37 @@ const CUSTOM = {
   exame: PERSONALIZADO,
 } as unknown as ICategoria;
 
+/**
+ * O `Select` do Radix não é um `<select>`: abre pelo teclado e a opção se
+ * escolhe pelo clique. O jsdom não tem estas APIs, então entram aqui.
+ */
+beforeAll(() => {
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+  Element.prototype.hasPointerCapture ??= () => false;
+  Element.prototype.scrollIntoView ??= () => {};
+});
+
+const gatilho = (rotulo: string) =>
+  screen.getByRole("combobox", { name: rotulo });
+
+function abrirLista(rotulo: string) {
+  fireEvent.keyDown(gatilho(rotulo), { key: "Enter" });
+}
+
+/** Abre a lista do campo e escolhe a opção pelo nome que o usuário vê. */
+function escolherOpcao(rotulo: string, opcao: string) {
+  abrirLista(rotulo);
+  fireEvent.click(screen.getByRole("option", { name: opcao }));
+}
+
 /** O exame vem antes da categoria, e a lista de categorias depende dele. */
 function escolher(categoria: ICategoria) {
-  fireEvent.change(document.querySelector('select[name="exame"]')!, {
-    target: { value: categoria.exame._id },
-  });
-  fireEvent.change(document.querySelector('select[name="categoria"]')!, {
-    target: { value: categoria._id },
-  });
+  escolherOpcao("Exame", categoria.exame.nome);
+  escolherOpcao("Categoria", categoria.nome);
 }
 
 function montar() {
@@ -70,12 +93,7 @@ function escolherCategoriaCustom() {
   escolher(CUSTOM);
 }
 
-/**
- * ⚠️ Busca por `name`, e não por `getByLabelText`. O "label" deste formulário é
- * uma `div` flutuante posicionada por CSS, sem `htmlFor` — os campos não têm
- * nome acessível. É defeito de acessibilidade pré-existente, fora do escopo
- * deste conserto, mas é por isso que o seletor aqui é o que é.
- */
+/** Os campos de texto continuam registrados pelo `name`; o rótulo agora é um `<label>`. */
 const campo = (nome: string) =>
   document.querySelector(`[name="${nome}"]`) as HTMLInputElement | null;
 
@@ -217,8 +235,9 @@ describe("NewProva — edição, aplicação e ano (card 40)", () => {
 
   it("rótulos corrigidos e aplicação num campo próprio", () => {
     montar();
-    expect(screen.getByText("Edição")).toBeInTheDocument();
+    expect(gatilho("Edição")).toBeInTheDocument();
     expect(screen.queryByText("Edicao")).toBeNull();
+    abrirLista("Aplicação");
     expect(
       screen.getByRole("option", { name: "2ª aplicação" }),
     ).toBeInTheDocument();
@@ -228,8 +247,8 @@ describe("NewProva — edição, aplicação e ano (card 40)", () => {
   it("⚠️ edição e aplicação são independentes: Digital na 2ª aplicação", async () => {
     montar();
     escolherCategoriaCustom();
-    fireEvent.change(campo("edicao")!, { target: { value: "Digital" } });
-    fireEvent.change(campo("aplicacao")!, { target: { value: "2" } });
+    escolherOpcao("Edição", "Digital");
+    escolherOpcao("Aplicação", "2ª aplicação");
 
     const formData = await criar();
 
@@ -289,10 +308,15 @@ describe("NewProva — exame primeiro, categorias do exame", () => {
     selecionavel: false,
     exame: { _id: "ex-velho", nome: "Vestibular antigo" },
   } as unknown as ICategoria;
-  const opcoes = (nome: string) =>
-    [
-      ...document.querySelectorAll(`select[name="${nome}"] option`),
-    ].map((o) => o.textContent);
+  /** Abre a lista, lê o nome das opções e fecha. */
+  const opcoes = (rotulo: string) => {
+    abrirLista(rotulo);
+    const nomes = screen
+      .queryAllByRole("option")
+      .map((o) => o.textContent);
+    fireEvent.keyDown(screen.getByRole("listbox"), { key: "Escape" });
+    return nomes;
+  };
 
   const abrir = () =>
     render(
@@ -306,36 +330,30 @@ describe("NewProva — exame primeiro, categorias do exame", () => {
 
   it("o exame é o primeiro campo, só com exames de categorias em uso", () => {
     abrir();
-    expect(document.querySelector("select")).toHaveAttribute("name", "exame");
-    expect(opcoes("exame")).toEqual(["", "ENEM", "Personalizado"]);
+    expect(screen.getAllByRole("combobox")[0]).toHaveAccessibleName("Exame");
+    // A opção vazia do `<select>` nativo virou o texto "Selecione" do campo.
+    expect(opcoes("Exame")).toEqual(["ENEM", "Personalizado"]);
   });
 
   it("sem exame, a categoria fica desabilitada e vazia", () => {
     abrir();
-    expect(document.querySelector('select[name="categoria"]')).toBeDisabled();
-    expect(opcoes("categoria")).toEqual([""]);
+    expect(gatilho("Categoria")).toBeDisabled();
+    expect(gatilho("Categoria")).toHaveTextContent("Selecione");
   });
 
   it("escolhido o exame, só as categorias dele", () => {
     abrir();
-    fireEvent.change(document.querySelector('select[name="exame"]')!, {
-      target: { value: ENEM._id },
-    });
-    expect(opcoes("categoria")).toEqual(["", "Enem Dia 1"]);
+    escolherOpcao("Exame", "ENEM");
+    expect(opcoes("Categoria")).toEqual(["Enem Dia 1"]);
   });
 
   it("⚠️ trocar o exame limpa a categoria escolhida", async () => {
     abrir();
     escolher(CUSTOM);
     expect(campo("nome")).not.toBeNull(); // custom escolhida
-    fireEvent.change(document.querySelector('select[name="exame"]')!, {
-      target: { value: ENEM._id },
-    });
+    escolherOpcao("Exame", "ENEM");
     await waitFor(() =>
-      expect(
-        (document.querySelector('select[name="categoria"]') as HTMLSelectElement)
-          .value,
-      ).toBe(""),
+      expect(gatilho("Categoria")).toHaveTextContent("Selecione"),
     );
     expect(campo("nome")).toBeNull();
   });

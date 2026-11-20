@@ -13,7 +13,8 @@ import { LOGIN_PATH } from "../../../routes/path";
 import { ResetPassword } from "../../../services/auth/resetPassword";
 import SpanValidate from "../../atoms/spanValidate";
 import { Button } from "@/components/ui/button";
-import FormField, { FormFieldInput } from "../../molecules/formField";
+import { CampoDoFormulario } from "@/components/formulario/campo-do-formulario";
+import type { FormFieldInput } from "@/components/formulario/tipos";
 
 export interface ResetFormProps {
   title: string;
@@ -96,7 +97,7 @@ export function ResetForm({
           {subtitle}
         </p>
         <form onSubmit={handleSubmit(reset)} className="flex flex-col gap-4">
-          <FormField
+          <CampoDoFormulario
             register={register}
             id={formData[0].id}
             key={formData[0].id}
@@ -138,7 +139,7 @@ export function ResetForm({
               </SpanValidate>
             </div>
           </div>
-          <FormField
+          <CampoDoFormulario
             register={register}
             id={formData[1].id}
             key={formData[1].id}

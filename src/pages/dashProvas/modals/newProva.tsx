@@ -3,10 +3,10 @@ import { GraduationCap, CloudUpload, FileText } from "lucide-react";
 import { Button } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import {
+import type {
   FormFieldInput,
   FormFieldOption,
-} from "../../../components/molecules/formField";
+} from "@/components/formulario/tipos";
 import UploadButton from "../../../components/molecules/uploadButton";
 import Form from "../../../components/organisms/form";
 import { ModalProps } from "@/types/modal";
@@ -27,7 +27,6 @@ import { categoriasDoExame, opcoesDeExame } from "./exameDaCategoria";
 import { useToastAsync } from "../../../hooks/useToastAsync";
 import { createProva } from "../../../services/prova/createProva";
 import { useAuthStore } from "../../../store/auth";
-import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
 import { OpcaoNovasVersoes } from "../components/OpcaoNovasVersoes";
 import { palette } from "@/lib/palette";
@@ -68,8 +67,6 @@ function NewProva({
 }: NewProvaProps) {
   const { register, handleSubmit, watch, setValue } = useForm();
   const [receberNovasVersoes, setReceberNovasVersoes] = useState(false);
-  // No celular (abaixo de 768px) os campos ficam compactos, como na tela de Estudantes.
-  const acimaDeSm = useAcimaDeSm();
   const {
     data: { token },
   } = useAuthStore();
@@ -310,7 +307,6 @@ function NewProva({
                   <Form
                     formFields={listFieldProva}
                     register={register}
-                    size={acimaDeSm ? "base" : "small"}
                     className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4"
                   />
                 </div>

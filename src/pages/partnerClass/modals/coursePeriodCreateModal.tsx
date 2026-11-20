@@ -1,4 +1,5 @@
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogContent,
@@ -103,21 +104,21 @@ export function CoursePeriodCreateEditModal({
 
         <form
           id="form-periodo-letivo"
+          noValidate
           className="flex flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
         >
+          <FormLegend />
           {/* Nome do Período */}
-          <InputFactory
-            id="name"
-            label="Nome do Período"
-            type="text"
-            placeholder="Ex: 1º Semestre 2024"
-            defaultValue={entity?.name}
-            error={errors.name}
-            onChange={(e: { target: { value: string } }) =>
-              setValue("name", e.target.value)
-            }
-          />
+          <Field label="Nome do Período" required error={errors.name?.message}>
+            <Input
+              id="name"
+              type="text"
+              placeholder="Ex: 1º Semestre 2024"
+              defaultValue={entity?.name}
+              onChange={(e) => setValue("name", e.target.value)}
+            />
+          </Field>
 
           {/* Datas */}
           <div className="flex flex-col sm:grid grid-cols-2 gap-x-4">

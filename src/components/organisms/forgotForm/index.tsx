@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LOGIN_PATH } from "../../../routes/path";
 import { Forgot } from "../../../services/auth/forgot";
-import { FormFieldInput } from "../../molecules/formField";
+import type { FormFieldInput } from "@/components/formulario/tipos";
 import FormSubmit from "../formSubmit";
 
 export interface ForgotFormProps {

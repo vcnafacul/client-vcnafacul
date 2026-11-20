@@ -1,4 +1,6 @@
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FrenteDto, SubjectDto } from "@/dtos/content/contentDtoInput";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -97,26 +99,23 @@ function ManagerSubject({
           <form
             id="form-manager-subject"
             onSubmit={handleSubmit(subject ? edit : create)}
-            className="flex flex-col py-4"
+            noValidate
+            className="flex flex-col gap-4 py-4"
           >
-            <InputFactory
-              id="name"
-              type="text"
-              label="Nome*"
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) => setValue("name", e.target.value)}
-              error={errors.name}
-              className="col-span-2"
-            />
-            <InputFactory
-              id="description"
-              type="textarea"
-              label="Descrição*"
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) => setValue("description", e.target.value)}
-              error={errors.description}
-              className="col-span-2 w-full outline-none pt-4"
-            />
+            <FormLegend />
+            <Field label="Nome" required error={errors.name?.message}>
+              <Input
+                id="name"
+                type="text"
+                onChange={(e) => setValue("name", e.target.value)}
+              />
+            </Field>
+            <Field label="Descrição" required error={errors.description?.message}>
+              <Textarea
+                id="description"
+                onChange={(e) => setValue("description", e.target.value)}
+              />
+            </Field>
           </form>
         </DialogBody>
         <DialogFooter>

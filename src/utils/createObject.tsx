@@ -1,4 +1,4 @@
-import { FormFieldInput } from "../components/molecules/formField";
+import type { FormFieldInput } from "@/components/formulario/tipos";
 
 export function createObjectFromFormFieldInput(fields: FormFieldInput[]): Record<string, string | number | readonly string[] | undefined> {
     const result: Record<string, string | number | readonly string[] | undefined> = {};

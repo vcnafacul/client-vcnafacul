@@ -203,6 +203,7 @@ function Step3Geo({
         {subtitle}
       </p>
       <form
+        noValidate
         className="w-full max-w-lg mx-auto"
         onSubmit={handleSubmit(handleForm)}
       >
@@ -214,11 +215,12 @@ function Step3Geo({
         />
         <div className="flex items-center gap-4 my-4">
           <input
+            id="localizacao-manual"
             type="checkbox"
             checked={useCep}
             onChange={(e) => setUseCep(e.target.checked)}
           />
-          <label>Definir localização manualmente</label>
+          <label htmlFor="localizacao-manual">Definir localização manualmente</label>
         </div>
         <Form
           className="flex flex-col gap-4 my-4 w-full"

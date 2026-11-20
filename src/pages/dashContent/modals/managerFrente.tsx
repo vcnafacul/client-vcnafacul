@@ -1,4 +1,5 @@
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { FrenteDto } from "@/dtos/content/contentDtoInput";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,7 +7,7 @@ import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import PropValue from "../../../components/molecules/PropValue";
-import { FormFieldOption } from "../../../components/molecules/formField";
+import type { FormFieldOption } from "@/components/formulario/tipos";
 import { ModalProps } from "@/types/modal";
 import {
   Dialog,
@@ -91,18 +92,19 @@ function ManagerFrente({
           <form
             id="form-manager-frente"
             onSubmit={handleSubmit(frente ? edit : create)}
+            noValidate
             className="flex flex-col gap-4"
           >
             <PropValue prop="Materia" value={materia.label} />
-            <InputFactory
-              id="name"
-              type="text"
-              label="Nome"
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onChange={(e: any) => setValue("name", e.target.value)}
-              error={errors.name}
-              defaultValue={frente?.nome}
-            />
+            <FormLegend />
+            <Field label="Nome" required error={errors.name?.message}>
+              <Input
+                id="name"
+                type="text"
+                defaultValue={frente?.nome}
+                onChange={(e) => setValue("name", e.target.value)}
+              />
+            </Field>
           </form>
         </DialogBody>
         <DialogFooter>

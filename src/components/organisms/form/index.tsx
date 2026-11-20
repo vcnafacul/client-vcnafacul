@@ -1,33 +1,34 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { ComponentProps } from "react"
-import FormField, { FormFieldInput } from "../../molecules/formField"
+import { CampoDoFormulario } from "@/components/formulario/campo-do-formulario"
+import type { FormFieldInput } from "@/components/formulario/tipos"
+import { FormLegend } from "@/components/ui/field"
 import { FieldError, FieldErrors, UseFormRegister } from "react-hook-form";
 
 export type FormProps = ComponentProps<'div'> & {
     formFields: FormFieldInput[];
     register: UseFormRegister<any>;
     errors?: FieldErrors;
-    /** Tamanho de todos os campos; `small` no celular. */
-    size?: "base" | "small";
 }
 
-function Form({ formFields, register, errors, size, ...props } : FormProps){
+function Form({ formFields, register, errors, ...props } : FormProps){
    return (
         <div {...props}>
-            {formFields.map(fData => 
-                    <FormField 
-                    id={fData.id} 
-                    key={fData.id} 
-                    label={fData.label} 
-                    value={fData.value} 
+            {formFields.some((f) => f.required) && <FormLegend />}
+            {formFields.map(fData =>
+                    <CampoDoFormulario
+                    id={fData.id}
+                    key={fData.id}
+                    label={fData.label}
+                    value={fData.value}
                     defaultValue={fData.defaultValue}
-                    type={fData.type} 
-                    visibility={fData.visibility} 
+                    type={fData.type}
+                    visibility={fData.visibility}
                     disabled={fData.disabled}
+                    required={fData.required}
                     options={fData.options}
                     register={register}
                     className={fData.className}
-                    size={fData.size ?? size}
                     error={errors && errors[fData.id] ? errors[fData.id] as FieldError : undefined}
                     />
                 )}

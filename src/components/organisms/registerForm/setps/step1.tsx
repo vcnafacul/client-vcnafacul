@@ -13,7 +13,9 @@ import { validNewEmail } from "../../../../services/auth/validNewEmail";
 import { UserRegister } from "../../../../types/user/userRegister";
 import SpanValidate from "../../../atoms/spanValidate";
 import { Button } from "@/components/ui/button";
-import { InputFactory } from "../../inputFactory";
+import { SenhaInput } from "@/components/formulario/senha-input";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 interface UseRegisterStep1 {
   email: string;
@@ -99,38 +101,46 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
   return (
     <form
       onSubmit={handleSubmit(continueRegister)}
+      noValidate
       className="flex flex-col gap-4 w-full"
     >
+      <FormLegend />
       {emailTravado ? (
         <p data-email-travado className="text-body">
           Email: <strong>{emailTravado}</strong>
         </p>
       ) : (
-        <InputFactory
-          id="email"
-          label="Email"
-          type="text"
-          error={errors.email}
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          onChange={(e: any) => setValue("email", e.target.value)}
-        />
+        <Field label="Email" required error={errors.email?.message}>
+          <Input
+            id="email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            onChange={(e: any) => setValue("email", e.target.value)}
+          />
+        </Field>
       )}
-      <InputFactory
-        id="password"
-        label="Senha"
-        type="password"
-        error={errors.password}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("password", e.target.value)}
-      />
-      <InputFactory
-        id="password_confirmation"
+      <Field label="Senha" required error={errors.password?.message}>
+        <SenhaInput
+          id="password"
+          autoComplete="new-password"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("password", e.target.value)}
+        />
+      </Field>
+      <Field
         label="Confirmar Senha"
-        type="password"
-        error={errors.password_confirmation}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("password_confirmation", e.target.value)}
-      />
+        required
+        error={errors.password_confirmation?.message}
+      >
+        <SenhaInput
+          id="password_confirmation"
+          autoComplete="new-password"
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          onChange={(e: any) => setValue("password_confirmation", e.target.value)}
+        />
+      </Field>
       <div className="flex gap-4 w-full text-body justify-between">
         <div className="font-normal text-caption"> Sua senha deve conter:</div>
         <div className="flex flex-col sm:flex-row sm:gap-4">

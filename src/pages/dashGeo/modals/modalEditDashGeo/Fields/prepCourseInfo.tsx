@@ -1,8 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
-  InputFactory,
-  InputFactoryType,
-} from "@/components/organisms/inputFactory";
+  SelectOpcoes,
+  type OpcaoDoCampo,
+} from "@/components/formulario/select-opcoes";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { prepCourseInfoType } from "@/pages/dashGeo/data";
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { TypeMarker } from "@/types/map/marker";
@@ -33,10 +36,74 @@ const CONTACT_FIELDS = [
   "tiktok",
 ] as const;
 
-interface ContactFieldProps {
-  id: string;
+type TipoDoCampo = "text" | "select" | string;
+
+/** `inputMode` do teclado do celular, pelo campo (CEP numérico, telefone, e-mail). */
+function modoDeEntrada(campo: string) {
+  if (campo === "cep") return "numeric" as const;
+  if (campo === "phone" || campo === "whatsapp") return "tel" as const;
+  if (campo === "email") return "email" as const;
+  return undefined;
+}
+
+interface CampoProps {
+  campo: string;
   label: string;
-  type: InputFactoryType;
+  type: TipoDoCampo;
+  onChange: (value: string) => void;
+  error: FieldErrors[string];
+  edit: boolean;
+  defaultValue?: string;
+  options?: OpcaoDoCampo[];
+}
+
+/** Um campo do cursinho: texto, ou lista quando o tipo é `select`. */
+function Campo({
+  campo,
+  label,
+  type,
+  onChange,
+  error,
+  edit,
+  defaultValue,
+  options,
+}: CampoProps) {
+  const [escolhido, setEscolhido] = useState(defaultValue ?? "");
+  const mensagem = error?.message as string | undefined;
+
+  if (type === "select") {
+    return (
+      <Field label={label} error={mensagem}>
+        <SelectOpcoes
+          id={label}
+          disabled={!edit}
+          options={options ?? []}
+          value={escolhido}
+          onValueChange={(valor) => {
+            setEscolhido(String(valor));
+            onChange(String(valor));
+          }}
+        />
+      </Field>
+    );
+  }
+  return (
+    <Field label={label} error={mensagem}>
+      <Input
+        id={label}
+        type="text"
+        inputMode={modoDeEntrada(campo)}
+        disabled={!edit}
+        defaultValue={defaultValue}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </Field>
+  );
+}
+
+interface ContactFieldProps {
+  campo: string;
+  label: string;
   onChange: (value: string) => void;
   error: FieldErrors[string];
   edit: boolean;
@@ -44,9 +111,8 @@ interface ContactFieldProps {
 }
 
 function ContactField({
-  id,
+  campo,
   label,
-  type,
   onChange,
   error,
   edit,
@@ -68,155 +134,79 @@ function ContactField({
   };
 
   return (
-    // O erro do campo é absolute: a mensagem com exemplo quebra em 2 linhas no
-    // celular e cobriria o campo de baixo sem esse espaço.
-    <div className={`relative ${error ? "pb-4" : ""}`}>
-      <InputFactory
-        id={id}
-        label={label}
-        type={type}
-        onChange={(e: any) => {
+    <Field label={label} error={error?.message as string | undefined}>
+      <Input
+        id={label}
+        type="text"
+        inputMode={modoDeEntrada(campo)}
+        disabled={!edit}
+        defaultValue={defaultValue}
+        onChange={(e) => {
           setValue(e.target.value);
           onChange(e.target.value);
         }}
-        error={error}
-        disabled={!edit}
-        defaultValue={defaultValue}
-        className={canCopy ? "pr-11" : ""}
+        trailing={
+          canCopy ? (
+            <Button
+              type="button"
+              size="icon"
+              variant="ghost"
+              aria-label={`Copiar ${label}`}
+              title={`Copiar ${label}`}
+              className="h-7 w-7 sm:h-7 sm:w-7"
+              onClick={copy}
+            >
+              <Copy aria-hidden="true" />
+            </Button>
+          ) : undefined
+        }
       />
-      {canCopy && (
-        <button
-          type="button"
-          onClick={copy}
-          aria-label={`Copiar ${label}`}
-          title={`Copiar ${label}`}
-          className="absolute right-2 top-4 p-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
-        >
-          <Copy className="w-4 h-4" />
-        </button>
-      )}
-    </div>
+    </Field>
   );
 }
 
 export function PrepCourseInfo({ form, setValue, errors, edit, geo }: Props) {
+  const campo = (
+    chave: keyof prepCourseInfoType,
+    valorInicial?: string
+  ) => (
+    <Campo
+      campo={chave}
+      label={form[chave].label}
+      type={form[chave].type}
+      onChange={(valor) => setValue(chave, valor)}
+      error={errors[chave]}
+      edit={edit}
+      defaultValue={valorInicial}
+      options={(form[chave] as { options?: OpcaoDoCampo[] }).options}
+    />
+  );
   return (
     <div
-      className="grid grid-cols-1 sm:grid-cols-2 items-center 
-      h-full sm:min-h-[729px] gap-x-4 px-1"
+      className="grid grid-cols-1 sm:grid-cols-2 items-start 
+      h-full sm:min-h-[729px] gap-x-4 gap-y-4 px-1"
     >
-      <InputFactory
-        id={form.name.label}
-        label={form.name.label}
-        type={form.name.type as InputFactoryType}
-        onChange={(e: any) => setValue("name", e.target.value)}
-        error={errors.name}
-        disabled={!edit}
-        defaultValue={geo.name}
-      />
+      {campo("name", geo.name)}
       {geo.type === TypeMarker.univPublic ? (
         <>
-          <InputFactory
-            id={form.alias.label}
-            label={form.alias.label}
-            type={form.alias.type as InputFactoryType}
-            onChange={(e: any) => setValue("alias", e.target.value)}
-            error={errors.alias}
-            disabled={!edit}
-            defaultValue={geo.alias}
-          />
-          <InputFactory
-            id={form.campus.label}
-            label={form.campus.label}
-            type={form.campus.type as InputFactoryType}
-            onChange={(e: any) => setValue("campus", e.target.value)}
-            error={errors.campus}
-            disabled={!edit}
-            defaultValue={geo.campus}
-          />
+          {campo("alias", geo.alias)}
+          {campo("campus", geo.campus)}
         </>
       ) : (
-        <InputFactory
-          id={form.category.label}
-          label={form.category.label}
-          type={form.category.type as InputFactoryType}
-          onChange={(e: any) => setValue("category", e.target.value)}
-          error={errors.category}
-          disabled={!edit}
-          defaultValue={geo.category}
-        />
+        campo("category", geo.category)
       )}
-      <InputFactory
-        id={form.cep.label}
-        label={form.cep.label}
-        type={form.cep.type as InputFactoryType}
-        onChange={(e: any) => setValue("cep", e.target.value)}
-        error={errors.cep}
-        disabled={!edit}
-        defaultValue={geo.cep}
-      />
-      <InputFactory
-        id={form.street.label}
-        label={form.street.label}
-        type={form.street.type as InputFactoryType}
-        onChange={(e: any) => setValue("street", e.target.value)}
-        error={errors.street}
-        disabled={!edit}
-        defaultValue={geo.street}
-      />
-      <InputFactory
-        id={form.number.label}
-        label={form.number.label}
-        type={form.number.type as InputFactoryType}
-        onChange={(e: any) => setValue("number", e.target.value)}
-        error={errors.number}
-        disabled={!edit}
-        defaultValue={geo.number}
-      />
-      <InputFactory
-        id={form.complement.label}
-        label={form.complement.label}
-        type={form.complement.type as InputFactoryType}
-        onChange={(e: any) => setValue("complement", e.target.value)}
-        error={errors.complement}
-        disabled={!edit}
-        defaultValue={geo.complement}
-      />
-      <InputFactory
-        id={form.neighborhood.label}
-        label={form.neighborhood.label}
-        type={form.neighborhood.type as InputFactoryType}
-        onChange={(e: any) => setValue("neighborhood", e.target.value)}
-        error={errors.neighborhood}
-        disabled={!edit}
-        defaultValue={geo.neighborhood}
-      />
-      <InputFactory
-        id={form.city.label}
-        label={form.city.label}
-        type={form.city.type as InputFactoryType}
-        onChange={(e: any) => setValue("city", e.target.value)}
-        error={errors.city}
-        disabled={!edit}
-        defaultValue={geo.city}
-      />
-      <InputFactory
-        id={form.state.label}
-        label={form.state.label}
-        type={form.state.type as InputFactoryType}
-        onChange={(e: any) => setValue("state", e.target.value)}
-        error={errors.state}
-        options={form.state.options}
-        disabled={!edit}
-        defaultValue={geo.state}
-        value={geo.state}
-      />
+      {campo("cep", geo.cep)}
+      {campo("street", geo.street)}
+      {campo("number", geo.number)}
+      {campo("complement", geo.complement)}
+      {campo("neighborhood", geo.neighborhood)}
+      {campo("city", geo.city)}
+      {campo("state", geo.state)}
       {CONTACT_FIELDS.map((field) => (
         <ContactField
           key={field}
-          id={form[field].label}
+          campo={field}
           label={form[field].label}
-          type={form[field].type as InputFactoryType}
           onChange={(value) => setValue(field, value)}
           error={errors[field]}
           edit={edit}

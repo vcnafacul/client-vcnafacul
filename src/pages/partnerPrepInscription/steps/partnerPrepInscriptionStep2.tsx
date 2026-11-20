@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { StudentInscriptionDTO } from "@/dtos/student/studentInscriptionDTO";
 import { stateOptions } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -153,100 +155,94 @@ export function PartnerPrepInscriptionStep2({
   return (
     <form
       onSubmit={handleSubmit(handleForm)}
+      noValidate
       className="w-full flex flex-col gap-4 md:gap-2 mt-4 md:mt-8 mb-8 md:mb-16"
     >
       <p className="text-body text-foreground mb-6 text-center">{description}</p>
-      <InputFactory
-        id="postalCode"
-        label="CEP*"
-        type="text"
-        error={errors.postalCode}
-        value={postalCode}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          const value = applyCepMask(e.target.value);
-          setCEP(value);
-          setValue("postalCode", value);
-        }}
-      />
-      <InputFactory
-        id="street"
-        label="Rua*"
-        type="text"
-        error={errors.street}
-        value={street}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          const value = e.target.value;
-          setStreet(value);
-          setValue("street", value);
-        }}
-        maxLength={100}
-      />
-      <InputFactory
-        id="number"
-        label="Número"
-        type="number"
-        defaultValue={currentData?.number}
-        error={errors.number}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) =>
-          setValue("number", e.target.value ? parseInt(e.target.value) : 0)
-        }
-      />
-      <InputFactory
-        id="complement"
-        label="Complemento"
-        type="text"
-        defaultValue={currentData?.complement}
-        error={errors.complement}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => setValue("complement", e.target.value)}
-        maxLength={200}
-      />
-      <InputFactory
-        id="neighborhood"
-        label="Bairro*"
-        type="text"
-        error={errors.neighborhood}
-        value={neighborhood}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          const value = e.target.value;
-          setNeighborhood(value);
-          setValue("neighborhood", value);
-        }}
-        maxLength={50}
-      />
-      <InputFactory
-        id="state"
-        label="Estado*"
-        type="select"
-        error={errors.state}
-        value={state}
-        defaultValue={state}
-        options={stateOptions as { value: string; label: string }[]}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          const value = e.value;
-          setState(value);
-          setValue("state", value);
-        }}
-      />
-      <InputFactory
-        id="city"
-        label="Cidade*"
-        type="text"
-        error={errors.city}
-        value={city}
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        onChange={(e: any) => {
-          const value = e.target.value;
-          setCity(value);
-          setValue("city", value);
-        }}
-        maxLength={50}
-      />
+      <FormLegend />
+      <Field label="CEP" required error={errors.postalCode?.message}>
+        <Input
+          id="postalCode"
+          type="text"
+          inputMode="numeric"
+          autoComplete="postal-code"
+          value={postalCode}
+          onChange={(e) => {
+            const value = applyCepMask(e.target.value);
+            setCEP(value);
+            setValue("postalCode", value);
+          }}
+        />
+      </Field>
+      <Field label="Rua" required maxLength={100} error={errors.street?.message}>
+        <Input
+          id="street"
+          type="text"
+          autoComplete="address-line1"
+          value={street}
+          onChange={(e) => {
+            const value = e.target.value;
+            setStreet(value);
+            setValue("street", value);
+          }}
+        />
+      </Field>
+      <Field label="Número" required error={errors.number?.message}>
+        <Input
+          id="number"
+          type="number"
+          inputMode="numeric"
+          defaultValue={currentData?.number}
+          onChange={(e) =>
+            setValue("number", e.target.value ? parseInt(e.target.value) : 0)
+          }
+        />
+      </Field>
+      <Field label="Complemento" maxLength={200} error={errors.complement?.message}>
+        <Input
+          id="complement"
+          type="text"
+          autoComplete="address-line2"
+          defaultValue={currentData?.complement}
+          onChange={(e) => setValue("complement", e.target.value)}
+        />
+      </Field>
+      <Field label="Bairro" required maxLength={50} error={errors.neighborhood?.message}>
+        <Input
+          id="neighborhood"
+          type="text"
+          value={neighborhood}
+          onChange={(e) => {
+            const value = e.target.value;
+            setNeighborhood(value);
+            setValue("neighborhood", value);
+          }}
+        />
+      </Field>
+      <Field label="Estado" required error={errors.state?.message}>
+        <SelectOpcoes
+          id="state"
+          options={stateOptions as { value: string; label: string }[]}
+          value={state}
+          onValueChange={(value) => {
+            setState(value);
+            setValue("state", value);
+          }}
+        />
+      </Field>
+      <Field label="Cidade" required maxLength={50} error={errors.city?.message}>
+        <Input
+          id="city"
+          type="text"
+          autoComplete="address-level2"
+          value={city}
+          onChange={(e) => {
+            const value = e.target.value;
+            setCity(value);
+            setValue("city", value);
+          }}
+        />
+      </Field>
 
       <div className="flex flex-col-reverse sm:flex-row gap-4">
         <Button className="w-full" variant="primary" size="lg" type="button" onClick={handleBackForm}>

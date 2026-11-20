@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import ControlCalendar from "@/components/atoms/controlCalendar";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import {
@@ -15,7 +14,10 @@ import { StepProps } from "..";
 import { Gender } from "../../../../store/auth";
 import { UserRegister } from "../../../../types/user/userRegister";
 import { Button } from "@/components/ui/button";
-import { InputFactory } from "../../inputFactory";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 interface UseRegisterStep2 {
   firstName: string;
@@ -146,26 +148,26 @@ function Step2({
   return (
     <form
       onSubmit={handleSubmit(registerSubmit)}
+      noValidate
       className="w-full flex flex-col gap-4"
     >
-      <InputFactory
-        id="firstName"
-        label="Nome"
-        type="text"
-        defaultValue={valoresIniciais?.firstName}
-        error={errors.firstName}
-        onChange={(e: any) => setValue("firstName", e.target.value)}
-      />
+      <FormLegend />
+      <Field label="Nome" required error={errors.firstName?.message}>
+        <Input
+          id="firstName"
+          type="text"
+          autoComplete="given-name"
+          defaultValue={valoresIniciais?.firstName}
+          onChange={(e) => setValue("firstName", e.target.value)}
+        />
+      </Field>
       <div className="flex flex-col w-full items-start justify-start">
         <div>
-          <InputFactory
+          <Checkbox
             id="socialNameCheckbox"
-            label=""
-            type="checkbox"
-            checkboxs={["Desejo utilizar o Nome Social"]}
-            onCheckedChange={(values: string[]) => {
-              setIsCheckboxChecked(values.length > 0);
-            }}
+            label="Desejo utilizar o Nome Social"
+            checked={isCheckboxChecked}
+            onCheckedChange={(marcado) => setIsCheckboxChecked(marcado === true)}
           />
         </div>
         <div className="text-body text-muted-foreground">
@@ -180,61 +182,65 @@ function Step2({
           </a>
         </div>
       </div>
-      <InputFactory
-        id="socialName"
-        label="Nome Social"
-        type="text"
-        disabled={!isCheckboxChecked}
-        error={errors.socialName}
-        onChange={(e: any) => setValue("socialName", e.target.value)}
-      />
-      <InputFactory
-        id="lastName"
-        label="Sobrenome"
-        type="text"
-        defaultValue={valoresIniciais?.lastName}
-        error={errors.lastName}
-        onChange={(e: any) => setValue("lastName", e.target.value)}
-      />
+      <Field label="Nome Social" error={errors.socialName?.message}>
+        <Input
+          id="socialName"
+          type="text"
+          disabled={!isCheckboxChecked}
+          onChange={(e) => setValue("socialName", e.target.value)}
+        />
+      </Field>
+      <Field label="Sobrenome" required error={errors.lastName?.message}>
+        <Input
+          id="lastName"
+          type="text"
+          autoComplete="family-name"
+          defaultValue={valoresIniciais?.lastName}
+          onChange={(e) => setValue("lastName", e.target.value)}
+        />
+      </Field>
       <span className="text-caption text-muted-foreground font-semibold mb-4">
         Esta é uma pré-visualização do nome que será utilizado na plataforma:{" "}
         {getDisplayName()}
       </span>
-      <InputFactory
-        id="gender"
-        label="Gênero"
-        type="select"
-        options={optionsGender}
-        error={errors.gender}
-        onChange={(e: any) => setValue("gender", e.target.value)}
-      />
+      <Field label="Gênero" required error={errors.gender?.message}>
+        <SelectOpcoes
+          id="gender"
+          options={optionsGender}
+          value={watch("gender")}
+          onValueChange={(valor) => setValue("gender", valor)}
+        />
+      </Field>
       <ControlCalendar
         control={control}
         label="Data de Nascimento"
         error={errors.birthday}
       />
-      <InputFactory
-        id="phone"
-        label="Telefone"
-        type="text"
-        error={errors.phone}
-        onChange={(e: any) => setValue("phone", e.target.value)}
-      />
-      <InputFactory
-        id="city"
-        label="Cidade"
-        type="text"
-        error={errors.city}
-        onChange={(e: any) => setValue("city", e.target.value)}
-      />
-      <InputFactory
-        id="state"
-        label="Estado"
-        type="select"
-        options={stateOptions}
-        error={errors.state}
-        onChange={(e: any) => setValue("state", e.target.value)}
-      />
+      <Field label="Telefone" required error={errors.phone?.message}>
+        <Input
+          id="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          onChange={(e) => setValue("phone", e.target.value)}
+        />
+      </Field>
+      <Field label="Cidade" required error={errors.city?.message}>
+        <Input
+          id="city"
+          type="text"
+          autoComplete="address-level2"
+          onChange={(e) => setValue("city", e.target.value)}
+        />
+      </Field>
+      <Field label="Estado" required error={errors.state?.message}>
+        <SelectOpcoes
+          id="state"
+          options={stateOptions}
+          value={watch("state")}
+          onValueChange={(valor) => setValue("state", valor)}
+        />
+      </Field>
       <div className="flex w-full gap-2 justify-center my-2">
         <input type="checkbox" {...register("lgpd")} />
         <span>

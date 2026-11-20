@@ -1,8 +1,6 @@
  
-import {
-  InputFactory,
-  InputFactoryType,
-} from "@/components/organisms/inputFactory";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { prepCourseUpdatedType } from "@/pages/dashGeo/data";
 import { Geolocation } from "@/types/geolocation/geolocation";
 
@@ -17,27 +15,32 @@ export function PrepCourseUpdated({ form, geo }: Props) {
       className="flex flex-col flex-wrap w-full 
       sm:w-[300px] h-full gap-x-4 pr-4"
     >
-      <InputFactory
-        id={form.userFullname.label}
-        label={form.userFullname.label}
-        type={form.userFullname.type as InputFactoryType}
-        disabled
-        defaultValue={geo.userFullName}
-      />
-      <InputFactory
-        id={form.userEmail.label}
-        label={form.userEmail.label}
-        type={form.userEmail.type as InputFactoryType}
-        disabled
-        defaultValue={geo.userEmail}
-      />
-      <InputFactory
-        id={form.userPhone.label}
-        label={form.userPhone.label}
-        type={form.userPhone.type as InputFactoryType}
-        disabled
-        defaultValue={geo.userPhone}
-      />
+      <Field label={form.userFullname.label}>
+        <Input
+          id={form.userFullname.label}
+          type="text"
+          disabled
+          defaultValue={geo.userFullName}
+        />
+      </Field>
+      <Field label={form.userEmail.label}>
+        <Input
+          id={form.userEmail.label}
+          type="text"
+          inputMode="email"
+          disabled
+          defaultValue={geo.userEmail}
+        />
+      </Field>
+      <Field label={form.userPhone.label}>
+        <Input
+          id={form.userPhone.label}
+          type="text"
+          inputMode="tel"
+          disabled
+          defaultValue={geo.userPhone}
+        />
+      </Field>
     </div>
   );
 }

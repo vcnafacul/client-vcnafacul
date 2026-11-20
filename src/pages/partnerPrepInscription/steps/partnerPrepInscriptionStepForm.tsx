@@ -9,7 +9,10 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { GrupoDeCheckbox } from "@/components/formulario/grupo-de-checkbox";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { useModals } from "@/hooks/useModal";
 import { ComplexCondition } from "@/types/partnerPrepForm/condition";
 import { avaliarCondicao } from "../avaliarCondicao";
@@ -31,21 +34,6 @@ interface PartnerPrepInscriptionStepFormProps {
   onAdvance: (sectionAnswers: Record<string, unknown>) => void;
   onBack: () => void;
 }
-
-// Função helper para determinar o className baseado no tamanho do texto
-const getInputClassByTextLength = (textLength: number): string => {
-  if (textLength <= 50) {
-    return ""; // Altura padrão
-  } else if (textLength <= 80) {
-    return "h-20 pt-12"; // Texto médio
-  } else if (textLength <= 120) {
-    return "h-24 pt-14"; // Texto longo
-  } else if (textLength <= 160) {
-    return "h-28 pt-14"; // Texto muito longo
-  } else {
-    return "h-[130px] pt-24"; // Texto extra longo
-  }
-};
 
 // Componente de Skeleton Loader
 const FormSkeleton = ({ section }: { section: SectionForm }) => {
@@ -124,17 +112,15 @@ const QuestionText = ({
   value?: string;
 }) => {
   return (
-    <InputFactory
-      id={question._id}
-      label={question.text}
-      placeholder={question.helpText ?? "Sua resposta..."}
-      type="text"
-      error={error ? { message: error } : undefined}
-      value={value}
-      className={getInputClassByTextLength(question.text.length)}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange={(e: any) => handleChange(question._id, e.target.value)}
-    />
+    <Field label={question.text} required error={error}>
+      <Input
+        id={question._id}
+        type="text"
+        placeholder={question.helpText ?? "Sua resposta..."}
+        value={value}
+        onChange={(e) => handleChange(question._id, e.target.value)}
+      />
+    </Field>
   );
 };
 
@@ -154,25 +140,18 @@ const QuestionBoolean = ({
     value === true ? "Sim" : value === false ? "Não" : undefined;
 
   return (
-    <InputFactory
-      id={question._id}
-      label={question.text}
-      type="select"
-      options={[
-        { label: "Sim", value: "Sim" },
-        { label: "Não", value: "Não" },
-      ]}
-      placeholder="Selecione"
-      error={error ? { message: error } : undefined}
-      value={selectValue}
-      className={getInputClassByTextLength(question.text.length)}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange={(e: any) => {
-        // Converter string para boolean
-        const boolValue = e.value === "Sim";
-        handleChange(question._id, boolValue);
-      }}
-    />
+    <Field label={question.text} required error={error}>
+      <SelectOpcoes
+        id={question._id}
+        options={[
+          { label: "Sim", value: "Sim" },
+          { label: "Não", value: "Não" },
+        ]}
+        placeholder="Selecione"
+        value={selectValue}
+        onValueChange={(valor) => handleChange(question._id, valor === "Sim")}
+      />
+    </Field>
   );
 };
 
@@ -188,20 +167,17 @@ const QuestionOptions = ({
   value?: string;
 }) => {
   return (
-    <InputFactory
-      id={question._id}
-      label={question.text}
-      type="select"
-      options={question.options?.map((option) => ({
-        label: option,
-        value: option,
-      }))}
-      error={error ? { message: error } : undefined}
-      value={value}
-      className={getInputClassByTextLength(question.text.length)}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange={(e: any) => handleChange(question._id, e.value)}
-    />
+    <Field label={question.text} required error={error}>
+      <SelectOpcoes
+        id={question._id}
+        options={(question.options ?? []).map((option) => ({
+          label: option,
+          value: option,
+        }))}
+        value={value}
+        onValueChange={(valor) => handleChange(question._id, valor)}
+      />
+    </Field>
   );
 };
 
@@ -215,18 +191,15 @@ const QuestionOptionsMultiple = ({
   error?: string;
 }) => {
   return (
-    <InputFactory
-      id={question._id}
-      label={question.text}
-      type="checkbox"
-      checkboxs={question.options || []}
-      propCleanRest="Não possuo"
-      error={error ? { message: error } : undefined}
-      onCheckedChange={(value: string[]) => {
-        handleChange(question._id, value);
-      }}
-      isCheckbox
-    />
+    <Field label={question.text} required error={error}>
+      <GrupoDeCheckbox
+        id={question._id}
+        aria-label={question.text}
+        opcoes={question.options || []}
+        excludentes
+        onValueChange={(valores) => handleChange(question._id, valores)}
+      />
+    </Field>
   );
 };
 
@@ -262,19 +235,18 @@ const QuestionNumber = ({
   };
 
   return (
-    <InputFactory
-      id={question._id}
-      label={question.text}
-      placeholder={question.helpText ?? "Digite um número..."}
-      type="number"
-      min={0}
-      step={1}
-      error={error ? { message: error } : undefined}
-      value={value}
-      className={getInputClassByTextLength(question.text.length)}
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      onChange={handleNumberChange}
-    />
+    <Field label={question.text} required error={error}>
+      <Input
+        id={question._id}
+        type="number"
+        inputMode="numeric"
+        placeholder={question.helpText ?? "Digite um número..."}
+        min={0}
+        step={1}
+        value={value}
+        onChange={handleNumberChange}
+      />
+    </Field>
   );
 };
 
@@ -416,6 +388,7 @@ export function PartnerPrepInscriptionStepForm({
     <>
       <form
         onSubmit={handleSubmit}
+        noValidate
         className="w-full flex flex-col gap-4 md:gap-2 mt-8 mb-16 animate-in fade-in duration-300"
       >
         <h2 className="text-h1 text-foreground mb-6 text-start px-4">
@@ -424,6 +397,7 @@ export function PartnerPrepInscriptionStepForm({
         {section.description && (
           <p className="text-muted-foreground/90 mb-2">{section.description}</p>
         )}
+        {section.questions.length > 0 && <FormLegend />}
         {section.questions.map((question) => (
           <div key={question._id}>
             {evaluateCondition(question.conditions) && (

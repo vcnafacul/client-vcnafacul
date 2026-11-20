@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
@@ -146,58 +149,53 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
           <form
             id="form-new-demand"
             onSubmit={handleSubmit(create)}
+            noValidate
             className="flex flex-col gap-6"
           >
+            <FormLegend />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <InputFactory
-                id="materia"
-                type="select"
-                appendTo="self"
-                label="Matéria"
-                error={errors.materia}
-                options={materiasOptions}
-                defaultValue={materia}
-                onChange={(e: any) => setValue("materia", e.target.value)}
-              />
-              <InputFactory
-                id="frente"
-                type="select"
-                appendTo="self"
-                label="Frente"
-                error={errors.frente}
-                value={frente}
-                options={frentes.map((f) => ({ label: f.nome, value: f._id }))}
-                onChange={(e: any) => setValue("frente", e.target.value)}
-              />
-              <InputFactory
-                id="subjectId"
-                type="select"
-                appendTo="self"
-                label="Tema"
-                error={errors.subjectId}
-                value={watch("subjectId")}
-                options={subjects.map((s) => ({ label: s.name, value: s._id }))}
-                onChange={(e: any) => setValue("subjectId", e.target.value)}
-              />
+              <Field label="Matéria" required error={errors.materia?.message}>
+                <SelectOpcoes
+                  id="materia"
+                  options={materiasOptions}
+                  value={materia}
+                  onValueChange={(valor) => setValue("materia", valor)}
+                />
+              </Field>
+              <Field label="Frente" required error={errors.frente?.message}>
+                <SelectOpcoes
+                  id="frente"
+                  options={frentes.map((f) => ({ label: f.nome, value: f._id || f.id }))}
+                  value={frente}
+                  onValueChange={(valor) => setValue("frente", valor)}
+                />
+              </Field>
+              <Field label="Tema" required error={errors.subjectId?.message}>
+                <SelectOpcoes
+                  id="subjectId"
+                  options={subjects.map((s) => ({ label: s.name, value: s._id || s.id }))}
+                  value={watch("subjectId")}
+                  onValueChange={(valor) => setValue("subjectId", valor)}
+                />
+              </Field>
             </div>
 
             <div className="grid grid-cols-1 gap-4">
-              <InputFactory
-                id="title"
-                type="text"
-                label="Título*"
-                placeholder="Digite um Título"
-                error={errors.title}
-                onChange={(e: any) => setValue("title", e.target.value)}
-              />
-              <InputFactory
-                id="description"
-                type="textarea"
-                label="Descrição*"
-                placeholder="Digite uma descrição"
-                error={errors.description}
-                onChange={(e: any) => setValue("description", e.target.value)}
-              />
+              <Field label="Título" required error={errors.title?.message}>
+                <Input
+                  id="title"
+                  type="text"
+                  placeholder="Digite um Título"
+                  onChange={(e) => setValue("title", e.target.value)}
+                />
+              </Field>
+              <Field label="Descrição" required error={errors.description?.message}>
+                <Textarea
+                  id="description"
+                  placeholder="Digite uma descrição"
+                  onChange={(e) => setValue("description", e.target.value)}
+                />
+              </Field>
             </div>
           </form>
         </DialogBody>

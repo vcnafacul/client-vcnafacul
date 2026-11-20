@@ -3,13 +3,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 import ControlCalendar from "@/components/atoms/controlCalendar";
+import { SelectOpcoes } from "@/components/formulario/select-opcoes";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { optionsGender, stateOptions } from "@/pages/register/data";
 import { UserMe } from "@/types/user/userMe";
 import { Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { InputFactory } from "../inputFactory";
 
 interface AccountFormProps {
   update: (data: any, onSuccess?: () => void, onError?: () => void) => void;
@@ -174,34 +177,36 @@ export function AccountForm({
             }
           );
         })}
+        noValidate
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full"
       >
-        <InputFactory
-          id="firstName"
-          label="Nome"
-          type="text"
-          defaultValue={userAccount?.firstName}
-          error={errors.firstName}
-          onChange={(e: any) => setValue("firstName", e.target.value)}
-        />
-        <InputFactory
-          id="lastName"
-          label="Sobrenome"
-          type="text"
-          defaultValue={userAccount?.lastName}
-          error={errors.lastName}
-          onChange={(e: any) => setValue("lastName", e.target.value)}
-        />
-        <InputFactory
-          id="gender"
-          label="Gênero"
-          type="select"
-          defaultValue={userAccount?.gender}
-          value={userAccount?.gender}
-          options={optionsGender}
-          error={errors.gender}
-          onChange={(e: any) => setValue("gender", e.target.value)}
-        />
+        <FormLegend className="col-span-1 md:col-span-2 lg:col-span-3" />
+        <Field label="Nome" required error={errors.firstName?.message}>
+          <Input
+            id="firstName"
+            type="text"
+            autoComplete="given-name"
+            defaultValue={userAccount?.firstName}
+            onChange={(e) => setValue("firstName", e.target.value)}
+          />
+        </Field>
+        <Field label="Sobrenome" required error={errors.lastName?.message}>
+          <Input
+            id="lastName"
+            type="text"
+            autoComplete="family-name"
+            defaultValue={userAccount?.lastName}
+            onChange={(e) => setValue("lastName", e.target.value)}
+          />
+        </Field>
+        <Field label="Gênero" error={errors.gender?.message}>
+          <SelectOpcoes
+            id="gender"
+            options={optionsGender}
+            value={watch("gender") ?? userAccount?.gender}
+            onValueChange={(valor) => setValue("gender", valor)}
+          />
+        </Field>
         <div className="flex items-center gap-3 p-4 bg-page rounded-lg border border-border h-16">
           <Checkbox
             className="h-5 w-5 border-input border-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-white data-[state=checked]:text-success"
@@ -219,58 +224,57 @@ export function AccountForm({
           </label>
         </div>
         <div className="col-span-1 space-y-4">
-          <InputFactory
-            id="socialName"
-            label="Nome Social"
-            type="text"
-            defaultValue={userAccount?.socialName}
-            disabled={!isCheckboxChecked}
-            error={errors.socialName}
-            onChange={(e: any) => setValue("socialName", e.target.value)}
-          />
+          <Field label="Nome Social" error={errors.socialName?.message}>
+            <Input
+              id="socialName"
+              type="text"
+              defaultValue={userAccount?.socialName}
+              disabled={!isCheckboxChecked}
+              onChange={(e) => setValue("socialName", e.target.value)}
+            />
+          </Field>
         </div>
         <ControlCalendar
           control={control}
           label="Data de Nascimento"
           value={new Date(userAccount?.birthday)}
         />
-        <InputFactory
-          id="phone"
-          label="Telefone"
-          type="text"
-          defaultValue={userAccount?.phone}
-          error={errors.phone}
-          onChange={(e: any) => setValue("phone", e.target.value)}
-        />
-        <InputFactory
-          id="city"
-          label="Cidade"
-          type="text"
-          defaultValue={userAccount?.city}
-          error={errors.city}
-          onChange={(e: any) => setValue("city", e.target.value)}
-        />
-        <InputFactory
-          id="state"
-          label="Estado"
-          type="select"
-          defaultValue={userAccount?.state}
-          value={userAccount?.state}
-          options={stateOptions}
-          error={errors.state}
-          onChange={(e: any) => setValue("state", e.target.value)}
-        />
-        <div className="col-span-1 md:col-span-2 lg:col-span-3">
-          <InputFactory
-            id="about"
-            label="Sobre"
-            type="textarea"
-            defaultValue={userAccount?.about}
-            options={stateOptions}
-            error={errors.about}
-            rows={5}
-            onChange={(e: any) => setValue("about", e.target.value)}
+        <Field label="Telefone" required error={errors.phone?.message}>
+          <Input
+            id="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            defaultValue={userAccount?.phone}
+            onChange={(e) => setValue("phone", e.target.value)}
           />
+        </Field>
+        <Field label="Cidade" required error={errors.city?.message}>
+          <Input
+            id="city"
+            type="text"
+            autoComplete="address-level2"
+            defaultValue={userAccount?.city}
+            onChange={(e) => setValue("city", e.target.value)}
+          />
+        </Field>
+        <Field label="Estado" required error={errors.state?.message}>
+          <SelectOpcoes
+            id="state"
+            options={stateOptions}
+            value={watch("state") ?? userAccount?.state}
+            onValueChange={(valor) => setValue("state", valor)}
+          />
+        </Field>
+        <div className="col-span-1 md:col-span-2 lg:col-span-3">
+          <Field label="Sobre" required error={errors.about?.message}>
+            <Textarea
+              id="about"
+              rows={5}
+              defaultValue={userAccount?.about ?? undefined}
+              onChange={(e) => setValue("about", e.target.value)}
+            />
+          </Field>
         </div>
         {/* Botão de salvar */}
         <div className="flex flex-col md:flex-row justify-between w-full col-span-1 md:col-span-2 lg:col-span-3">

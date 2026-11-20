@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { InputFactory } from "@/components/organisms/inputFactory";
+import { Field, FormLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -114,31 +116,29 @@ export function ClassCreateEditModal({
 
         <form
           id="form-turma"
+          noValidate
           className="flex flex-col gap-4"
           onSubmit={handleSubmit(resolver)}
         >
+          <FormLegend />
           {/* Linha 1: Nome e Data */}
-          <InputFactory
-            id="name"
-            label="Título"
-            type="text"
-            defaultValue={entity?.name}
-            error={errors.name}
-            onChange={(e: { target: { value: string } }) =>
-              setValue("name", e.target.value)
-            }
-          />
+          <Field label="Título" required error={errors.name?.message}>
+            <Input
+              id="name"
+              type="text"
+              defaultValue={entity?.name}
+              onChange={(e) => setValue("name", e.target.value)}
+            />
+          </Field>
           {/* Linha 2: Descrição */}
-          <InputFactory
-            id="description"
-            label="Descrição"
-            type="textarea"
-            defaultValue={entity?.description}
-            onChange={(e: { target: { value: string | undefined } }) =>
-              setValue("description", e.target.value)
-            }
-            rows={5}
-          />
+          <Field label="Descrição">
+            <Textarea
+              id="description"
+              rows={5}
+              defaultValue={entity?.description}
+              onChange={(e) => setValue("description", e.target.value)}
+            />
+          </Field>
         </form>
 
         <DialogFooter>
