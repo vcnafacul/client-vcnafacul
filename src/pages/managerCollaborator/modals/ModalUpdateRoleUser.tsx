@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { PermissionType } from "@/dtos/roles/permissionHierarchy";
 import PermissaoSwitch from "@/components/permissoes/PermissaoSwitch";
 import { Field } from "@/components/ui/field";
 import { OptionsSelect } from "@/components/ui/options-select";
@@ -56,6 +57,8 @@ function PermissionReadonlyList({
                 label={node.label}
                 checked={node.value}
                 readonly
+                type={node.type as PermissionType}
+                mostrarTipo
               />
             ))}
           </div>

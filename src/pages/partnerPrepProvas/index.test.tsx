@@ -705,9 +705,9 @@ describe("volta do relatório — o que o state restaura", () => {
     );
 
     expect(screen.getByPlaceholderText("Buscar por nome")).toHaveValue("2023");
-    expect(screen.getByRole("combobox", { name: "Todas edições" })).toHaveTextContent(Edicao.Digital);
-    expect(screen.getByRole("combobox", { name: "Todas aplicações" })).toHaveTextContent("1");
-    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent("2023");
+    expect(screen.getByRole("combobox", { name: "Todas edições" })).toHaveTextContent(new RegExp(`^${Edicao.Digital}$`));
+    expect(screen.getByRole("combobox", { name: "Todas aplicações" })).toHaveTextContent(/^1$/);
+    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent(/^2023$/);
     expect(screen.getByRole("checkbox")).toBeChecked();
     expect(screen.getByText(/Limpar filtros \(5\)/)).toBeInTheDocument();
     expect(chavesDasLinhas()).toEqual(["b"]);
@@ -783,9 +783,9 @@ describe("volta do relatório — o que o state restaura", () => {
       await montarComState({ de: { caminho: CAMINHO_DA_TELA, ...parcial } });
 
       expect(screen.getByPlaceholderText("Buscar por nome")).toHaveValue("");
-      expect(screen.getByRole("combobox", { name: "Todas edições" })).toHaveTextContent("Todas edições");
-      expect(screen.getByRole("combobox", { name: "Todas aplicações" })).toHaveTextContent("Todas aplicações");
-      expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent("Todos os anos");
+      expect(screen.getByRole("combobox", { name: "Todas edições" })).toHaveTextContent(/^Todas edições$/);
+      expect(screen.getByRole("combobox", { name: "Todas aplicações" })).toHaveTextContent(/^Todas aplicações$/);
+      expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent(/^Todos os anos$/);
       expect(screen.getByRole("checkbox")).not.toBeChecked();
       expect(screen.queryByText(/Limpar filtros/)).toBeNull();
       expect(screen.queryByTestId("show-prova")).toBeNull();

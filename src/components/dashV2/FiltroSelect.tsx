@@ -9,7 +9,7 @@ export interface OpcaoDoFiltro {
 export interface FiltroSelectProps {
   options: OpcaoDoFiltro[];
   value?: number | string;
-  defaultValue?: number | string | readonly string[];
+  defaultValue?: number | string;
   disabled?: boolean;
   className?: string;
   "aria-label"?: string;
@@ -35,8 +35,7 @@ export function FiltroSelect({
   setState,
   "aria-label": rotulo,
 }: FiltroSelectProps) {
-  const atual =
-    value ?? (typeof defaultValue === "object" ? undefined : defaultValue);
+  const atual = value ?? defaultValue;
   return (
     <OptionsSelect<string>
       aria-label={rotulo ?? String(options[0]?.name ?? "Filtro")}

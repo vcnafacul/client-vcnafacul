@@ -109,7 +109,8 @@ export default function PaginaCursinhoEdicao() {
 
       <div className="flex items-center gap-3 bg-white border rounded-lg p-4">
         <Switch
-          aria-labelledby="pagina-ativa-rotulo"
+          aria-label="Página pública"
+          aria-describedby="pagina-ativa-rotulo"
           checked={active}
           onCheckedChange={setActive}
         />

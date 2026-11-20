@@ -52,6 +52,8 @@ function PermissionGroupCard({
                 implied={isImplied || isFromBase}
                 onChange={(val) => onToggle(camelKey, val)}
                 disabled={isDisabled}
+                type={node.type}
+                mostrarTipo={activeTab === "all"}
               />
             </div>
           );

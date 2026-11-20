@@ -142,8 +142,8 @@ describe("DashContent (dashV2)", () => {
         MATERIA_TODAS,
       ),
     );
-    expect(await select("Matéria")).toHaveTextContent("Todas as matérias");
-    expect(await select("Status")).toHaveTextContent("Pendente Upload");
+    expect(await select("Matéria")).toHaveTextContent(/^Todas as matérias$/);
+    expect(await select("Status")).toHaveTextContent(/^Pendente Upload$/);
   });
 
   it("clicar na demanda abre o detalhe dela", async () => {

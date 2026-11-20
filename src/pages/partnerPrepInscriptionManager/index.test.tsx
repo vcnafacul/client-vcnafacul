@@ -121,7 +121,7 @@ describe("Processos Seletivos na Dash V2 (tickets/021 card 04)", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /Limpar filtros/ }));
     expect(nomesNaTabela()).toHaveLength(3);
-    expect(screen.getByRole("combobox", { name: "Status" })).toHaveTextContent("Todos");
+    expect(screen.getByRole("combobox", { name: "Status" })).toHaveTextContent(/^Todos$/);
   });
 
   it("⚠️ erro de busca: estado de erro com 'tentar de novo' — não o spinner eterno", async () => {

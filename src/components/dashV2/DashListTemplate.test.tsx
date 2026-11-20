@@ -491,7 +491,7 @@ describe("DashListTemplate — limpar filtros", () => {
     });
     const { remontar } = montar(contexto);
 
-    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent("2019");
+    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent(/^2019$/);
 
     remontar(
       criarContexto({
@@ -500,7 +500,7 @@ describe("DashListTemplate — limpar filtros", () => {
       }),
     );
 
-    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent("Todos os anos");
+    expect(screen.getByRole("combobox", { name: "Todos os anos" })).toHaveTextContent(/^Todos os anos$/);
   });
 });
 
