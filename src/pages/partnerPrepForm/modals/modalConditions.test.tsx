@@ -7,10 +7,6 @@ import {
 } from "@/types/partnerPrepForm/questionForm";
 
 vi.mock("react-toastify", () => ({ toast: { success: vi.fn(), error: vi.fn() } }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children, isOpen }: { children: React.ReactNode; isOpen: boolean }) =>
-    isOpen ? <div>{children}</div> : null,
-}));
 
 import { ModalConditions } from "./modalConditions";
 
@@ -35,7 +31,8 @@ describe("ModalConditions (tickets-documentacao, 27)", () => {
       />,
     );
     fireEvent.mouseDown(screen.getAllByRole("combobox")[0]);
-    const lista = within(screen.getByRole("listbox"));
+    // MenuProps disablePortal (o menu fica dentro do Dialog): o MUI marca o Dialog como aria-hidden enquanto o menu está aberto.
+    const lista = within(screen.getByRole("listbox", { hidden: true }));
     expect(lista.queryByText("Renda")).toBeNull();
     expect(lista.getByText("Idade")).toBeInTheDocument();
     expect(lista.getByText("Número")).toBeInTheDocument();

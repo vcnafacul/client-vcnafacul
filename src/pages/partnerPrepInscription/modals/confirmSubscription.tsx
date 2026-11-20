@@ -1,6 +1,13 @@
-import ModalTemplate from "@/components/templates/modalTemplate";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { AlertTriangle } from "lucide-react";
 import { useState } from "react";
@@ -19,25 +26,24 @@ export default function ConfirmSubscription({
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 md:p-6 rounded-md max-w-lg w-full max-h-[80vh] overflow-y-auto"
-    >
-      <div className="space-y-4 md:space-y-6">
-        <div className="flex items-start gap-2 md:gap-3">
-          <AlertTriangle className="text-warning mt-1 flex-shrink-0 w-5 h-5 md:w-6 md:h-6" />
-          <div>
-            <h2 className="text-h3 font-semibold text-foreground">
-              Atenção!
-            </h2>
-            <p className="text-caption text-muted-foreground">
-              Antes de prosseguir, é importante que você esteja ciente de que
-              fornecer informações falsas é crime previsto no Código Penal
-              Brasileiro. Leia com atenção:
-            </p>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="md">
+        <DialogHeader>
+          <div className="flex items-start gap-2 md:gap-3">
+            <AlertTriangle
+              aria-hidden="true"
+              className="text-warning mt-1 flex-shrink-0 w-5 h-5 md:w-6 md:h-6"
+            />
+            <div className="space-y-1.5">
+              <DialogTitle className="pr-0">Atenção!</DialogTitle>
+              <DialogDescription>
+                Antes de prosseguir, é importante que você esteja ciente de que
+                fornecer informações falsas é crime previsto no Código Penal
+                Brasileiro. Leia com atenção:
+              </DialogDescription>
+            </div>
           </div>
-        </div>
+        </DialogHeader>
 
         <div className="bg-warning-muted border-l-4 border-warning p-3 md:p-4 rounded-md text-caption text-foreground">
           <p className="font-medium">Código Penal – Falsidade ideológica</p>
@@ -82,23 +88,15 @@ export default function ConfirmSubscription({
           </Label>
         </div>
 
-        <div className="flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2 md:pt-4">
-          <Button
-            variant="ghost"
-            onClick={handleClose}
-            className="w-full sm:w-auto"
-          >
+        <DialogFooter>
+          <Button variant="ghost" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button
-            onClick={handleConfirm}
-            disabled={!isChecked}
-            className="w-full sm:w-auto"
-          >
+          <Button onClick={handleConfirm} disabled={!isChecked}>
             Confirmar
           </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

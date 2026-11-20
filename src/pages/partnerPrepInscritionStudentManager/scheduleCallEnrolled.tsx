@@ -1,6 +1,11 @@
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar } from "primereact/calendar";
@@ -45,14 +50,23 @@ export function ScheduleCallEnrolle(props: Props) {
   }, []);
 
   return (
-    <ModalTemplate {...props} className="bg-white p-4 rounded-md">
-      <div className="px-4">
-        <Text size="secondary">Programar Convocação </Text>
-        <form onSubmit={handleSubmit(scheduleEnrolled)}>
+    <Dialog open={props.isOpen} onOpenChange={(o) => !o && props.handleClose()}>
+      <DialogContent
+        size="sm"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Programar Convocação</DialogTitle>
+        </DialogHeader>
+        <form
+          id="form-programar-convocacao"
+          onSubmit={handleSubmit(scheduleEnrolled)}
+        >
           <div className="card flex justify-content-center h-16 border pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
             <label
               className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
-              htmlFor="date"
+              htmlFor="range"
             >
               Inicio - Fim
             </label>
@@ -69,6 +83,7 @@ export function ScheduleCallEnrolle(props: Props) {
                   className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 w-full"
                   readOnlyInput
                   hideOnRangeSelection
+                  appendTo="self"
                 />
               )}
             />
@@ -78,20 +93,24 @@ export function ScheduleCallEnrolle(props: Props) {
               </p>
             )}
           </div>
-          <div className="flex gap-4 mt-6">
-            <Button variant="outline" size="sm"
-              className="w-full"
-              type="button"
-              onClick={props.handleClose}
-            >
-              Cancelar
-            </Button>
-            <Button variant="primary" size="sm" className="w-full">
-              Confirma
-            </Button>
-          </div>
         </form>
-      </div>
-    </ModalTemplate>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            type="button"
+            onClick={props.handleClose}
+          >
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            type="submit"
+            form="form-programar-convocacao"
+          >
+            Confirma
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

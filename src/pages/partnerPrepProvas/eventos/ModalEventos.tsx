@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { getProvasCursinho } from "@/services/prova/getProvasCursinho";
 import { statusDaProva, STATUS_COMPLETA } from "@/pages/dashProvas/status";
 import { ProvaOpcao } from "./FormDoEvento";
@@ -109,17 +115,25 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="w-full max-w-2xl rounded-lg bg-white shadow-lg p-2"
-    >
-      <div className="p-4 sm:p-6 max-h-[85vh] overflow-y-auto">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        size="lg"
+        onInteractOutside={(e) => e.preventDefault()}
+        {...(tela.tipo === "lista" ? {} : { "aria-describedby": undefined })}
+      >
+        <DialogHeader>
+          <DialogTitle>Eventos de simulado</DialogTitle>
+          {tela.tipo === "lista" && (
+            <DialogDescription>
+              Os alunos matriculados se inscrevem escolhendo a prova. Use o número de
+              inscritos de cada prova para saber quanto imprimir.
+            </DialogDescription>
+          )}
+        </DialogHeader>
         {tela.tipo === "lista" && (
           <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <h2 className="text-h3 font-semibold text-foreground">Eventos de simulado</h2>
-              {podeEditar && (
+            {podeEditar && (
+              <div className="flex justify-end">
                 <button
                   type="button"
                   onClick={() => setTela({ tipo: "form", evento: null })}
@@ -127,12 +141,8 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
                 >
                   Novo evento
                 </button>
-              )}
-            </div>
-            <p className="text-caption text-muted-foreground">
-              Os alunos matriculados se inscrevem escolhendo a prova. Use o número de
-              inscritos de cada prova para saber quanto imprimir.
-            </p>
+              </div>
+            )}
             {eventos === null && <p className="text-body">Carregando...</p>}
             {eventos?.length === 0 && (
               <p className="text-body text-muted-foreground">Nenhum evento ainda.</p>
@@ -205,7 +215,7 @@ export function ModalEventos({ isOpen, handleClose, token, podeEditar }: Props) 
             onVoltar={() => setTela({ tipo: "lista" })}
           />
         )}
-      </div>
-    </ModalTemplate>
+      </DialogContent>
+    </Dialog>
   );
 }

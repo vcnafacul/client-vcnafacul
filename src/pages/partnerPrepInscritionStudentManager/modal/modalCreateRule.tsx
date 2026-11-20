@@ -1,6 +1,13 @@
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { createRule, CreateRuleDtoInput } from "@/services/partnerPrepForm/createRule";
 import { useAuthStore } from "@/store/auth";
 import {
@@ -348,20 +355,16 @@ export function ModalCreateRule({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleCloseModal}
-      className="bg-white p-4 md:p-6 rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-    >
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Criar Nova Regra
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Configure a regra de pontuação vinculada a uma pergunta do formulário
-        </Typography>
-      </Box>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleCloseModal()}>
+      <DialogContent size="lg" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Criar Nova Regra</DialogTitle>
+          <DialogDescription>
+            Configure a regra de pontuação vinculada a uma pergunta do formulário
+          </DialogDescription>
+        </DialogHeader>
 
+        <DialogBody className="-mx-1 px-1 pt-2">
       <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
         <TextField
           label="Nome da Regra *"
@@ -390,6 +393,7 @@ export function ModalCreateRule({
           <TextField
             label="Tipo *"
             select
+            SelectProps={{ MenuProps: { disablePortal: true } }}
             value={formData.type}
             onChange={(e) => handleInputChange("type", e.target.value)}
             fullWidth
@@ -414,6 +418,7 @@ export function ModalCreateRule({
         <TextField
           label="Modo da Regra"
           select
+          SelectProps={{ MenuProps: { disablePortal: true } }}
           value={isComputedStrategy(formData.strategy) ? "computed" : "single"}
           onChange={(e) => {
             if (e.target.value === "computed") {
@@ -438,6 +443,7 @@ export function ModalCreateRule({
                 value={formData.questionId}
                 onChange={(e) => handleQuestionChange(e.target.value)}
                 displayEmpty
+                MenuProps={{ disablePortal: true }}
               >
                 <MenuItem value="" disabled>
                   Selecione uma pergunta
@@ -463,6 +469,7 @@ export function ModalCreateRule({
                   <TextField
                     label="Estratégia de Pontuação *"
                     select
+                    SelectProps={{ MenuProps: { disablePortal: true } }}
                     value={formData.strategy}
                     onChange={(e) => handleInputChange("strategy", e.target.value)}
                     fullWidth
@@ -687,6 +694,7 @@ export function ModalCreateRule({
                     value=""
                     onChange={(e) => addComputedQuestion(e.target.value)}
                     displayEmpty
+                    MenuProps={{ disablePortal: true }}
                   >
                     <MenuItem value="" disabled>
                       Adicionar pergunta numérica...
@@ -820,8 +828,10 @@ export function ModalCreateRule({
             </Box>
           </>
         )}
+      </Box>
+        </DialogBody>
 
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 2 }}>
+        <DialogFooter>
           <Button onClick={handleCloseModal} variant="outlined" disabled={loading}>
             Cancelar
           </Button>
@@ -833,8 +843,8 @@ export function ModalCreateRule({
           >
             {loading ? "Criando..." : "Criar Regra"}
           </Button>
-        </Box>
-      </Box>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

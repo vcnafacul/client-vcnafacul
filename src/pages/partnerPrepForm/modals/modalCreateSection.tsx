@@ -1,7 +1,14 @@
 import { motivoDoErro } from "../motivoDoErro";
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   createSection,
   CreateSectionDtoInput,
@@ -13,7 +20,6 @@ import {
   Button,
   CircularProgress,
   TextField,
-  Typography,
 } from "@mui/material";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -97,50 +103,48 @@ export function ModalCreateSection({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleCloseModal}
-      className="bg-white p-4 sm:p-6 rounded-lg shadow-lg max-w-md w-full"
-    >
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Criar Nova Seção
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Preencha as informações da nova seção do formulário
-        </Typography>
-      </Box>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleCloseModal()}>
+      <DialogContent
+        size="md"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Criar Nova Seção</DialogTitle>
+          <DialogDescription>
+            Preencha as informações da nova seção do formulário
+          </DialogDescription>
+        </DialogHeader>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-        {/* Nome da Seção */}
-        <TextField
-          label="Nome da Seção *"
-          value={formData.name}
-          onChange={(e) => handleInputChange("name", e.target.value)}
-          error={!!error}
-          helperText={error}
-          fullWidth
-          variant="outlined"
-          placeholder="Ex: Informações Pessoais"
-        />
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {/* Nome da Seção */}
+            <TextField
+              label="Nome da Seção *"
+              value={formData.name}
+              onChange={(e) => handleInputChange("name", e.target.value)}
+              error={!!error}
+              helperText={error}
+              fullWidth
+              variant="outlined"
+              placeholder="Ex: Informações Pessoais"
+            />
 
-        {/* Descrição da Seção */}
-        <TextField
-          label="Descrição"
-          value={formData.description ?? ""}
-          onChange={(e) => handleInputChange("description", e.target.value)}
-          fullWidth
-          variant="outlined"
-          placeholder="Ex: Preencha suas informações pessoais básicas"
-          multiline
-          minRows={2}
-          maxRows={4}
-        />
+            {/* Descrição da Seção */}
+            <TextField
+              label="Descrição"
+              value={formData.description ?? ""}
+              onChange={(e) => handleInputChange("description", e.target.value)}
+              fullWidth
+              variant="outlined"
+              placeholder="Ex: Preencha suas informações pessoais básicas"
+              multiline
+              minRows={2}
+              maxRows={4}
+            />
+          </Box>
+        </DialogBody>
 
-        {/* Botões de Ação */}
-        <Box
-          sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 2 }}
-        >
+        <DialogFooter>
           <Button
             onClick={handleCloseModal}
             variant="outlined"
@@ -156,8 +160,8 @@ export function ModalCreateSection({
           >
             {loading ? "Criando..." : "Criar Seção"}
           </Button>
-        </Box>
-      </Box>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

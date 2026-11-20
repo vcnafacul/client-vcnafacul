@@ -1,6 +1,12 @@
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { addRuleToSet } from "@/services/partnerPrepForm/addRuleToSet";
@@ -311,35 +317,22 @@ export function ModalRules({
       .join(", ");
   };
 
-  if (loading) {
-    return (
-      <ModalTemplate
-        isOpen={isOpen}
-        handleClose={handleClose!}
-        className="bg-white p-4 md:p-6 rounded-lg shadow-lg max-w-4xl w-full"
-      >
-        <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-          <CircularProgress />
-        </Box>
-      </ModalTemplate>
-    );
-  }
-
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose!}
-      className="bg-white p-4 md:p-6 rounded-lg shadow-lg max-w-5xl w-full max-h-[90vh] overflow-y-auto"
-    >
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Regras de Pontuação
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Gerencie as regras de pontuação e desempate para esta inscrição
-        </Typography>
-      </Box>
-
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose?.()}>
+      <DialogContent size="full">
+        <DialogHeader>
+          <DialogTitle>Regras de Pontuação</DialogTitle>
+          <DialogDescription>
+            Gerencie as regras de pontuação e desempate para esta inscrição
+          </DialogDescription>
+        </DialogHeader>
+        <DialogBody>
+          {loading ? (
+            <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <>
       {/* Conjunto de Regras */}
       {ruleSet && (
         <Box
@@ -586,6 +579,10 @@ export function ModalRules({
           }}
         />
       )}
-    </ModalTemplate>
+            </>
+          )}
+        </DialogBody>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -10,7 +10,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { extendInscription } from "@/services/prepCourse/inscription/extend";
 import { getSubscribers } from "@/services/prepCourse/inscription/getSubscribers";
 import { useAuthStore } from "@/store/auth";
@@ -255,15 +261,11 @@ export function InscriptionInfoModal({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-4 rounded-md w-full max-w-2xl"
-    >
-      <div className="w-full sm:min-w-[550px] flex flex-col gap-4">
-        <h1 className="text-left text-foreground text-h1 font-extrabold">
-          {dataInscription.inscription}
-        </h1>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="lg" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>{dataInscription.inscription}</DialogTitle>
+        </DialogHeader>
         <h3 className="font-extrabold text-h2 text-foreground break-words">
           {inscriptionSelected?.name}
         </h3>
@@ -328,74 +330,78 @@ export function InscriptionInfoModal({
             )}
           </div>
         </div>
-        <div
-          className="flex gap-1.5 items-center justify-end cursor-pointer"
+        <button
+          type="button"
+          className="flex gap-1.5 items-center justify-end"
           onClick={clipboard}
         >
           <p className="font-medium">Link de inscrição</p>
-          <Copy size="1em" />
-        </div>
-        {/*
-          Celular: um botão por linha, na ordem de uso (lista, baixar, editar)
-          e o destrutivo por último. A partir de sm volta à linha única.
-        */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-          <div className="order-2 sm:order-1">
-            <ShadcnTooltip content="Download Lista de Alunos">
-              <Button
-                variant="cta"
-                aria-label="Baixar lista de alunos"
-                className="h-10 sm:h-8 w-full sm:w-auto"
-                onClick={() => exportToExcel()}
-              >
-                <Download className="w-6 h-6" />
-                <span className="sm:hidden">Baixar lista de alunos</span>
-              </Button>
-            </ShadcnTooltip>
-          </div>
-          <div className="order-1 sm:order-2 w-full sm:w-36">
-            <BLink
-              className="h-10 sm:h-8 w-full bg-success border-none hover:bg-success/60"
-              to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
-            >
-              <div className="flex justify-center gap-1.5">
-                <p className="text-body w-fit">Lista de Alunos</p>
-              </div>
-            </BLink>
-          </div>
-          <div className="order-3 flex flex-col-reverse gap-3 sm:flex-row sm:flex-1 sm:justify-end sm:gap-4">
-            <Button variant="destructive" size="lg"
-              className="w-full sm:w-24 h-10 sm:h-8"
-              disabled={inscriptionSelected!.subscribersCount > 0}
-              onClick={() => setOpenModalDelete(true)}
-            >
-              <div className="flex justify-center gap-1.5">
-                <TrashIcon />
-                <p className="text-body w-fit">Deletar</p>
-              </div>
-            </Button>
-
-            {canExtend === true ? (
-              <Button variant="outline" size="lg"
-                className="w-full sm:w-32 h-10 sm:h-8"
-                onClick={() => setOpenModalExtend(true)}
-              >
-                Prorrogar
-              </Button>
-            ) : (
-              <Button variant="outline" size="lg"
-                className="w-full sm:w-24 h-10 sm:h-8"
-                onClick={() => setOpenModalEdit(true)}
-              >
-                Editar
-              </Button>
-            )}
-          </div>
-        </div>
+          <Copy size="1em" aria-hidden="true" />
+        </button>
         {ModalEdit()}
         {ModalDelete()}
         {ModalExtend()}
-      </div>
-    </ModalTemplate>
+
+        <DialogFooter className="flex-col sm:flex-col sm:items-stretch">
+          {/*
+            Celular: um botão por linha, na ordem de uso (lista, baixar, editar)
+            e o destrutivo por último. A partir de sm volta à linha única.
+          */}
+          <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
+            <div className="order-2 sm:order-1">
+              <ShadcnTooltip content="Download Lista de Alunos">
+                <Button
+                  variant="cta"
+                  aria-label="Baixar lista de alunos"
+                  className="h-10 sm:h-8 w-full sm:w-auto"
+                  onClick={() => exportToExcel()}
+                >
+                  <Download className="w-6 h-6" />
+                  <span className="sm:hidden">Baixar lista de alunos</span>
+                </Button>
+              </ShadcnTooltip>
+            </div>
+            <div className="order-1 sm:order-2 w-full sm:w-36">
+              <BLink
+                className="h-10 sm:h-8 w-full bg-success border-none hover:bg-success/60"
+                to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
+              >
+                <div className="flex justify-center gap-1.5">
+                  <p className="text-body w-fit">Lista de Alunos</p>
+                </div>
+              </BLink>
+            </div>
+            <div className="order-3 flex flex-col-reverse gap-3 sm:flex-row sm:flex-1 sm:justify-end sm:gap-4">
+              <Button variant="destructive" size="lg"
+                className="w-full sm:w-24 h-10 sm:h-8"
+                disabled={inscriptionSelected!.subscribersCount > 0}
+                onClick={() => setOpenModalDelete(true)}
+              >
+                <div className="flex justify-center gap-1.5">
+                  <TrashIcon />
+                  <p className="text-body w-fit">Deletar</p>
+                </div>
+              </Button>
+
+              {canExtend === true ? (
+                <Button variant="outline" size="lg"
+                  className="w-full sm:w-32 h-10 sm:h-8"
+                  onClick={() => setOpenModalExtend(true)}
+                >
+                  Prorrogar
+                </Button>
+              ) : (
+                <Button variant="outline" size="lg"
+                  className="w-full sm:w-24 h-10 sm:h-8"
+                  onClick={() => setOpenModalEdit(true)}
+                >
+                  Editar
+                </Button>
+              )}
+            </div>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

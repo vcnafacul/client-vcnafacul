@@ -1,6 +1,13 @@
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   ComplexCondition,
   Logic,
@@ -127,6 +134,7 @@ const ExpectedValueInput = memo(
               value={String(value)}
               onChange={(e) => onChange(e.target.value)}
               label="Valor esperado"
+              MenuProps={{ disablePortal: true }}
             >
               {questionOptions?.map((option, index) => (
                 <MenuItem key={index} value={option}>
@@ -345,220 +353,220 @@ export function ModalConditions({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleCloseModal}
-      className="bg-white p-4 sm:p-6 rounded-lg shadow-lg max-w-3xl w-full max-h-[90vh] overflow-y-auto"
-    >
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Definir Condições
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Configure as condições que devem ser atendidas para exibir esta
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleCloseModal()}>
+      <DialogContent
+        size="lg"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Definir Condições</DialogTitle>
+          <DialogDescription>
+            Configure as condições que devem ser atendidas para exibir esta
           questão
-        </Typography>
-      </Box>
+          </DialogDescription>
+        </DialogHeader>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-        {/* Operador Principal */}
-        <FormControl>
-          <FormLabel component="legend">Operador Principal</FormLabel>
-          <RadioGroup
-            value={mainOperator}
-            onChange={(e) => setMainOperator(e.target.value as Logic)}
-            row
-          >
-            <FormControlLabel
-              value={Logic.And}
-              control={<Radio />}
-              label="E (todas as condições)"
-            />
-            <FormControlLabel
-              value={Logic.Or}
-              control={<Radio />}
-              label="OU (qualquer condição)"
-            />
-          </RadioGroup>
-        </FormControl>
-
-        <Divider />
-
-        {/* Lista de Condições */}
-        <Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 2,
-            }}
-          >
-            <Typography variant="h6">Condições</Typography>
-            <Button
-              startIcon={<Plus size="1em" />}
-              onClick={addCondition}
-              size="small"
-              variant="outlined"
-            >
-              Adicionar Condição
-            </Button>
-          </Box>
-
+        <DialogBody className="-mx-1 px-1 pt-2">
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {conditionList.map((condition, index) => {
-              const selectedQuestion = getSelectedQuestion(
-                condition.questionId
-              );
-              const availableOperators = selectedQuestion
-                ? getOperatorsForType(selectedQuestion.answerType)
-                : [];
+            {/* Operador Principal */}
+            <FormControl>
+              <FormLabel component="legend">Operador Principal</FormLabel>
+              <RadioGroup
+                value={mainOperator}
+                onChange={(e) => setMainOperator(e.target.value as Logic)}
+                row
+              >
+                <FormControlLabel
+                  value={Logic.And}
+                  control={<Radio />}
+                  label="E (todas as condições)"
+                />
+                <FormControlLabel
+                  value={Logic.Or}
+                  control={<Radio />}
+                  label="OU (qualquer condição)"
+                />
+              </RadioGroup>
+            </FormControl>
 
-              return (
-                <Box
-                  key={index}
-                  sx={{
-                    p: 2,
-                    border: "1px solid",
-                    borderColor: "grey.300",
-                    borderRadius: 2,
-                    backgroundColor: "grey.50",
-                  }}
+            <Divider />
+
+            {/* Lista de Condições */}
+            <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <Typography variant="h6">Condições</Typography>
+                <Button
+                  startIcon={<Plus size="1em" />}
+                  onClick={addCondition}
+                  size="small"
+                  variant="outlined"
                 >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      mb: 2,
-                    }}
-                  >
-                    <Typography variant="subtitle2" fontWeight="bold">
-                      Condição {index + 1}
-                    </Typography>
-                    {conditionList.length > 1 && (
-                      <IconButton
-                        onClick={() => removeCondition(index)}
-                        color="error"
-                        size="small"
-                      >
-                        <Trash2 size="1em" />
-                      </IconButton>
-                    )}
-                  </Box>
+                  Adicionar Condição
+                </Button>
+              </Box>
 
-                  <Box
-                    sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-                  >
-                    {/* Seleção da Questão */}
-                    <FormControl
-                      fullWidth
-                      error={!!errors[`${index}-questionId`]}
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+                {conditionList.map((condition, index) => {
+                  const selectedQuestion = getSelectedQuestion(
+                    condition.questionId
+                  );
+                  const availableOperators = selectedQuestion
+                    ? getOperatorsForType(selectedQuestion.answerType)
+                    : [];
+
+                  return (
+                    <Box
+                      key={index}
+                      sx={{
+                        p: 2,
+                        border: "1px solid",
+                        borderColor: "grey.300",
+                        borderRadius: 2,
+                        backgroundColor: "grey.50",
+                      }}
                     >
-                      <InputLabel>Questão de Referência</InputLabel>
-                      <Select
-                        value={condition.questionId}
-                        onChange={(e) =>
-                          updateCondition(index, "questionId", e.target.value)
-                        }
-                        label="Questão de Referência"
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                          mb: 2,
+                        }}
                       >
-                        {activeQuestions.length > 0 ? (
-                          activeQuestions.map((question) => (
-                            <MenuItem key={question._id} value={question._id}>
-                              <Box
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  gap: 1,
-                                }}
-                              >
-                                <Chip
-                                  label={ROTULO_DO_TIPO[question.answerType]}
-                                  size="small"
-                                  variant="outlined"
-                                />
-                                <Typography variant="body2">
-                                  {resumo(question.text)}
-                                </Typography>
-                              </Box>
-                            </MenuItem>
-                          ))
-                        ) : (
-                          <MenuItem disabled>
-                            <Typography variant="body2" color="text.secondary">
-                              Nenhuma questão ativa disponível
-                            </Typography>
-                          </MenuItem>
-                        )}
-                      </Select>
-                      {errors[`${index}-questionId`] && (
-                        <Typography
-                          variant="caption"
-                          color="error"
-                          sx={{ mt: 1 }}
-                        >
-                          {errors[`${index}-questionId`]}
+                        <Typography variant="subtitle2" fontWeight="bold">
+                          Condição {index + 1}
                         </Typography>
-                      )}
-                    </FormControl>
-
-                    {/* Seleção do Operador */}
-                    {selectedQuestion && (
-                      <FormControl
-                        fullWidth
-                        error={!!errors[`${index}-operator`]}
-                      >
-                        <InputLabel>Operador</InputLabel>
-                        <Select
-                          value={condition.operator}
-                          onChange={(e) =>
-                            updateCondition(index, "operator", e.target.value)
-                          }
-                          label="Operador"
-                        >
-                          {availableOperators.map((op) => (
-                            <MenuItem key={op.value} value={op.value}>
-                              {op.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                        {errors[`${index}-operator`] && (
-                          <Typography
-                            variant="caption"
+                        {conditionList.length > 1 && (
+                          <IconButton
+                            onClick={() => removeCondition(index)}
                             color="error"
-                            sx={{ mt: 1 }}
+                            size="small"
                           >
-                            {errors[`${index}-operator`]}
-                          </Typography>
+                            <Trash2 size="1em" />
+                          </IconButton>
                         )}
-                      </FormControl>
-                    )}
+                      </Box>
 
-                    {/* Input de Valor Esperado */}
-                    {selectedQuestion && condition.operator && (
-                      <ExpectedValueInput
-                        questionType={selectedQuestion.answerType}
-                        questionOptions={selectedQuestion.options}
-                        value={condition.expectedValue}
-                        onChange={(value) =>
-                          updateCondition(index, "expectedValue", String(value))
-                        }
-                        error={!!errors[`${index}-expectedValue`]}
-                        helperText={errors[`${index}-expectedValue`]}
-                      />
-                    )}
-                  </Box>
-                </Box>
-              );
-            })}
+                      <Box
+                        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+                      >
+                        {/* Seleção da Questão */}
+                        <FormControl
+                          fullWidth
+                          error={!!errors[`${index}-questionId`]}
+                        >
+                          <InputLabel>Questão de Referência</InputLabel>
+                          <Select
+                            value={condition.questionId}
+                            onChange={(e) =>
+                              updateCondition(index, "questionId", e.target.value)
+                            }
+                            label="Questão de Referência"
+                            MenuProps={{ disablePortal: true }}
+                          >
+                            {activeQuestions.length > 0 ? (
+                              activeQuestions.map((question) => (
+                                <MenuItem key={question._id} value={question._id}>
+                                  <Box
+                                    sx={{
+                                      display: "flex",
+                                      alignItems: "center",
+                                      gap: 1,
+                                    }}
+                                  >
+                                    <Chip
+                                      label={ROTULO_DO_TIPO[question.answerType]}
+                                      size="small"
+                                      variant="outlined"
+                                    />
+                                    <Typography variant="body2">
+                                      {resumo(question.text)}
+                                    </Typography>
+                                  </Box>
+                                </MenuItem>
+                              ))
+                            ) : (
+                              <MenuItem disabled>
+                                <Typography variant="body2" color="text.secondary">
+                                  Nenhuma questão ativa disponível
+                                </Typography>
+                              </MenuItem>
+                            )}
+                          </Select>
+                          {errors[`${index}-questionId`] && (
+                            <Typography
+                              variant="caption"
+                              color="error"
+                              sx={{ mt: 1 }}
+                            >
+                              {errors[`${index}-questionId`]}
+                            </Typography>
+                          )}
+                        </FormControl>
+
+                        {/* Seleção do Operador */}
+                        {selectedQuestion && (
+                          <FormControl
+                            fullWidth
+                            error={!!errors[`${index}-operator`]}
+                          >
+                            <InputLabel>Operador</InputLabel>
+                            <Select
+                              value={condition.operator}
+                              onChange={(e) =>
+                                updateCondition(index, "operator", e.target.value)
+                              }
+                              label="Operador"
+                              MenuProps={{ disablePortal: true }}
+                            >
+                              {availableOperators.map((op) => (
+                                <MenuItem key={op.value} value={op.value}>
+                                  {op.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                            {errors[`${index}-operator`] && (
+                              <Typography
+                                variant="caption"
+                                color="error"
+                                sx={{ mt: 1 }}
+                              >
+                                {errors[`${index}-operator`]}
+                              </Typography>
+                            )}
+                          </FormControl>
+                        )}
+
+                        {/* Input de Valor Esperado */}
+                        {selectedQuestion && condition.operator && (
+                          <ExpectedValueInput
+                            questionType={selectedQuestion.answerType}
+                            questionOptions={selectedQuestion.options}
+                            value={condition.expectedValue}
+                            onChange={(value) =>
+                              updateCondition(index, "expectedValue", String(value))
+                            }
+                            error={!!errors[`${index}-expectedValue`]}
+                            helperText={errors[`${index}-expectedValue`]}
+                          />
+                        )}
+                      </Box>
+                    </Box>
+                  );
+                })}
+              </Box>
+            </Box>
           </Box>
-        </Box>
+        </DialogBody>
 
-        {/* Botões de Ação */}
-        <Box
-          sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 2 }}
-        >
+        <DialogFooter>
           <Button
             onClick={handleCloseModal}
             variant="outlined"
@@ -574,8 +582,8 @@ export function ModalConditions({
           >
             {loading ? "Salvando..." : "Salvar Condições"}
           </Button>
-        </Box>
-      </Box>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

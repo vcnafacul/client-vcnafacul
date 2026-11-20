@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Prova } from "@/dtos/prova/prova";
 import { duplicarProvaCursinho } from "@/services/prova/duplicarProvaCursinho";
 
@@ -43,48 +51,48 @@ export function ModalDuplicarProva({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="w-full max-w-lg rounded-lg bg-white shadow-lg p-2"
-    >
-      <form onSubmit={duplicar} className="p-6 space-y-4">
-        <h2 className="text-h3 font-semibold text-foreground">Duplicar prova</h2>
-        <p className="text-body text-muted-foreground">
-          Nova prova a partir de <strong>{prova.nome}</strong>.
-        </p>
-        <div>
-          <label htmlFor="nome-da-copia" className="block text-body font-semibold mb-1">
-            Nome da nova prova
-          </label>
-          <input
-            id="nome-da-copia"
-            value={nome}
-            maxLength={200}
-            onChange={(e) => setNome(e.target.value)}
-            className="w-full border rounded-lg p-2"
-          />
-        </div>
-        <div role="note" className="rounded-lg bg-warning-muted p-3 text-body text-foreground space-y-1">
-          <p>
-            As questões serão <strong>as mesmas</strong> da prova original — corrigir
-            uma questão vale para as duas.
-          </p>
-          <p>A ordem é de cada prova: trocar o número numa não muda a outra.</p>
-        </div>
-        <div className="flex justify-end gap-3">
-          <button type="button" onClick={handleClose} className="px-4 py-2 border rounded-lg">
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent size="md" onInteractOutside={(e) => e.preventDefault()}>
+        <DialogHeader>
+          <DialogTitle>Duplicar prova</DialogTitle>
+          <DialogDescription>
+            Nova prova a partir de <strong>{prova.nome}</strong>.
+          </DialogDescription>
+        </DialogHeader>
+        <form
+          id="form-duplicar-prova"
+          onSubmit={duplicar}
+          className="space-y-4"
+        >
+          <div>
+            <label htmlFor="nome-da-copia" className="block text-body font-semibold mb-1">
+              Nome da nova prova
+            </label>
+            <input
+              id="nome-da-copia"
+              value={nome}
+              maxLength={200}
+              onChange={(e) => setNome(e.target.value)}
+              className="w-full border rounded-lg p-2"
+            />
+          </div>
+          <div role="note" className="rounded-lg bg-warning-muted p-3 text-body text-foreground space-y-1">
+            <p>
+              As questões serão <strong>as mesmas</strong> da prova original — corrigir
+              uma questão vale para as duas.
+            </p>
+            <p>A ordem é de cada prova: trocar o número numa não muda a outra.</p>
+          </div>
+        </form>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={handleClose}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={duplicando}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg disabled:opacity-60"
-          >
+          </Button>
+          <Button type="submit" form="form-duplicar-prova" disabled={duplicando}>
             {duplicando ? "Duplicando..." : "Duplicar"}
-          </button>
-        </div>
-      </form>
-    </ModalTemplate>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

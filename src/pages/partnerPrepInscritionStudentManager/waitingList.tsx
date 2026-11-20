@@ -9,9 +9,14 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { getWaitingListInfo } from "@/services/prepCourse/inscription/getWaitingList";
 import { sendEmailWaitingList } from "@/services/prepCourse/inscription/sendEmailWaitingList";
 import { useAuthStore } from "@/store/auth";
@@ -151,9 +156,14 @@ export function WaitingList(props: Props) {
 
   return (
     <>
-      <ModalTemplate {...props} className="bg-white p-4 rounded-md">
-        <div className="w-full overflow-y-auto scrollbar-hide flex flex-col gap-4">
-          <Text size="secondary">Lista de Espera</Text>
+      <Dialog
+        open={props.isOpen}
+        onOpenChange={(o) => !o && props.handleClose()}
+      >
+        <DialogContent size="md" aria-describedby={undefined}>
+          <DialogHeader>
+            <DialogTitle>Lista de Espera</DialogTitle>
+          </DialogHeader>
           <table className="min-w-full divide-y divide-border">
             <thead>
               <tr>
@@ -172,14 +182,16 @@ export function WaitingList(props: Props) {
               ))}
             </tbody>
           </table>
-          <div className="flex flex-col sm:flex-row sm:justify-between gap-2 sm:gap-4">
-            <Button variant="outline" size="sm"
+          <DialogFooter>
+            <Button
+              variant="outline"
               aria-label="Baixar lista de espera em PDF"
               onClick={() => downloadPDF()}
             >
               <FileText className="h-6 w-10" />
             </Button>
-            <Button variant="primary" size="sm"
+            <Button
+              variant="primary"
               onClick={() => modals.modalEditWailtingList.open()}
             >
               <div className="flex items-center">
@@ -188,10 +200,8 @@ export function WaitingList(props: Props) {
               </div>
             </Button>
             <AlertDialog>
-              <AlertDialogTrigger>
-                <Button variant="primary" size="sm"
-                  className="w-full"
-                >
+              <AlertDialogTrigger asChild>
+                <Button variant="primary">
                   <div className="flex justify-center items-center">
                     <Mail className="h-6 w-10" />
                     <p className="text-body">
@@ -218,9 +228,9 @@ export function WaitingList(props: Props) {
                 </AlertDialogFooter>
               </AlertDialogContent>
             </AlertDialog>
-          </div>
-        </div>
-      </ModalTemplate>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       {ModalEditWailtingList()}
     </>
   );

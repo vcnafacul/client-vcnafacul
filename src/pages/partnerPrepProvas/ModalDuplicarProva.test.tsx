@@ -5,9 +5,6 @@ const svc = vi.hoisted(() => ({ duplicarProvaCursinho: vi.fn() }));
 vi.mock("@/services/prova/duplicarProvaCursinho", () => svc);
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
 vi.mock("react-toastify", () => ({ toast }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
 
 import { ModalDuplicarProva } from "./ModalDuplicarProva";
 

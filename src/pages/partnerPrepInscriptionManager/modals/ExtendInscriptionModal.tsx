@@ -1,5 +1,11 @@
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar } from "primereact/calendar";
@@ -42,17 +48,21 @@ export function ExtendInscriptionModal({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-6 rounded-md"
-    >
-      <div className="sm:min-w-[500px] flex flex-col gap-6">
-        <h1 className="text-foreground text-h1 font-bold">
-          Prorrogar Processo Seletivo
-        </h1>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        size="md"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Prorrogar Processo Seletivo</DialogTitle>
+        </DialogHeader>
 
-        <form className="flex flex-col gap-6" onSubmit={handleSubmit(resolver)}>
+        <form
+          id="form-prorrogar-inscricao"
+          className="flex flex-col gap-6"
+          onSubmit={handleSubmit(resolver)}
+        >
           <div>
             <Label
               htmlFor="endDate"
@@ -70,6 +80,7 @@ export function ExtendInscriptionModal({
                   value={field.value}
                   onChange={(e) => field.onChange(e.value)}
                   readOnlyInput
+                  appendTo="self"
                   className="w-full"
                   minDate={
                     currentEndDate ? new Date(currentEndDate) : new Date()
@@ -81,20 +92,21 @@ export function ExtendInscriptionModal({
               <p className="text-destructive text-caption mt-1">{errors.endDate.message}</p>
             )}
           </div>
-
-          <div className="flex justify-end gap-4">
-            <Button variant="outline" size="lg"
-              className="w-24 h-9"
-              onClick={handleClose}
-            >
-              Cancelar
-            </Button>
-            <Button variant="primary" size="lg" className="w-24 h-9" type="submit">
-              Confirmar
-            </Button>
-          </div>
         </form>
-      </div>
-    </ModalTemplate>
+
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            type="submit"
+            form="form-prorrogar-inscricao"
+          >
+            Confirmar
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { ICategoria, isCompartilhada } from "@/dtos/categoria/categoria";
 import { Prova } from "@/dtos/prova/prova";
 import {
@@ -120,15 +127,16 @@ export function ModalEditarDadosDaProva({
   };
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="w-full max-w-lg rounded-lg bg-white shadow-lg p-2"
-    >
-      <form onSubmit={salvar} className="p-6 space-y-4">
-        <h2 className="text-h3 font-semibold text-foreground">
-          Editar dados da prova
-        </h2>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        size="md"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Editar dados da prova</DialogTitle>
+        </DialogHeader>
+        <form id="form-editar-dados-prova" onSubmit={salvar} className="space-y-4">
         <div>
           <label
             htmlFor="prova-nome"
@@ -228,23 +236,16 @@ export function ModalEditarDadosDaProva({
             {travada ? TEXTO_CATEGORIA_TRAVADA : TEXTO_AVISO_CATEGORIA}
           </p>
         </div>
-        <div className="flex justify-end gap-3">
-          <button
-            type="button"
-            onClick={handleClose}
-            className="px-4 py-2 border rounded-lg"
-          >
+        </form>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={handleClose}>
             Cancelar
-          </button>
-          <button
-            type="submit"
-            disabled={salvando}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg disabled:opacity-60"
-          >
+          </Button>
+          <Button type="submit" form="form-editar-dados-prova" disabled={salvando}>
             {salvando ? "Salvando..." : "Salvar"}
-          </button>
-        </div>
-      </form>
-    </ModalTemplate>
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -12,10 +12,6 @@ const provasSvc = vi.hoisted(() => ({ getProvasCursinho: vi.fn() }));
 vi.mock("@/services/prova/getProvasCursinho", () => provasSvc);
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
 vi.mock("react-toastify", () => ({ toast }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ isOpen, children }: { isOpen: boolean; children: React.ReactNode }) =>
-    isOpen ? <div role="dialog">{children}</div> : null,
-}));
 
 import { ModalEventos } from "./ModalEventos";
 import { textoDaExclusao } from "./textoDaExclusao";

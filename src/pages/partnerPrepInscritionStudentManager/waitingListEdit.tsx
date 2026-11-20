@@ -1,6 +1,11 @@
-import Text from "@/components/atoms/text";
 import { Button } from "@/components/ui/button";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useState } from "react";
 import {
   DndContext,
@@ -94,9 +99,11 @@ function WaitingListEdit(props: Props) {
   };
 
   return (
-    <ModalTemplate {...props} className="bg-white p-4 rounded-md">
-      <div className="w-full overflow-y-auto scrollbar-hide flex flex-col gap-4">
-        <Text size="secondary">Lista de Espera</Text>
+    <Dialog open={props.isOpen} onOpenChange={(o) => !o && props.handleClose()}>
+      <DialogContent size="md" aria-describedby={undefined}>
+        <DialogHeader>
+          <DialogTitle>Lista de Espera</DialogTitle>
+        </DialogHeader>
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -125,19 +132,19 @@ function WaitingListEdit(props: Props) {
             </tbody>
           </table>
         </DndContext>
-        <div className="flex w-full justify-center gap-4 p-4 flex-wrap">
-          <Button variant="outline" size="sm" className="w-32" onClick={props.handleClose}>
+        <DialogFooter>
+          <Button variant="outline" onClick={props.handleClose}>
             Cancelar
           </Button>
-          <Button variant="primary" size="sm"
-            className="w-32"
+          <Button
+            variant="primary"
             onClick={() => props.updateOder(data.map((s) => s.id))}
           >
             Salvar
           </Button>
-        </div>
-      </div>
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
 

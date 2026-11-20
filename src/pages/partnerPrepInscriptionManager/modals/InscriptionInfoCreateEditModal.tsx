@@ -1,7 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import { InputFactory } from "@/components/organisms/inputFactory";
-import ModalTemplate from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Calendar } from "primereact/calendar";
@@ -91,15 +97,18 @@ export function InscriptionInfoCreateEditModal({
   }, []);
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleClose}
-      className="bg-white p-6 rounded-md"
-    >
-      <div className="sm:min-w-[640px] flex flex-col gap-6">
-        <h1 className="text-foreground text-h1 font-bold">Processo Seletivo</h1>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
+      <DialogContent
+        size="lg"
+        aria-describedby={undefined}
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Processo Seletivo</DialogTitle>
+        </DialogHeader>
 
         <form
+          id="form-processo-seletivo"
           className="grid grid-cols-1 sm:grid-cols-2 gap-6"
           onSubmit={handleSubmit(resolver)}
         >
@@ -152,6 +161,7 @@ export function InscriptionInfoCreateEditModal({
                   selectionMode="range"
                   readOnlyInput
                   hideOnRangeSelection
+                  appendTo="self"
                   className="w-full"
                 />
               )}
@@ -187,20 +197,21 @@ export function InscriptionInfoCreateEditModal({
               </Label>
             </div>
           )}
-
-          <div className="flex justify-end gap-4 sm:col-span-2 mt-2">
-            <Button variant="outline" size="lg"
-              className="w-24 h-9"
-              onClick={handleClose}
-            >
-              Cancelar
-            </Button>
-            <Button variant="primary" size="lg" className="w-24 h-9" type="submit">
-              {isEdit ? "Salvar" : "Criar"}
-            </Button>
-          </div>
         </form>
-      </div>
-    </ModalTemplate>
+
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={handleClose}>
+            Cancelar
+          </Button>
+          <Button
+            variant="primary"
+            type="submit"
+            form="form-processo-seletivo"
+          >
+            {isEdit ? "Salvar" : "Criar"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

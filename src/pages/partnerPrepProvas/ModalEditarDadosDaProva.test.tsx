@@ -5,9 +5,6 @@ const svc = vi.hoisted(() => ({ editarDadosProvaCursinho: vi.fn() }));
 vi.mock("@/services/prova/editarDadosProvaCursinho", () => svc);
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
 vi.mock("react-toastify", () => ({ toast }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
-}));
 
 import {
   ModalEditarDadosDaProva,

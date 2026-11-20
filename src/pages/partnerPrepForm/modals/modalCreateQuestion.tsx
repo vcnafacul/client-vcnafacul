@@ -1,9 +1,16 @@
 import { rotuloDaLogica } from "../textosDeCondicao";
 import { opcoesLimpas, opcoesRepetidas } from "../opcoes";
 import { motivoDoErro } from "../motivoDoErro";
-import ModalTemplate, {
-  ModalProps,
-} from "@/components/templates/modalTemplate";
+import { ModalProps } from "@/components/templates/modalTemplate";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { useModals } from "@/hooks/useModal";
 import {
   createQuestion,
@@ -215,205 +222,205 @@ export function ModalCreateQuestion({
   const isOptionsType = formData.answerType === AnswerType.Options;
 
   return (
-    <ModalTemplate
-      isOpen={isOpen}
-      handleClose={handleCloseModal}
-      className="bg-white p-4 sm:p-6 rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-    >
-      <Box sx={{ mb: 3 }}>
-        <Typography variant="h5" fontWeight="bold" gutterBottom>
-          Criar Nova Questão
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Preencha os dados da questão para a seção
-        </Typography>
-      </Box>
+    <Dialog open={isOpen} onOpenChange={(o) => !o && handleCloseModal()}>
+      <DialogContent
+        size="lg"
+        onInteractOutside={(e) => e.preventDefault()}
+      >
+        <DialogHeader>
+          <DialogTitle>Criar Nova Questão</DialogTitle>
+          <DialogDescription>
+            Preencha os dados da questão para a seção
+          </DialogDescription>
+        </DialogHeader>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-        {/* Texto da Pergunta */}
-        <TextField
-          label="Texto da Pergunta *"
-          value={formData.text}
-          onChange={(e) => handleInputChange("text", e.target.value)}
-          error={!!errors.text}
-          helperText={errors.text}
-          multiline
-          rows={3}
-          fullWidth
-          variant="outlined"
-        />
+        <DialogBody className="-mx-1 px-1 pt-2">
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+            {/* Texto da Pergunta */}
+            <TextField
+              label="Texto da Pergunta *"
+              value={formData.text}
+              onChange={(e) => handleInputChange("text", e.target.value)}
+              error={!!errors.text}
+              helperText={errors.text}
+              multiline
+              rows={3}
+              fullWidth
+              variant="outlined"
+            />
 
-        {/* Help Text */}
-        <TextField
-          label="Texto de Ajuda (Opcional)"
-          value={formData.helpText}
-          onChange={(e) => handleInputChange("helpText", e.target.value)}
-          multiline
-          rows={2}
-          fullWidth
-          variant="outlined"
-          helperText="Texto adicional que aparecerá para ajudar o usuário"
-        />
+            {/* Help Text */}
+            <TextField
+              label="Texto de Ajuda (Opcional)"
+              value={formData.helpText}
+              onChange={(e) => handleInputChange("helpText", e.target.value)}
+              multiline
+              rows={2}
+              fullWidth
+              variant="outlined"
+              helperText="Texto adicional que aparecerá para ajudar o usuário"
+            />
 
-        {/* Tipo de Resposta */}
-        <FormControl fullWidth>
-          <FormLabel component="legend">Tipo de Resposta *</FormLabel>
-          <Select
-            value={formData.answerType}
-            onChange={(e) =>
-              handleAnswerTypeChange(e.target.value as AnswerType)
-            }
-            fullWidth
-          >
-            <MenuItem value={AnswerType.Text}>Texto</MenuItem>
-            <MenuItem value={AnswerType.Number}>Número</MenuItem>
-            <MenuItem value={AnswerType.Boolean}>Sim/Não</MenuItem>
-            <MenuItem value={AnswerType.Options}>Opções (Dropdown)</MenuItem>
-          </Select>
-        </FormControl>
-
-        {/* Collection Type - Só aparece para Options */}
-        {isOptionsType && (
-          <FormControl>
-            <FormLabel component="legend">Tipo de Seleção *</FormLabel>
-            <RadioGroup
-              value={formData.collection}
-              onChange={(e) =>
-                handleInputChange(
-                  "collection",
-                  e.target.value as AnswerCollectionType
-                )
-              }
-              row
-            >
-              <FormControlLabel
-                value={AnswerCollectionType.Single}
-                control={<Radio />}
-                label="Resposta Única"
-              />
-              <FormControlLabel
-                value={AnswerCollectionType.Multiple}
-                control={<Radio />}
-                label="Múltiplas Respostas"
-              />
-            </RadioGroup>
-          </FormControl>
-        )}
-
-        {/* Opções - Só aparece para Options */}
-        {isOptionsType && (
-          <Box>
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                mb: 2,
-              }}
-            >
-              <FormLabel component="legend">Opções de Resposta *</FormLabel>
-              <Button
-                startIcon={<Plus size="1em" />}
-                onClick={addOption}
-                size="small"
-                variant="outlined"
+            {/* Tipo de Resposta */}
+            <FormControl fullWidth>
+              <FormLabel component="legend">Tipo de Resposta *</FormLabel>
+              <Select
+                value={formData.answerType}
+                onChange={(e) =>
+                  handleAnswerTypeChange(e.target.value as AnswerType)
+                }
+                fullWidth
+                MenuProps={{ disablePortal: true }}
               >
-                Adicionar Opção
-              </Button>
-            </Box>
+                <MenuItem value={AnswerType.Text}>Texto</MenuItem>
+                <MenuItem value={AnswerType.Number}>Número</MenuItem>
+                <MenuItem value={AnswerType.Boolean}>Sim/Não</MenuItem>
+                <MenuItem value={AnswerType.Options}>Opções (Dropdown)</MenuItem>
+              </Select>
+            </FormControl>
 
-            {errors.options && (
-              <Alert severity="error" sx={{ mb: 2 }}>
-                {errors.options}
-              </Alert>
+            {/* Collection Type - Só aparece para Options */}
+            {isOptionsType && (
+              <FormControl>
+                <FormLabel component="legend">Tipo de Seleção *</FormLabel>
+                <RadioGroup
+                  value={formData.collection}
+                  onChange={(e) =>
+                    handleInputChange(
+                      "collection",
+                      e.target.value as AnswerCollectionType
+                    )
+                  }
+                  row
+                >
+                  <FormControlLabel
+                    value={AnswerCollectionType.Single}
+                    control={<Radio />}
+                    label="Resposta Única"
+                  />
+                  <FormControlLabel
+                    value={AnswerCollectionType.Multiple}
+                    control={<Radio />}
+                    label="Múltiplas Respostas"
+                  />
+                </RadioGroup>
+              </FormControl>
             )}
 
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              {formData.options.map((option, index) => (
+            {/* Opções - Só aparece para Options */}
+            {isOptionsType && (
+              <Box>
                 <Box
-                  key={index}
-                  sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                  sx={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    mb: 2,
+                  }}
                 >
-                  <TextField
-                    label={`Opção ${index + 1}`}
-                    value={option}
-                    onChange={(e) => updateOption(index, e.target.value)}
-                    fullWidth
+                  <FormLabel component="legend">Opções de Resposta *</FormLabel>
+                  <Button
+                    startIcon={<Plus size="1em" />}
+                    onClick={addOption}
+                    size="small"
                     variant="outlined"
+                  >
+                    Adicionar Opção
+                  </Button>
+                </Box>
+
+                {errors.options && (
+                  <Alert severity="error" sx={{ mb: 2 }}>
+                    {errors.options}
+                  </Alert>
+                )}
+
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  {formData.options.map((option, index) => (
+                    <Box
+                      key={index}
+                      sx={{ display: "flex", gap: 1, alignItems: "center" }}
+                    >
+                      <TextField
+                        label={`Opção ${index + 1}`}
+                        value={option}
+                        onChange={(e) => updateOption(index, e.target.value)}
+                        fullWidth
+                        variant="outlined"
+                        size="small"
+                      />
+                      {formData.options.length > 1 && (
+                        <IconButton
+                          onClick={() => removeOption(index)}
+                          color="error"
+                          size="small"
+                        >
+                          <Trash2 size="1em" />
+                        </IconButton>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
+            )}
+
+            <Divider />
+
+            {/* Condições */}
+            <Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 2,
+                }}
+              >
+                <Typography variant="h6">Condições</Typography>
+                <Button
+                  startIcon={<Settings size="1em" />}
+                  onClick={() => modals.modalConditions.open()}
+                  variant="outlined"
+                  size="small"
+                >
+                  {formData.conditions ? "Editar Condições" : "Definir Condições"}
+                </Button>
+              </Box>
+
+              {formData.conditions && (
+                <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 2 }}>
+                  <Chip
+                    label={`${formData.conditions.conditions.length} condição(ões)`}
+                    color="info"
+                    variant="outlined"
+                  />
+                  <Chip
+                    label={rotuloDaLogica(formData.conditions.logic)}
+                    color="primary"
+                    variant="filled"
                     size="small"
                   />
-                  {formData.options.length > 1 && (
-                    <IconButton
-                      onClick={() => removeOption(index)}
-                      color="error"
-                      size="small"
-                    >
-                      <Trash2 size="1em" />
-                    </IconButton>
-                  )}
                 </Box>
-              ))}
+              )}
             </Box>
-          </Box>
-        )}
 
-        <Divider />
+            <Divider />
 
-        {/* Condições */}
-        <Box>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              mb: 2,
-            }}
-          >
-            <Typography variant="h6">Condições</Typography>
-            <Button
-              startIcon={<Settings size="1em" />}
-              onClick={() => modals.modalConditions.open()}
-              variant="outlined"
-              size="small"
-            >
-              {formData.conditions ? "Editar Condições" : "Definir Condições"}
-            </Button>
-          </Box>
-
-          {formData.conditions && (
-            <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 2 }}>
-              <Chip
-                label={`${formData.conditions.conditions.length} condição(ões)`}
-                color="info"
-                variant="outlined"
-              />
-              <Chip
-                label={rotuloDaLogica(formData.conditions.logic)}
-                color="primary"
-                variant="filled"
-                size="small"
-              />
-            </Box>
-          )}
-        </Box>
-
-        <Divider />
-
-        {/* Status Ativo */}
-        <FormControlLabel
-          control={
-            <Switch
-              checked={formData.active}
-              onChange={(e) => handleInputChange("active", e.target.checked)}
+            {/* Status Ativo */}
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={formData.active}
+                  onChange={(e) => handleInputChange("active", e.target.checked)}
+                />
+              }
+              label="Questão Ativa"
             />
-          }
-          label="Questão Ativa"
-        />
+          </Box>
+          {ConditionsModal()}
+        </DialogBody>
 
-        {/* Botões de Ação */}
-        <Box
-          sx={{ display: "flex", gap: 2, justifyContent: "flex-end", mt: 2 }}
-        >
+        <DialogFooter>
           <Button
             onClick={handleCloseModal}
             variant="outlined"
@@ -429,9 +436,8 @@ export function ModalCreateQuestion({
           >
             {loading ? "Criando..." : "Criar Questão"}
           </Button>
-        </Box>
-      </Box>
-      {ConditionsModal()}
-    </ModalTemplate>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

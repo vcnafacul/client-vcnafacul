@@ -25,15 +25,6 @@ vi.mock("react-toastify", () => ({
     dismiss: vi.fn(),
   },
 }));
-vi.mock("@/components/templates/modalTemplate", () => ({
-  default: ({
-    children,
-    isOpen,
-  }: {
-    children: React.ReactNode;
-    isOpen: boolean;
-  }) => (isOpen ? <div>{children}</div> : null),
-}));
 
 import { ModalShowQuestion } from "./modalShowQuestion";
 
