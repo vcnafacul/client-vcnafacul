@@ -18,18 +18,16 @@ import {
   UpdateSubjectDto,
 } from "@/dtos/content/SubjectDto";
 import { useModals } from "@/hooks/useModal";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
-  Box,
-  Button,
-  Paper,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Typography,
-} from "@mui/material";
+} from "@/components/ui/table";
 import { useState } from "react";
 import { ExpandableFrente, FrenteCard } from "./components/expandableFrente";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
@@ -140,42 +138,30 @@ export function PanelFrente({
           </ul>
         )
       ) : (
-      <TableContainer component={Paper} sx={{ borderRadius: 2 }}>
+      <Card>
         <Table>
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "primary.50" }}>
-              <TableCell size="small" className="w-5" />
-              <TableCell
-                size="small"
-                sx={{ fontWeight: "bold", color: "primary.main" }}
-              >
-                Nome
-              </TableCell>
-              <TableCell
-                size="small"
-                align="right"
-                sx={{ fontWeight: "bold", color: "primary.main" }}
-              >
+          <TableHeader>
+            <TableRow className="bg-muted">
+              <TableHead className="w-5">
+                <span className="sr-only">Expandir</span>
+              </TableHead>
+              <TableHead className="font-bold text-primary">Nome</TableHead>
+              <TableHead className="text-right font-bold text-primary">
                 Temas
-              </TableCell>
-              <TableCell
-                size="small"
-                align="right"
-                sx={{ fontWeight: "bold", color: "primary.main" }}
-              >
+              </TableHead>
+              <TableHead className="text-right font-bold text-primary">
                 Ações
-              </TableCell>
+              </TableHead>
             </TableRow>
-          </TableHead>
+          </TableHeader>
           <TableBody>
             {frentes.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4}>
-                  <Box sx={{ py: 4, textAlign: "center" }}>
-                    <Typography variant="body2" color="text.secondary">
-                      Nenhuma frente cadastrada para esta matéria
-                    </Typography>
-                  </Box>
+                <TableCell
+                  colSpan={4}
+                  className="py-8 text-center text-body text-muted-foreground"
+                >
+                  Nenhuma frente cadastrada para esta matéria
                 </TableCell>
               </TableRow>
             ) : (
@@ -213,7 +199,7 @@ export function PanelFrente({
             )}
           </TableBody>
         </Table>
-      </TableContainer>
+      </Card>
       )}
 
       {modals.frenteEditor.isOpen && (

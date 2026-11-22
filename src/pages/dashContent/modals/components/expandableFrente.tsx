@@ -1,15 +1,14 @@
 import { FrenteDto, SubjectDto } from "@/dtos/content/contentDtoInput";
 import { UpdateSubjectDto } from "@/dtos/content/SubjectDto";
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 import {
-  Box,
-  Collapse,
-  IconButton,
-  TableCell,
-  TableRow,
   Tooltip,
-  Typography,
-} from "@mui/material";
-import { useState } from "react";
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { FrentesActionMenu } from "./frentesActionMenu";
 import { RenderTemasTable } from "./renderTemasTable";
@@ -37,60 +36,54 @@ export function ExpandableFrente({
 }: Props) {
   const [open, setOpen] = useState(false);
   const id = frente._id || frente.id;
+  const idDetalhes = useId();
   const total = temas.length;
+  const rotulo = open ? "Recolher" : "Expandir";
 
   return (
     <>
       <TableRow
         key={id}
-        sx={{
-          backgroundColor: open ? "action.selected" : "transparent",
-          "&:hover": { backgroundColor: "action.hover" },
-          borderLeft: "4px solid",
-          borderLeftColor: "primary.main",
-        }}
+        data-state={open ? "selected" : undefined}
+        className="hover:bg-accent"
       >
-        <TableCell size="small" className="w-16">
+        <TableCell className="w-16 border-l-4 border-l-primary">
           {total > 0 && (
-            <Tooltip title={open ? "Recolher" : "Expandir"} arrow>
-              <IconButton
-                aria-label="expand row"
-                size="small"
-                onClick={() => setOpen(!open)}
-                sx={{
-                  transition: "transform 0.2s ease-in-out",
-                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
-                }}
-              >
-                <ChevronDown className="w-5 h-5" />
-              </IconButton>
-            </Tooltip>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`${rotulo} temas de ${frente.nome}`}
+                    aria-expanded={open}
+                    aria-controls={open ? idDetalhes : undefined}
+                    onClick={() => setOpen(!open)}
+                    className="sm:h-8 sm:w-8"
+                  >
+                    <ChevronDown
+                      className={`transition-transform ${open ? "rotate-180" : ""}`}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{rotulo}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </TableCell>
         <TableCell>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              {frente.nome}
-            </Typography>
-          </Box>
+          <span className="text-body font-bold text-foreground">
+            {frente.nome}
+          </span>
         </TableCell>
-        <TableCell align="right">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <Typography variant="body2" fontWeight="bold">
-              {total}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              temas
-            </Typography>
-          </Box>
+        <TableCell className="text-right">
+          <div className="flex flex-col items-end">
+            <span className="text-body font-bold">{total}</span>
+            <span className="text-caption text-muted-foreground">temas</span>
+          </div>
         </TableCell>
-        <TableCell align="right" className="w-10">
+        <TableCell className="w-10 text-right">
           <FrentesActionMenu
             onAdd={onAddTema}
             addLabel="Adicionar Tema"
@@ -100,25 +93,13 @@ export function ExpandableFrente({
           />
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={4}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 2 }}>
-              <Typography
-                variant="h6"
-                gutterBottom
-                component="div"
-                sx={{
-                  fontWeight: "bold",
-                  color: "primary.main",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                  mb: 2,
-                }}
-              >
+      {open && (
+        <TableRow className="hover:bg-transparent">
+          <TableCell colSpan={4} className="py-0">
+            <div id={idDetalhes} className="m-2">
+              <h4 className="mb-2 text-h4 font-bold text-primary">
                 Temas ({total})
-              </Typography>
+              </h4>
               <RenderTemasTable
                 frente={frente}
                 temas={temas}
@@ -126,10 +107,10 @@ export function ExpandableFrente({
                 onDeleteTema={onDeleteTema}
                 onReorderTemas={onReorderTemas}
               />
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+            </div>
+          </TableCell>
+        </TableRow>
+      )}
     </>
   );
 }

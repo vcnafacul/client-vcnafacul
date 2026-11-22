@@ -19,14 +19,13 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import {
-  Paper,
   Table,
   TableBody,
-  TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-} from "@mui/material";
+} from "@/components/ui/table";
+import { Card } from "@/components/ui/card";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { Roles } from "@/enums/roles/roles";
 import { useState } from "react";
@@ -155,30 +154,20 @@ export function RenderTemasTable({
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <TableContainer
-          component={Paper}
-          elevation={1}
-          sx={{ borderRadius: 2, overflowX: "auto" }}
-        >
-          <Table aria-label="temas" size="small">
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "grey.50" }}>
-                <TableCell sx={{ fontWeight: "bold", width: 40 }} />
-                <TableCell sx={{ fontWeight: "bold" }}>Nome</TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Aprovadas
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Pendentes
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Pendentes Upload
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Ações
-                </TableCell>
+        <Card>
+          <Table aria-label="temas">
+            <TableHeader>
+              <TableRow className="bg-muted">
+                <TableHead className="w-10">
+                  <span className="sr-only">Arrastar para ordenar</span>
+                </TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead className="text-center">Aprovadas</TableHead>
+                <TableHead className="text-center">Pendentes</TableHead>
+                <TableHead className="text-center">Pendentes Upload</TableHead>
+                <TableHead className="text-center">Ações</TableHead>
               </TableRow>
-            </TableHead>
+            </TableHeader>
             <TableBody>
               <SortableContext
                 items={temas.map((t) => t._id || t.id)}
@@ -196,7 +185,7 @@ export function RenderTemasTable({
               </SortableContext>
             </TableBody>
           </Table>
-        </TableContainer>
+        </Card>
       </DndContext>
       )}
 

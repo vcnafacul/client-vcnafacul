@@ -12,9 +12,14 @@ import { iconPresets } from "@/config/materiaPresets";
 import { useModals } from "@/hooks/useModal";
 import { MateriaCanDeleteResult } from "@/services/content/getMateriaCanDelete";
 import { MateriaDto } from "@/services/content/getMaterias";
-import { Button, IconButton } from "@mui/material";
-import Paper from "@mui/material/Paper";
-import Tooltip from "@mui/material/Tooltip";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
@@ -120,18 +125,39 @@ export function PanelMateria({
             headerAlign: "center",
             width: 120,
             renderCell: (params) => (
-              <div className="flex gap-2 justify-center">
-                <Tooltip title="Editar matéria">
-                  <IconButton onClick={() => editar(params.row as MateriaDto)}>
-                    <Pencil size="1em" className="text-muted-foreground hover:text-black" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Excluir matéria">
-                  <IconButton onClick={() => excluir(params.row as MateriaDto)}>
-                    <Trash2 size="1em" className="text-destructive opacity-50 hover:opacity-100" />
-                  </IconButton>
-                </Tooltip>
-              </div>
+              <TooltipProvider delayDuration={200}>
+                <div className="flex gap-2 justify-center">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Editar matéria"
+                        onClick={() => editar(params.row as MateriaDto)}
+                      >
+                        <Pencil />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Editar matéria</TooltipContent>
+                  </Tooltip>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        aria-label="Excluir matéria"
+                        className="text-destructive"
+                        onClick={() => excluir(params.row as MateriaDto)}
+                      >
+                        <Trash2 />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Excluir matéria</TooltipContent>
+                  </Tooltip>
+                </div>
+              </TooltipProvider>
             ),
           } as GridColDef,
         ]
@@ -208,7 +234,7 @@ export function PanelMateria({
           })}
         </ul>
       ) : (
-        <Paper sx={{ height: "100%", overflow: "auto" }}>
+        <Card className="h-full overflow-auto">
           <DataGrid
             rows={materias}
             columns={columns}
@@ -216,7 +242,7 @@ export function PanelMateria({
             rowHeight={40}
             sx={{ border: 0 }}
           />
-        </Paper>
+        </Card>
       )}
 
       {modals.editor.isOpen && (

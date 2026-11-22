@@ -3,7 +3,8 @@ import { StatusEnum } from "@/enums/generic/statusEnum";
 import { StatusContent } from "@/enums/content/statusContent";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { IconButton, TableCell, TableRow, Typography } from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 import { GripVertical } from "lucide-react";
 import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
@@ -44,8 +45,6 @@ export function SortableTemaRow({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
-    backgroundColor: isDragging ? "rgba(25, 118, 210, 0.05)" : "transparent",
   };
 
   const contents = tema.contents ?? [];
@@ -58,58 +57,40 @@ export function SortableTemaRow({
     <TableRow
       ref={setNodeRef}
       style={style}
-      sx={{
-        "&:hover": {
-          backgroundColor: isDragging
-            ? "rgba(25, 118, 210, 0.05)"
-            : "action.hover",
-        },
-        cursor: isDragging ? "grabbing" : "default",
-      }}
+      data-state={isDragging ? "selected" : undefined}
+      className={isDragging ? "opacity-50" : undefined}
     >
-      <TableCell sx={{ width: 40, padding: "8px" }}>
+      <TableCell className="w-10 p-2">
         {podeReordenar && (
-        <IconButton
-          {...attributes}
-          {...listeners}
-          size="small"
-          sx={{
-            // Sem isto o toque vira rolagem e o arraste é cancelado.
-            touchAction: "none",
-            cursor: "grab",
-            "&:active": { cursor: "grabbing" },
-            color: "grey.500",
-            "&:hover": {
-              color: "primary.main",
-              backgroundColor: "primary.50",
-            },
-          }}
-        >
-          <GripVertical className="h-5 w-5" />
-        </IconButton>
+          <Button
+            {...attributes}
+            {...listeners}
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={`Arrastar o tema ${tema.name} para reordenar`}
+            // Sem touch-none o toque vira rolagem e o arraste é cancelado.
+            className={`touch-none text-muted-foreground hover:text-primary sm:h-8 sm:w-8 ${
+              isDragging ? "cursor-grabbing" : "cursor-grab"
+            }`}
+          >
+            <GripVertical />
+          </Button>
         )}
       </TableCell>
       <TableCell>
-        <Typography variant="body2" fontWeight="medium">
-          {tema.name}
-        </Typography>
+        <span className="text-body font-medium">{tema.name}</span>
       </TableCell>
-      <TableCell align="center">
-        <Typography variant="body2">
-          {approved}/{total}
-        </Typography>
+      <TableCell className="text-center">
+        {approved}/{total}
       </TableCell>
-      <TableCell align="center">
-        <Typography variant="body2">
-          {pending}/{total}
-        </Typography>
+      <TableCell className="text-center">
+        {pending}/{total}
       </TableCell>
-      <TableCell align="center">
-        <Typography variant="body2">
-          {pendingUpload}/{total}
-        </Typography>
+      <TableCell className="text-center">
+        {pendingUpload}/{total}
       </TableCell>
-      <TableCell align="center" className="w-10">
+      <TableCell className="w-10 text-center">
         <FrentesActionMenu
           onEdit={onEdit}
           onReorder={onReorderContents}
