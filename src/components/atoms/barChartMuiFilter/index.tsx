@@ -83,16 +83,21 @@ export default function BarChartWithFilter({
               onClick={() => handleToggle(item.id)}
               className={cn(
                 badgeVariants({ variant: "outline" }),
-                "shrink-0 cursor-pointer border-[1.5px] hover:opacity-90",
-                isHidden && "opacity-50",
+                "shrink-0 cursor-pointer text-foreground hover:bg-muted",
+                !isHidden && "bg-muted",
               )}
-              style={{
-                backgroundColor: isHidden ? "transparent" : chipColor,
-                color: isHidden ? chipColor : "white",
-                borderColor: chipColor,
-              }}
             >
-              {item.label}
+              <span
+                aria-hidden="true"
+                className={cn(
+                  "size-2 shrink-0 rounded-full",
+                  isHidden && "opacity-40",
+                )}
+                style={{ backgroundColor: chipColor }}
+              />
+              <span className={cn(isHidden && "line-through")}>
+                {item.label}
+              </span>
             </button>
           );
         })}
