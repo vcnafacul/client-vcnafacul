@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,14 +16,11 @@ import { getAttendanceRecordByStudentId } from "@/services/prepCourse/attendance
 import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
-import {
-  AttendancePeriod,
-  attendancePeriodLabel,
-} from "@/types/partnerPrepCourse/attendancePeriod";
+import { attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePeriod";
 import { AttendanceRecordByStudent } from "@/types/partnerPrepCourse/attendanceRecord";
 import { Card } from "@/components/ui/card";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useCallback, useEffect, useState } from "react";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { PeriodJustificationList } from "./periodJustificationList";
 import { PeriodJustificationModal } from "./periodJustificationModal";
@@ -76,6 +72,9 @@ function ModalJustificativa({
   );
 }
 
+// Opções que a grade tinha antes do R30 (o portal do MUI as limitou a uma).
+const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
+
 interface AttendanceRecordProps {
   isOpen: boolean;
   handleClose: () => void;
@@ -98,7 +97,9 @@ export function AttendanceRecordByStudentModal({
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
   const [showPeriodModal, setShowPeriodModal] = useState(false);
   const [periodRefreshTrigger, setPeriodRefreshTrigger] = useState(0);
-  const limit = 10;
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0]);
+  const [carregando, setCarregando] = useState(true);
 
   const modals = useModals(["modalApplyJustification"]);
 
@@ -111,66 +112,33 @@ export function AttendanceRecordByStudentModal({
 
   const executeAsync = useToastAsync();
 
-  const columns: GridColDef[] = [
+  const columns: DataTableColumn<AttendanceRecordByStudent>[] = [
     {
-      field: "registeredAt",
-      headerName: "Registrado em",
+      id: "registeredAt",
+      header: "Registrado em",
       align: "center",
-      headerAlign: "center",
-      minWidth: 200,
-      filterable: false,
-      sortable: false,
-      renderCell: (params) => {
-        const date = new Date(params.row.registeredAt);
-        return date.toLocaleDateString("pt-BR");
-      },
+      mobile: "title",
+      cell: (a) => new Date(a.registeredAt).toLocaleDateString("pt-BR"),
     },
     {
-      field: "period",
-      headerName: "Período",
+      id: "period",
+      header: "Período",
       align: "center",
-      headerAlign: "center",
-      minWidth: 120,
-      filterable: false,
-      sortable: false,
-      renderCell: (params) =>
-        params.row.period
-          ? attendancePeriodLabel[params.row.period as AttendancePeriod]
-          : "-",
+      cell: (a) => (a.period ? attendancePeriodLabel[a.period] : "-"),
     },
+    { id: "className", header: "Turma", align: "center", cell: (a) => a.className },
+    { id: "present", header: "Presença", align: "center", cell: (a) => a.present },
     {
-      field: "className",
-      headerName: "Turma",
+      id: "justification",
+      header: "Justificativa",
       align: "center",
-      headerAlign: "center",
-      minWidth: 200,
-      filterable: false,
-      sortable: false,
-    },
-    {
-      field: "present",
-      headerName: "Presença",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 200,
-      filterable: false,
-      sortable: false,
-    },
-    {
-      field: "justification",
-      headerName: "Justificativa",
-      align: "center",
-      headerAlign: "center",
-      flex: 1,
-      minWidth: 200,
-      filterable: false,
-      sortable: false,
+      cell: (a) => a.justification,
     },
   ];
-  const paginationModel = { page: 0, pageSize: limit };
 
   const handleGetAttendances = async (page: number, limit: number) => {
-    getAttendanceRecordByStudentId(token, page, limit, studentId)
+    setCarregando(true);
+    return getAttendanceRecordByStudentId(token, page, limit, studentId)
       .then((res) => {
         const data: AttendanceRecordByStudent[] = res.data.map((s) => ({
           id: s.id,
@@ -188,36 +156,19 @@ export function AttendanceRecordByStudentModal({
       })
       .catch((err) => {
         toast.error(err.message);
-      });
+      })
+      .finally(() => setCarregando(false));
   };
 
   useEffect(() => {
-    handleGetAttendances(paginationModel.page + 1, paginationModel.pageSize);
+    handleGetAttendances(page, pageSize);
   }, []);
 
-  const handleSelectionChange = useCallback(
-    (newSelection: any) => {
-      setSelectedRows((prevSelection) => {
-        const currentPageIds = attendances.map((row) => row.id);
-
-        // Filtra os que estavam na página atual e foram desmarcados
-        const removed = prevSelection.filter(
-          (id) => !newSelection.includes(id) && currentPageIds.includes(id),
-        );
-
-        // Adiciona os novos selecionados
-        const added = newSelection.filter(
-          (id: string) => !prevSelection.includes(id),
-        );
-
-        return [
-          ...prevSelection.filter((id) => !removed.includes(id)),
-          ...added,
-        ];
-      });
-    },
-    [attendances],
-  );
+  const irParaPagina = (novaPagina: number, novoTamanho = pageSize) => {
+    setPage(novaPagina);
+    setPageSize(novoTamanho);
+    handleGetAttendances(novaPagina, novoTamanho);
+  };
 
   const handleApplyJustification = async (justification?: string) => {
     if (selectedRows.length === 0) {
@@ -287,33 +238,42 @@ export function AttendanceRecordByStudentModal({
           No celular a caixa cresce e rola junto com a página: com altura
           fixa, as justificativas abertas espremiam a grade até sumir.
         */}
-          <Card className="flex h-[420px] w-full min-h-0 flex-none flex-col overflow-hidden sm:h-auto sm:flex-1">
-            <DataGrid
-              disableColumnMenu
-              pageSizeOptions={[paginationModel.pageSize]}
-              rows={attendances}
+          <Card className="flex h-[420px] w-full min-h-0 flex-none flex-col overflow-auto sm:h-auto sm:flex-1">
+            <DataTable
+              aria-label="Registro de presença do estudante"
               columns={columns}
-              rowCount={totalItems}
-              paginationMode="server"
-              initialState={{ pagination: { paginationModel } }}
-              rowHeight={40}
-              rowSelection={podeGerenciar}
-              checkboxSelection={podeGerenciar}
-              rowSelectionModel={selectedRows}
-              onRowSelectionModelChange={handleSelectionChange}
-              sx={{
-                border: 0,
-                flex: 1,
-                minHeight: 0,
-                height: "100%",
-                "& .MuiDataGrid-main": { overflow: "auto" },
+              rows={attendances}
+              getRowId={(a) => a.id}
+              state={carregando ? "loading" : "ready"}
+              density="compact"
+              className="rounded-none border-0"
+              selection={podeGerenciar ? selectedRows : undefined}
+              onSelectionChange={podeGerenciar ? setSelectedRows : undefined}
+              pagination={{
+                page,
+                pageSize,
+                total: totalItems,
+                onPageChange: (p) => irParaPagina(p),
+                pageSizeOptions: PAGE_SIZE_OPTIONS,
+                onPageSizeChange: (n) => irParaPagina(1, n),
               }}
-              onPaginationModelChange={(newPageSize) => {
-                handleGetAttendances(
-                  newPageSize.page + 1,
-                  newPageSize.pageSize,
-                );
-              }}
+              renderMobileCard={(a) => (
+                <div className="flex flex-col gap-1">
+                  <p className="font-semibold">
+                    {new Date(a.registeredAt).toLocaleDateString("pt-BR")}
+                  </p>
+                  <p className="text-body-sm text-muted-foreground">
+                    {[
+                      a.period ? attendancePeriodLabel[a.period] : "-",
+                      a.className,
+                      a.present,
+                    ].join(" · ")}
+                  </p>
+                  {a.justification && (
+                    <p className="text-body-sm">{a.justification}</p>
+                  )}
+                </div>
+              )}
             />
           </Card>
           {ModalApplyJustification()}

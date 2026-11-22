@@ -11,13 +11,6 @@ vi.mock("@/store/auth", () => ({
 vi.mock("react-toastify", () => ({
   toast: { error: vi.fn(), warn: vi.fn(), success: vi.fn(), loading: vi.fn() },
 }));
-// O DataGrid não roda no jsdom (ver `index.test.tsx`): o dublê expõe o que
-// importa aqui — se a tabela tem caixas de seleção.
-vi.mock("@mui/x-data-grid", () => ({
-  DataGrid: (p: { checkboxSelection?: boolean }) => (
-    <div data-testid="data-grid" data-caixas={String(!!p.checkboxSelection)} />
-  ),
-}));
 vi.mock(
   "@/services/prepCourse/attendanceRecord/getAttendanceRecordByStudentId",
   () => ({
@@ -76,7 +69,14 @@ describe("janela Registro de Presença do aluno (tickets-documentacao, 07)", () 
     abrir();
     expect(screen.getByText("Aplicar Justificativa")).toBeInTheDocument();
     expect(screen.getByText("Justificar Período")).toBeInTheDocument();
-    expect(screen.getByTestId("data-grid")).toHaveAttribute("data-caixas", "true");
+    // As caixas só existem depois que a grade carrega a primeira página.
+    expect(
+      await screen.findByRole("checkbox", { name: "Selecionar todas as linhas" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Aplicar Justificativa").closest("button")).toBeDisabled();
+    // Selecionar uma linha liga "Aplicar Justificativa".
+    fireEvent.click(screen.getByRole("checkbox", { name: /^Selecionar \d/ }));
+    expect(screen.getByText("Aplicar Justificativa").closest("button")).toBeEnabled();
     await abrirJustificativas();
     expect(screen.getByTitle("Excluir justificativa")).toBeInTheDocument();
   });
@@ -86,7 +86,8 @@ describe("janela Registro de Presença do aluno (tickets-documentacao, 07)", () 
     abrir();
     expect(screen.queryByText("Aplicar Justificativa")).toBeNull();
     expect(screen.queryByText("Justificar Período")).toBeNull();
-    expect(screen.getByTestId("data-grid")).toHaveAttribute("data-caixas", "false");
+    expect(await screen.findByText("Turma A")).toBeInTheDocument();
+    expect(screen.queryByRole("checkbox")).toBeNull();
     await abrirJustificativas();
     expect(screen.queryByTitle("Excluir justificativa")).toBeNull();
   });
