@@ -20,24 +20,17 @@ import {
   AnswerType,
   QuestionForm,
 } from "@/types/partnerPrepForm/questionForm";
-import {
-  Alert,
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-  Radio,
-  RadioGroup,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useState } from "react";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { useId, useState } from "react";
 import { Edit3, Plus, Save, Settings, Trash2, X } from "lucide-react";
 import { ModalConditions } from "./modalConditions";
 import {
@@ -75,6 +68,7 @@ export function ModalShowQuestion({
 }: ModalShowQuestionProps) {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const idOpcoes = useId();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isOpenConditions, setIsOpenConditions] = useState<boolean>(false);
   // Remover todas as condições (card 22): no salvar vai `conditions: null`.
@@ -241,21 +235,6 @@ export function ModalShowQuestion({
     }
   };
 
-  const getAnswerTypeColor = (type: AnswerType) => {
-    switch (type) {
-      case AnswerType.Text:
-        return "primary";
-      case AnswerType.Number:
-        return "secondary";
-      case AnswerType.Boolean:
-        return "warning";
-      case AnswerType.Options:
-        return "info";
-      default:
-        return "default";
-    }
-  };
-
   const isOptionsType = question.answerType === AnswerType.Options;
 
   return (
@@ -269,251 +248,178 @@ export function ModalShowQuestion({
           <DialogTitle>
             {isEditMode ? "Editar Questão" : "Visualizar Questão"}
           </DialogTitle>
-          <Box sx={{ display: "flex", gap: 2, alignItems: "center", flexWrap: "wrap" }}>
-            <Chip
-              label={getAnswerTypeLabel(question.answerType)}
-              color={getAnswerTypeColor(question.answerType)}
-              variant="outlined"
-              sx={{ fontWeight: "bold" }}
-            />
-            <Chip
-              label={question.active ? "Ativo" : "Inativo"}
-              color={question.active ? "success" : "default"}
-              variant={question.active ? "filled" : "outlined"}
-            />
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="outline">
+              {getAnswerTypeLabel(question.answerType)}
+            </Badge>
+            <StatusBadge variant={question.active ? "success" : "neutral"} look="tint">
+              {question.active ? "Ativo" : "Inativo"}
+            </StatusBadge>
             {!isEditMode && !readOnly && (
               <Button
-                startIcon={<Edit3 size="1em" />}
                 onClick={handleEditMode}
-                variant="outlined"
-                size="small"
-                sx={{ ml: "auto" }}
+                variant="outline"
+                size="sm"
+                className="ml-auto"
               >
+                <Edit3 aria-hidden="true" />
                 Editar
               </Button>
             )}
-          </Box>
+          </div>
         </DialogHeader>
 
         <DialogBody className="-mx-1 px-1 pt-2">
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <div className="flex flex-col gap-6">
             {/* Texto da Pergunta */}
-            <TextField
-              label="Texto da Pergunta"
-              value={editableData.text}
-              onChange={(e) => handleInputChange("text", e.target.value)}
-              error={!!errors.text}
-              helperText={errors.text}
-              multiline
-              rows={3}
-              fullWidth
-              disabled={!isEditMode}
-              variant="outlined"
-              sx={{
-                "& .MuiInputBase-input.Mui-readOnly": {
-                  backgroundColor: isEditMode ? "inherit" : "grey.50",
-                },
-              }}
-            />
+            <Field label="Texto da Pergunta" error={errors.text || undefined}>
+              <Textarea
+                value={editableData.text}
+                onChange={(e) => handleInputChange("text", e.target.value)}
+                rows={3}
+                disabled={!isEditMode}
+              />
+            </Field>
 
             {/* Help Text */}
-            <TextField
-              label="Texto de Ajuda"
-              value={editableData.helpText}
-              onChange={(e) => handleInputChange("helpText", e.target.value)}
-              multiline
-              rows={2}
-              fullWidth
-              variant="outlined"
-              placeholder="Texto adicional para ajudar o usuário"
-              disabled={!isEditMode}
-              sx={{
-                "& .MuiInputBase-input.Mui-readOnly": {
-                  backgroundColor: isEditMode ? "inherit" : "grey.50",
-                },
-              }}
-            />
+            <Field label="Texto de Ajuda">
+              <Textarea
+                value={editableData.helpText}
+                onChange={(e) => handleInputChange("helpText", e.target.value)}
+                rows={2}
+                placeholder="Texto adicional para ajudar o usuário"
+                disabled={!isEditMode}
+              />
+            </Field>
 
             {/* Collection Type - Só aparece para Options */}
             {isOptionsType && (
-              <FormControl>
-                <FormLabel component="legend">Tipo de Seleção</FormLabel>
+              <fieldset className="grid gap-1.5">
+                <legend className="mb-1.5 text-label">Tipo de Seleção</legend>
                 <RadioGroup
                   value={editableData.collection}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "collection",
-                      e.target.value as AnswerCollectionType
-                    )
+                  onValueChange={(v) =>
+                    handleInputChange("collection", v as AnswerCollectionType)
                   }
-                  row
+                  className="sm:grid-flow-col sm:justify-start sm:gap-6"
                 >
-                  <FormControlLabel
+                  <RadioGroupItem
                     value={AnswerCollectionType.Single}
-                    control={<Radio />}
                     label="Resposta Única"
                     disabled={!isEditMode}
                   />
-                  <FormControlLabel
+                  <RadioGroupItem
                     value={AnswerCollectionType.Multiple}
-                    control={<Radio />}
                     label="Múltiplas Respostas"
                     disabled={!isEditMode}
                   />
                 </RadioGroup>
-              </FormControl>
+              </fieldset>
             )}
 
             {/* Opções - Só aparece para Options */}
             {isOptionsType && (
-              <Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 2,
-                  }}
-                >
-                  <FormLabel component="legend">Opções de Resposta</FormLabel>
+              <div role="group" aria-labelledby={idOpcoes} className="grid gap-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span id={idOpcoes} className="text-label">Opções de Resposta</span>
                   {isEditMode && (
-                    <Button
-                      startIcon={<Plus size="1em" />}
-                      onClick={addOption}
-                      size="small"
-                      variant="outlined"
-                    >
+                    <Button onClick={addOption} size="sm" variant="outline">
+                      <Plus aria-hidden="true" />
                       Adicionar Opção
                     </Button>
                   )}
-                </Box>
+                </div>
 
                 {errors.options && (
-                  <Alert severity="error" sx={{ mb: 2 }}>
-                    {errors.options}
-                  </Alert>
+                  <Alert variant="destructive" title={errors.options} />
                 )}
 
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <div className="flex flex-col gap-4">
                   {editableData.options.map((option, index) => (
-                    <Box
-                      key={index}
-                      sx={{ display: "flex", gap: 1, alignItems: "center" }}
-                    >
-                      <TextField
-                        label={`Opção ${index + 1}`}
-                        value={option}
-                        onChange={(e) => updateOption(index, e.target.value)}
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                        disabled={!isEditMode}
-                        sx={{
-                          "& .MuiInputBase-input.Mui-readOnly": {
-                            backgroundColor: isEditMode ? "inherit" : "grey.50",
-                          },
-                        }}
-                      />
+                    <div key={index} className="flex items-end gap-2">
+                      <Field label={`Opção ${index + 1}`} className="flex-1">
+                        <Input
+                          value={option}
+                          onChange={(e) => updateOption(index, e.target.value)}
+                          disabled={!isEditMode}
+                        />
+                      </Field>
                       {isEditMode && editableData.options.length > 1 && (
-                        <IconButton
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label={`Remover opção ${index + 1}`}
                           onClick={() => removeOption(index)}
-                          color="error"
-                          size="small"
                         >
-                          <Trash2 size="1em" />
-                        </IconButton>
+                          <Trash2 aria-hidden="true" />
+                        </Button>
                       )}
-                    </Box>
+                    </div>
                   ))}
-                </Box>
-              </Box>
+                </div>
+              </div>
             )}
 
-            <Divider />
+            <Separator />
 
             {/* Condições */}
-            <Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 2,
-                }}
-              >
-                <Typography variant="h6">Condições</Typography>
+            <div className="grid gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-h4">Condições</h3>
                 {isEditMode && (
-                  <Box sx={{ display: "flex", gap: 1 }}>
+                  <div className="flex flex-wrap gap-2">
                     {editableData.conditions && (
                       <Button
-                        startIcon={<Trash2 size="1em" />}
                         onClick={() => setConfirmarRemocao(true)}
-                        variant="outlined"
-                        color="error"
-                        size="small"
+                        variant="destructive"
+                        size="sm"
                       >
+                        <Trash2 aria-hidden="true" />
                         Remover condições
                       </Button>
                     )}
                     <Button
-                      startIcon={<Settings size="1em" />}
                       onClick={() => setIsOpenConditions(true)}
-                      variant="outlined"
-                      size="small"
+                      variant="outline"
+                      size="sm"
                     >
+                      <Settings aria-hidden="true" />
                       {editableData.conditions
                         ? "Editar Condições"
                         : "Definir Condições"}
                     </Button>
-                  </Box>
+                  </div>
                 )}
-              </Box>
+              </div>
 
               {editableData.conditions ? (
-                <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 2 }}>
-                  <Chip
-                    label={`${editableData.conditions.conditions.length} condição(ões)`}
-                    color="info"
-                    variant="outlined"
-                  />
-                  <Chip
-                    label={rotuloDaLogica(editableData.conditions.logic)}
-                    color="primary"
-                    variant="filled"
-                    size="small"
-                  />
-                </Box>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline">
+                    {`${editableData.conditions.conditions.length} condição(ões)`}
+                  </Badge>
+                  <Badge variant="default">
+                    {rotuloDaLogica(editableData.conditions.logic)}
+                  </Badge>
+                </div>
               ) : (
-                <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                <p className="text-body text-muted-foreground">
                   Nenhuma condição definida
-                </Typography>
+                </p>
               )}
-            </Box>
+            </div>
 
-            <Divider />
+            <Separator />
 
             {/* Status Ativo */}
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-              }}
-            >
-              <Typography variant="body1" fontWeight="medium">
-                Questão Ativa
-              </Typography>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                <Switch
-                  checked={editableData.active}
-                  onChange={handleToggleActive}
-                  // Ativar/desativar salva na hora e fecha o modal: em modo de
-                  // edição, isso descartaria as alterações ainda não salvas.
-                  disabled={loading || readOnly || isEditMode}
-                />
-              </Box>
-            </Box>
-          </Box>
+            <Switch
+              checked={editableData.active}
+              onCheckedChange={handleToggleActive}
+              // Ativar/desativar salva na hora e fecha o modal: em modo de
+              // edição, isso descartaria as alterações ainda não salvas.
+              disabled={loading || readOnly || isEditMode}
+              label="Questão Ativa"
+            />
+          </div>
           {/* Modal de Condições */}
           <ModalConditions
             isOpen={isOpenConditions}
@@ -562,18 +468,14 @@ export function ModalShowQuestion({
           <DialogFooter>
             <Button
               onClick={handleCancelEdit}
-              variant="outlined"
+              variant="outline"
               disabled={loading}
-              startIcon={<X size="1em" />}
             >
+              <X aria-hidden="true" />
               Cancelar
             </Button>
-            <Button
-              onClick={handleSave}
-              variant="contained"
-              disabled={loading}
-              startIcon={loading ? <CircularProgress size={20} /> : <Save size="1em" />}
-            >
+            <Button onClick={handleSave} variant="primary" loading={loading}>
+              {!loading && <Save aria-hidden="true" />}
               {loading ? "Salvando..." : "Salvar"}
             </Button>
           </DialogFooter>

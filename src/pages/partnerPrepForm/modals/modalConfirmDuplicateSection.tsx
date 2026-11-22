@@ -8,7 +8,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Typography } from "@mui/material";
 
 interface ModalConfirmDuplicateSectionProps {
   isOpen: boolean;
@@ -35,15 +34,15 @@ export function ModalConfirmDuplicateSection({
           <AlertDialogTitle>Confirmar Duplicação de Seção</AlertDialogTitle>
           <AlertDialogDescription asChild>
             <div className="flex flex-col gap-4 py-4">
-              <Typography variant="body1">
+              <p className="text-body text-foreground">
                 Você tem certeza que deseja duplicar a seção{" "}
                 <strong>{sectionName}</strong>?
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
+              </p>
+              <p className="text-body text-muted-foreground">
                 Isso criará uma cópia completa da seção incluindo todas as
                 questões associadas, com o nome "{sectionName} (cópia)". A cópia
                 nasce desativada: revise e ative quando estiver pronta.
-              </Typography>
+              </p>
             </div>
           </AlertDialogDescription>
         </AlertDialogHeader>

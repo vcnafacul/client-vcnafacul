@@ -12,12 +12,10 @@ import {
 import { updateSection } from "@/services/partnerPrepForm/updateSection";
 import { useAuthStore } from "@/store/auth";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
-import {
-  Box,
-  Button,
-  CircularProgress,
-  TextField,
-} from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -105,50 +103,37 @@ export function ModalUpdateSection({
         </DialogHeader>
 
         <DialogBody className="-mx-1 px-1 pt-2">
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-            {/* Nome da Seção */}
-            <TextField
-              label="Nome da Seção *"
-              value={name}
-              onChange={(e) => handleInputChange(e.target.value)}
-              error={!!error}
-              helperText={error}
-              fullWidth
-              variant="outlined"
-              placeholder="Ex: Informações Pessoais"
-              disabled={loading}
-            />
+          <div className="flex flex-col gap-4">
+            <Field label="Nome da Seção" required error={error}>
+              <Input
+                value={name}
+                onChange={(e) => handleInputChange(e.target.value)}
+                placeholder="Ex: Informações Pessoais"
+                disabled={loading}
+              />
+            </Field>
 
-            {/* Descrição da Seção */}
-            <TextField
-              label="Descrição"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              fullWidth
-              variant="outlined"
-              placeholder="Ex: Preencha suas informações pessoais básicas"
-              multiline
-              minRows={2}
-              maxRows={4}
-              disabled={loading}
-            />
-          </Box>
+            <Field label="Descrição">
+              <Textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Ex: Preencha suas informações pessoais básicas"
+                rows={3}
+                disabled={loading}
+              />
+            </Field>
+          </div>
         </DialogBody>
 
         <DialogFooter>
           <Button
             onClick={handleCloseModal}
-            variant="outlined"
+            variant="outline"
             disabled={loading}
           >
             Cancelar
           </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} /> : null}
-          >
+          <Button onClick={handleSubmit} variant="primary" loading={loading}>
             {loading ? "Salvando..." : "Salvar"}
           </Button>
         </DialogFooter>

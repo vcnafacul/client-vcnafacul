@@ -26,23 +26,24 @@ import {
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { capitalizeWords } from "@/utils/capitalizeWords";
 import { downloadPDF } from "@/utils/get-pdf";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import {
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Divider,
-  IconButton,
-  Paper,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
+} from "@/components/ui/table";
+import {
   Tooltip,
-  Typography,
-} from "@mui/material";
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useEffect, useMemo, useState } from "react";
 import { Download, Play, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -328,258 +329,223 @@ export function ModalRules({
         </DialogHeader>
         <DialogBody>
           {loading ? (
-            <Box sx={{ display: "flex", justifyContent: "center", py: 8 }}>
-              <CircularProgress />
-            </Box>
+            <div className="flex justify-center py-16">
+              <Spinner size="page" />
+            </div>
           ) : (
-            <>
-      {/* Conjunto de Regras */}
-      {ruleSet && (
-        <Box
-          sx={{
-            mb: 2,
-            display: "flex",
-            gap: 1,
-            alignItems: "center",
-            flexWrap: "wrap",
-          }}
-        >
-          <Chip
-            label={`${ruleSet.scoringRules.length} regra(s) de pontuação`}
-            color="success"
-            variant="outlined"
-            size="small"
-          />
-          <Chip
-            label={`${ruleSet.tieBreakerRules.length} regra(s) de desempate`}
-            color="warning"
-            variant="outlined"
-            size="small"
-          />
-        </Box>
-      )}
+            <TooltipProvider delayDuration={200}>
+              <div className="flex flex-col gap-6">
+                {/* Conjunto de Regras */}
+                {ruleSet && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge variant="outline">
+                      {`${ruleSet.scoringRules.length} regra(s) de pontuação`}
+                    </Badge>
+                    <Badge variant="outline">
+                      {`${ruleSet.tieBreakerRules.length} regra(s) de desempate`}
+                    </Badge>
+                  </div>
+                )}
 
-      {/* Botões de Ação */}
-      <Box sx={{ display: "flex", gap: 2, mb: 3, flexWrap: "wrap" }}>
-        <Button
-          variant="contained"
-          startIcon={<Plus size="1em" />}
-          onClick={() => modals.createRule.open()}
-          size="small"
-        >
-          Nova Regra
-        </Button>
-        {ruleSet && (
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={
-              rankingLoading ? (
-                <CircularProgress size={16} color="inherit" />
-              ) : (
-                <Play size="1em" />
-              )
-            }
-            onClick={handleRunRanking}
-            disabled={rankingLoading || ruleSet.scoringRules.length === 0}
-            size="small"
-          >
-            {rankingLoading ? "Calculando..." : "Executar Ranking"}
-          </Button>
-        )}
-      </Box>
-
-      <Divider sx={{ mb: 3 }} />
-
-      {/* Tabela de Regras */}
-      <Typography variant="h6" gutterBottom>
-        Regras ({allRules.length})
-      </Typography>
-
-      {allRules.length === 0 ? (
-        <Box sx={{ textAlign: "center", py: 4 }}>
-          <Typography color="text.secondary">
-            Nenhuma regra criada ainda. Clique em "Nova Regra" para começar.
-          </Typography>
-        </Box>
-      ) : (
-        <TableContainer component={Paper} elevation={1} sx={{ mb: 3 }}>
-          <Table size="small">
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "grey.100" }}>
-                <TableCell sx={{ fontWeight: "bold" }}>Nome</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Tipo</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Estratégia</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Pergunta</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Config</TableCell>
-                <TableCell sx={{ fontWeight: "bold" }} align="center">
-                  Ações
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {allRules.map((rule) => (
-                <TableRow key={rule._id} hover>
-                  <TableCell>
-                    <Tooltip title={rule.description}>
-                      <span style={{ cursor: "help" }}>{rule.name}</span>
-                    </Tooltip>
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={
-                        rule.type === RuleType.Score
-                          ? "Pontuação"
-                          : "Desempate"
-                      }
-                      color={
-                        rule.type === RuleType.Score ? "success" : "warning"
-                      }
-                      size="small"
-                      variant="outlined"
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={
-                        rule.strategy === Strategy.PerOption
-                          ? "Por Opção"
-                          : rule.strategy === Strategy.InverseProportional
-                            ? "Proporcional Inversa"
-                            : rule.strategy === Strategy.ComputedInverseProportional
-                              ? "Prop. Inversa Calculada"
-                              : "Faixa Numérica"
-                      }
-                      size="small"
-                      variant="outlined"
-                    />
-                  </TableCell>
-                  <TableCell sx={{ maxWidth: 200 }}>
-                    <Typography
-                      variant="body2"
-                      noWrap
-                      title={getQuestionText(rule)}
+                {/* Botões de Ação */}
+                <div className="flex flex-wrap gap-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => modals.createRule.open()}
+                  >
+                    <Plus aria-hidden="true" />
+                    Nova Regra
+                  </Button>
+                  {ruleSet && (
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={handleRunRanking}
+                      loading={rankingLoading}
+                      disabled={ruleSet.scoringRules.length === 0}
                     >
-                      {getQuestionText(rule)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell sx={{ maxWidth: 200 }}>
-                    <Typography
-                      variant="body2"
-                      noWrap
-                      title={getRuleConfig(rule)}
-                    >
-                      {getRuleConfig(rule)}
-                    </Typography>
-                  </TableCell>
-                  <TableCell align="center">
-                    <Tooltip title="Deletar regra">
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => handleDeleteRule(rule._id)}
-                      >
-                        <Trash2 size="1em" />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
+                      {!rankingLoading && <Play aria-hidden="true" />}
+                      {rankingLoading ? "Calculando..." : "Executar Ranking"}
+                    </Button>
+                  )}
+                </div>
 
-      {/* Resultado do Ranking */}
-      {rankingRows.length > 0 && (
-        <>
-          <Divider sx={{ mb: 3 }} />
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              flexWrap: "wrap",
-              gap: 1,
-              mb: 1,
-            }}
-          >
-            <Box>
-              <Typography variant="h6">Resultado do Ranking</Typography>
-              <Typography variant="caption" color="text.secondary">
-                {rankingRows.length} aluno(s) ranqueado(s)
-              </Typography>
-            </Box>
-            <Box sx={{ display: "flex", gap: 1 }}>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<Download size="1em" />}
-                onClick={handleDownloadCSV}
-              >
-                CSV
-              </Button>
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<Download size="1em" />}
-                onClick={handleDownloadPDF}
-              >
-                PDF
-              </Button>
-            </Box>
-          </Box>
-          <TableContainer component={Paper} elevation={1}>
-            <Table size="small">
-              <TableHead>
-                <TableRow sx={{ backgroundColor: "grey.100" }}>
-                  <TableCell sx={{ fontWeight: "bold" }}>Posição</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Nome</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }}>Email</TableCell>
-                  <TableCell sx={{ fontWeight: "bold" }} align="right">
-                    Pontuação
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rankingRows.map((row, index) => (
-                  <TableRow key={index} hover>
-                    <TableCell>
-                      <Chip
-                        label={`${row.rank}º`}
-                        color={row.rank <= 3 ? "success" : "default"}
-                        size="small"
-                        variant={row.rank <= 3 ? "filled" : "outlined"}
-                      />
-                    </TableCell>
-                    <TableCell>{row.nome}</TableCell>
-                    <TableCell>{row.maskedEmail}</TableCell>
-                    <TableCell align="right">
-                      <Typography fontWeight="bold">
-                        {row.totalScore}
-                      </Typography>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </>
-      )}
+                <Separator />
 
-      {/* Modal de Criação de Regra */}
-      {modals.createRule.isOpen && (
-        <ModalCreateRule
-          isOpen={modals.createRule.isOpen}
-          handleClose={() => modals.createRule.close()}
-          questions={questions}
-          onSuccess={(rule: RuleForm) => {
-            modals.createRule.close();
-            handleRuleCreated(rule);
-          }}
-        />
-      )}
-            </>
+                {/* Tabela de Regras */}
+                <section className="grid gap-3">
+                  <h3 className="text-h4">Regras ({allRules.length})</h3>
+
+                  {allRules.length === 0 ? (
+                    <p className="py-8 text-center text-body text-muted-foreground">
+                      Nenhuma regra criada ainda. Clique em "Nova Regra" para começar.
+                    </p>
+                  ) : (
+                    <div className="rounded-lg border">
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead>Nome</TableHead>
+                            <TableHead>Tipo</TableHead>
+                            <TableHead>Estratégia</TableHead>
+                            <TableHead>Pergunta</TableHead>
+                            <TableHead>Config</TableHead>
+                            <TableHead className="text-center">Ações</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {allRules.map((rule) => (
+                            <TableRow key={rule._id}>
+                              <TableCell>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className="cursor-help text-left"
+                                    >
+                                      {rule.name}
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent className="max-w-xs">
+                                    {rule.description}
+                                  </TooltipContent>
+                                </Tooltip>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline">
+                                  {rule.type === RuleType.Score
+                                    ? "Pontuação"
+                                    : "Desempate"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell>
+                                <Badge variant="outline">
+                                  {rule.strategy === Strategy.PerOption
+                                    ? "Por Opção"
+                                    : rule.strategy === Strategy.InverseProportional
+                                      ? "Proporcional Inversa"
+                                      : rule.strategy === Strategy.ComputedInverseProportional
+                                        ? "Prop. Inversa Calculada"
+                                        : "Faixa Numérica"}
+                                </Badge>
+                              </TableCell>
+                              <TableCell className="max-w-[200px]">
+                                <p
+                                  className="truncate text-body"
+                                  title={getQuestionText(rule)}
+                                >
+                                  {getQuestionText(rule)}
+                                </p>
+                              </TableCell>
+                              <TableCell className="max-w-[200px]">
+                                <p
+                                  className="truncate text-body"
+                                  title={getRuleConfig(rule)}
+                                >
+                                  {getRuleConfig(rule)}
+                                </p>
+                              </TableCell>
+                              <TableCell className="text-center">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      size="icon"
+                                      variant="ghost"
+                                      aria-label={`Deletar regra ${rule.name}`}
+                                      onClick={() => handleDeleteRule(rule._id)}
+                                    >
+                                      <Trash2 aria-hidden="true" className="text-destructive" />
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent>Deletar regra</TooltipContent>
+                                </Tooltip>
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </div>
+                  )}
+                </section>
+
+                {/* Resultado do Ranking */}
+                {rankingRows.length > 0 && (
+                  <>
+                    <Separator />
+                    <section className="grid gap-3">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <h3 className="text-h4">Resultado do Ranking</h3>
+                          <p className="text-caption text-muted-foreground">
+                            {rankingRows.length} aluno(s) ranqueado(s)
+                          </p>
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleDownloadCSV}
+                          >
+                            <Download aria-hidden="true" />
+                            CSV
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={handleDownloadPDF}
+                          >
+                            <Download aria-hidden="true" />
+                            PDF
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="rounded-lg border">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Posição</TableHead>
+                              <TableHead>Nome</TableHead>
+                              <TableHead>Email</TableHead>
+                              <TableHead className="text-right">Pontuação</TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {rankingRows.map((row, index) => (
+                              <TableRow key={index}>
+                                <TableCell>
+                                  <Badge variant={row.rank <= 3 ? "default" : "outline"}>
+                                    {`${row.rank}º`}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell>{row.nome}</TableCell>
+                                <TableCell>{row.maskedEmail}</TableCell>
+                                <TableCell className="text-right font-semibold">
+                                  {row.totalScore}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </div>
+                    </section>
+                  </>
+                )}
+
+                {/* Modal de Criação de Regra */}
+                {modals.createRule.isOpen && (
+                  <ModalCreateRule
+                    isOpen={modals.createRule.isOpen}
+                    handleClose={() => modals.createRule.close()}
+                    questions={questions}
+                    onSuccess={(rule: RuleForm) => {
+                      modals.createRule.close();
+                      handleRuleCreated(rule);
+                    }}
+                  />
+                )}
+              </div>
+            </TooltipProvider>
           )}
         </DialogBody>
       </DialogContent>

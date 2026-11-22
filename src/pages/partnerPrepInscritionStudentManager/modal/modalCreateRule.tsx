@@ -19,22 +19,20 @@ import {
   RuleType,
   Strategy,
 } from "@/types/partnerPrepForm/ruleForm";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { OptionsSelect } from "@/components/ui/options-select";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
 import {
-  Alert,
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Divider,
-  FormControl,
-  FormLabel,
-  IconButton,
-  MenuItem,
-  Select,
-  TextField,
   Tooltip,
-  Typography,
-} from "@mui/material";
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useState } from "react";
 import { Info, Plus, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -365,482 +363,437 @@ export function ModalCreateRule({
         </DialogHeader>
 
         <DialogBody className="-mx-1 px-1 pt-2">
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
-        <TextField
-          label="Nome da Regra *"
-          value={formData.name}
-          onChange={(e) => handleInputChange("name", e.target.value)}
-          error={!!errors.name}
-          helperText={errors.name}
-          fullWidth
-          variant="outlined"
-          placeholder="Ex: Pontuação por renda familiar"
-        />
+          <div className="flex flex-col gap-6">
+            <Field label="Nome da Regra" required error={errors.name || undefined}>
+              <Input
+                value={formData.name}
+                onChange={(e) => handleInputChange("name", e.target.value)}
+                placeholder="Ex: Pontuação por renda familiar"
+              />
+            </Field>
 
-        <TextField
-          label="Descrição *"
-          value={formData.description}
-          onChange={(e) => handleInputChange("description", e.target.value)}
-          error={!!errors.description}
-          helperText={errors.description}
-          multiline
-          rows={2}
-          fullWidth
-          variant="outlined"
-        />
+            <Field
+              label="Descrição"
+              required
+              error={errors.description || undefined}
+            >
+              <Textarea
+                value={formData.description}
+                onChange={(e) => handleInputChange("description", e.target.value)}
+                rows={2}
+              />
+            </Field>
 
-        <Box sx={{ display: "flex", gap: 2, alignItems: "flex-start" }}>
-          <TextField
-            label="Tipo *"
-            select
-            SelectProps={{ MenuProps: { disablePortal: true } }}
-            value={formData.type}
-            onChange={(e) => handleInputChange("type", e.target.value)}
-            fullWidth
-            variant="outlined"
-          >
-            <MenuItem value={RuleType.Score}>Pontuação</MenuItem>
-            <MenuItem value={RuleType.TieBreaker}>Desempate</MenuItem>
-          </TextField>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
+              <Field label="Tipo" required className="flex-1">
+                <OptionsSelect
+                  value={formData.type}
+                  onValueChange={(v) => handleInputChange("type", v)}
+                  options={[
+                    { value: RuleType.Score, label: "Pontuação" },
+                    { value: RuleType.TieBreaker, label: "Desempate" },
+                  ]}
+                />
+              </Field>
 
-          <TextField
-            label="Peso"
-            type="number"
-            value={formData.weight}
-            onChange={(e) => handleInputChange("weight", e.target.value)}
-            variant="outlined"
-            sx={{ width: 120 }}
-            inputProps={{ min: 1 }}
-          />
-        </Box>
+              <Field label="Peso" className="sm:w-32">
+                <Input
+                  type="number"
+                  value={formData.weight}
+                  onChange={(e) => handleInputChange("weight", e.target.value)}
+                  min={1}
+                />
+              </Field>
+            </div>
 
-        {/* Strategy selector - show ComputedInverseProportional option always */}
-        <TextField
-          label="Modo da Regra"
-          select
-          SelectProps={{ MenuProps: { disablePortal: true } }}
-          value={isComputedStrategy(formData.strategy) ? "computed" : "single"}
-          onChange={(e) => {
-            if (e.target.value === "computed") {
-              handleStrategyChange(Strategy.ComputedInverseProportional);
-            } else {
-              handleStrategyChange(Strategy.PerOption);
-            }
-          }}
-          fullWidth
-          variant="outlined"
-        >
-          <MenuItem value="single">Pergunta Única</MenuItem>
-          <MenuItem value="computed">Proporcional Inversa Calculada (múltiplas perguntas)</MenuItem>
-        </TextField>
+            {/* Strategy selector - show ComputedInverseProportional option always */}
+            <Field label="Modo da Regra">
+              <OptionsSelect
+                value={isComputedStrategy(formData.strategy) ? "computed" : "single"}
+                onValueChange={(v) => {
+                  if (v === "computed") {
+                    handleStrategyChange(Strategy.ComputedInverseProportional);
+                  } else {
+                    handleStrategyChange(Strategy.PerOption);
+                  }
+                }}
+                options={[
+                  { value: "single", label: "Pergunta Única" },
+                  {
+                    value: "computed",
+                    label: "Proporcional Inversa Calculada (múltiplas perguntas)",
+                  },
+                ]}
+              />
+            </Field>
 
-        {/* ==================== SINGLE QUESTION MODE ==================== */}
-        {!isComputedStrategy(formData.strategy) && (
-          <>
-            <FormControl fullWidth error={!!errors.questionId}>
-              <FormLabel>Pergunta Vinculada *</FormLabel>
-              <Select
-                value={formData.questionId}
-                onChange={(e) => handleQuestionChange(e.target.value)}
-                displayEmpty
-                MenuProps={{ disablePortal: true }}
-              >
-                <MenuItem value="" disabled>
-                  Selecione uma pergunta
-                </MenuItem>
-                {questions.map((q) => (
-                  <MenuItem key={q._id} value={q._id}>
-                    {q.text}
-                  </MenuItem>
-                ))}
-              </Select>
-              {errors.questionId && (
-                <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
-                  {errors.questionId}
-                </Typography>
-              )}
-            </FormControl>
-
-            {selectedQuestion && (
+            {/* ==================== SINGLE QUESTION MODE ==================== */}
+            {!isComputedStrategy(formData.strategy) && (
               <>
-                <Divider />
+                <Field
+                  label="Pergunta Vinculada"
+                  required
+                  error={errors.questionId || undefined}
+                >
+                  <OptionsSelect
+                    value={formData.questionId}
+                    onValueChange={handleQuestionChange}
+                    placeholder="Selecione uma pergunta"
+                    options={questions.map((q) => ({
+                      value: q._id,
+                      label: q.text,
+                    }))}
+                  />
+                </Field>
 
-                {selectedQuestion.answerType === AnswerType.Number && (
-                  <TextField
-                    label="Estratégia de Pontuação *"
-                    select
-                    SelectProps={{ MenuProps: { disablePortal: true } }}
-                    value={formData.strategy}
-                    onChange={(e) => handleInputChange("strategy", e.target.value)}
-                    fullWidth
-                    variant="outlined"
-                  >
-                    <MenuItem value={Strategy.NumericRange}>Faixa Numérica</MenuItem>
-                    <MenuItem value={Strategy.InverseProportional}>Proporcional Inversa</MenuItem>
-                  </TextField>
-                )}
+                {selectedQuestion && (
+                  <>
+                    <Separator />
 
-                {formData.strategy === Strategy.PerOption && selectedQuestion.options && (
-                  <Box>
-                    <FormLabel>Pontuação por Opção *</FormLabel>
-                    {errors.config && (
-                      <Alert severity="error" sx={{ my: 1 }}>
-                        {errors.config}
-                      </Alert>
+                    {selectedQuestion.answerType === AnswerType.Number && (
+                      <Field label="Estratégia de Pontuação" required>
+                        <OptionsSelect
+                          value={formData.strategy}
+                          onValueChange={(v) => handleInputChange("strategy", v)}
+                          options={[
+                            { value: Strategy.NumericRange, label: "Faixa Numérica" },
+                            {
+                              value: Strategy.InverseProportional,
+                              label: "Proporcional Inversa",
+                            },
+                          ]}
+                        />
+                      </Field>
                     )}
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mt: 1 }}>
-                      {selectedQuestion.options.map((option) => (
-                        <Box key={option} sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-                          <Typography sx={{ flex: 1, fontSize: "0.875rem" }}>
-                            {option}
-                          </Typography>
-                          <TextField
-                            type="number"
-                            value={formData.optionPoints[option] ?? "0"}
-                            onChange={(e) => handleOptionPointChange(option, e.target.value)}
-                            variant="outlined"
-                            size="small"
-                            sx={{ width: 100 }}
-                            label="Pontos"
-                          />
-                        </Box>
-                      ))}
-                    </Box>
-                  </Box>
-                )}
 
-                {formData.strategy === Strategy.NumericRange && (
-                  <Box>
-                    <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 1, mb: 1 }}>
-                      <FormLabel>Faixas Numéricas *</FormLabel>
-                      <Button startIcon={<Plus size="1em" />} onClick={addRange} size="small" variant="outlined">
-                        Adicionar Faixa
-                      </Button>
-                    </Box>
-                    {errors.config && (
-                      <Alert severity="error" sx={{ mb: 1 }}>
-                        {errors.config}
-                      </Alert>
+                    {formData.strategy === Strategy.PerOption && selectedQuestion.options && (
+                      <div className="grid gap-2">
+                        <h3 className="text-label">
+                          Pontuação por Opção
+                          <span aria-hidden="true" className="ml-0.5 text-destructive">
+                            *
+                          </span>
+                        </h3>
+                        {errors.config && (
+                          <Alert variant="destructive" title={errors.config} />
+                        )}
+                        <div className="flex flex-col gap-2">
+                          {selectedQuestion.options.map((option) => (
+                            <div key={option} className="flex items-center gap-4">
+                              <span className="min-w-0 flex-1 break-words text-body">
+                                {option}
+                              </span>
+                              <Input
+                                type="number"
+                                value={formData.optionPoints[option] ?? "0"}
+                                onChange={(e) => handleOptionPointChange(option, e.target.value)}
+                                aria-label={`Pontos para ${option}`}
+                                className="w-24 shrink-0"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
-                    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-                      {formData.ranges.map((range, index) => (
-                        <Box key={index} sx={{ display: "flex", gap: 1, alignItems: "center" }}>
-                          <TextField
-                            type="number"
-                            value={range.min}
-                            onChange={(e) => updateRange(index, "min", e.target.value)}
-                            variant="outlined"
-                            size="small"
-                            label="Mín"
-                            placeholder="∞"
-                            sx={{ flex: 1, minWidth: 0 }}
-                          />
-                          <TextField
-                            type="number"
-                            value={range.max}
-                            onChange={(e) => updateRange(index, "max", e.target.value)}
-                            variant="outlined"
-                            size="small"
-                            label="Máx"
-                            placeholder="∞"
-                            sx={{ flex: 1, minWidth: 0 }}
-                          />
-                          <TextField
-                            type="number"
-                            value={range.points}
-                            onChange={(e) => updateRange(index, "points", e.target.value)}
-                            variant="outlined"
-                            size="small"
-                            label="Pontos"
-                            sx={{ width: { xs: 80, sm: 100 }, flexShrink: 0 }}
-                          />
-                          {formData.ranges.length > 1 && (
-                            <IconButton onClick={() => removeRange(index)} color="error" size="small">
-                              <Trash2 size="1em" />
-                            </IconButton>
-                          )}
-                        </Box>
-                      ))}
-                    </Box>
-                  </Box>
-                )}
 
-                {formData.strategy === Strategy.InverseProportional && (
-                  <Box>
-                    <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                      <FormLabel>Proporcional Inversa *</FormLabel>
-                      <Tooltip
-                        title={
-                          "Quanto menor o valor informado pelo aluno, maior a pontuação.\n\n" +
-                          "• Valor de Referência: valor limite até o qual o aluno recebe a pontuação máxima (ex: renda de R$ 300).\n" +
-                          "• Pontuação Máxima: pontos atribuídos quando o valor do aluno é igual ou menor que a referência.\n\n" +
-                          "Fórmula: pontuação = máx × min(1, referência ÷ valor do aluno).\n" +
-                          "Exemplo: ref = 300, máx = 10 → aluno com 600 recebe 5pts; aluno com 150 recebe 10pts."
-                        }
-                        enterTouchDelay={0}
-                        leaveTouchDelay={5000}
-                        arrow
-                        slotProps={{
-                          tooltip: {
-                            sx: { whiteSpace: "pre-line", maxWidth: 320, fontSize: "0.8rem" },
-                          },
-                        }}
-                      >
-                        <IconButton size="small" sx={{ color: "info.main" }}>
-                          <Info className="h-4 w-4" />
-                        </IconButton>
-                      </Tooltip>
-                    </Box>
-                    {errors.config && (
-                      <Alert severity="error" sx={{ my: 1 }}>
-                        {errors.config}
-                      </Alert>
+                    {formData.strategy === Strategy.NumericRange && (
+                      <div className="grid gap-2">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <h3 className="text-label">
+                            Faixas Numéricas
+                            <span aria-hidden="true" className="ml-0.5 text-destructive">
+                              *
+                            </span>
+                          </h3>
+                          <Button onClick={addRange} size="sm" variant="outline">
+                            <Plus aria-hidden="true" />
+                            Adicionar Faixa
+                          </Button>
+                        </div>
+                        {errors.config && (
+                          <Alert variant="destructive" title={errors.config} />
+                        )}
+                        <div className="flex flex-col gap-3">
+                          {formData.ranges.map((range, index) => (
+                            <div key={index} className="flex items-end gap-2">
+                              <Field label="Mín" className="min-w-0 flex-1">
+                                <Input
+                                  type="number"
+                                  value={range.min}
+                                  onChange={(e) => updateRange(index, "min", e.target.value)}
+                                  placeholder="∞"
+                                />
+                              </Field>
+                              <Field label="Máx" className="min-w-0 flex-1">
+                                <Input
+                                  type="number"
+                                  value={range.max}
+                                  onChange={(e) => updateRange(index, "max", e.target.value)}
+                                  placeholder="∞"
+                                />
+                              </Field>
+                              <Field label="Pontos" className="w-20 shrink-0 sm:w-24">
+                                <Input
+                                  type="number"
+                                  value={range.points}
+                                  onChange={(e) => updateRange(index, "points", e.target.value)}
+                                />
+                              </Field>
+                              {formData.ranges.length > 1 && (
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  aria-label={`Remover faixa ${index + 1}`}
+                                  onClick={() => removeRange(index)}
+                                >
+                                  <Trash2 aria-hidden="true" />
+                                </Button>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
                     )}
-                    <Box sx={{ display: "flex", gap: 2, mt: 1 }}>
-                      <TextField
-                        type="number"
-                        value={formData.referenceValue}
-                        onChange={(e) => handleInputChange("referenceValue", e.target.value)}
-                        variant="outlined"
-                        label="Valor de Referência"
-                        inputProps={{ min: 0.01, step: "any" }}
-                        sx={{ flex: 1 }}
-                      />
-                      <TextField
-                        type="number"
-                        value={formData.maxScore}
-                        onChange={(e) => handleInputChange("maxScore", e.target.value)}
-                        variant="outlined"
-                        label="Pontuação Máxima"
-                        sx={{ flex: 1 }}
-                      />
-                    </Box>
-                  </Box>
+
+                    {formData.strategy === Strategy.InverseProportional && (
+                      <div className="grid gap-2">
+                        <div className="flex items-center gap-1">
+                          <h3 className="text-label">
+                            Proporcional Inversa
+                            <span aria-hidden="true" className="ml-0.5 text-destructive">
+                              *
+                            </span>
+                          </h3>
+                          <TooltipProvider delayDuration={200}>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  aria-label="Como funciona a proporcional inversa"
+                                >
+                                  <Info aria-hidden="true" />
+                                </Button>
+                              </TooltipTrigger>
+                              <TooltipContent className="max-w-xs whitespace-pre-line">
+                                {"Quanto menor o valor informado pelo aluno, maior a pontuação.\n\n" +
+                                  "• Valor de Referência: valor limite até o qual o aluno recebe a pontuação máxima (ex: renda de R$ 300).\n" +
+                                  "• Pontuação Máxima: pontos atribuídos quando o valor do aluno é igual ou menor que a referência.\n\n" +
+                                  "Fórmula: pontuação = máx × min(1, referência ÷ valor do aluno).\n" +
+                                  "Exemplo: ref = 300, máx = 10 → aluno com 600 recebe 5pts; aluno com 150 recebe 10pts."}
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        </div>
+                        {errors.config && (
+                          <Alert variant="destructive" title={errors.config} />
+                        )}
+                        <div className="flex flex-col gap-4 sm:flex-row">
+                          <Field label="Valor de Referência" className="flex-1">
+                            <Input
+                              type="number"
+                              value={formData.referenceValue}
+                              onChange={(e) => handleInputChange("referenceValue", e.target.value)}
+                              min={0.01}
+                              step="any"
+                            />
+                          </Field>
+                          <Field label="Pontuação Máxima" className="flex-1">
+                            <Input
+                              type="number"
+                              value={formData.maxScore}
+                              onChange={(e) => handleInputChange("maxScore", e.target.value)}
+                            />
+                          </Field>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </>
             )}
-          </>
-        )}
 
-        {/* ==================== COMPUTED INVERSE PROPORTIONAL MODE ==================== */}
-        {isComputedStrategy(formData.strategy) && (
-          <>
-            <Divider />
+            {/* ==================== COMPUTED INVERSE PROPORTIONAL MODE ==================== */}
+            {isComputedStrategy(formData.strategy) && (
+              <>
+                <Separator />
 
-            <Box>
-              <Box sx={{ display: "flex", alignItems: "center", gap: 0.5, mb: 1 }}>
-                <FormLabel>Proporcional Inversa Calculada *</FormLabel>
-                <Tooltip
-                  title={
-                    "Combina respostas de múltiplas perguntas numéricas usando uma expressão matemática, e aplica proporcionalidade inversa ao resultado.\n\n" +
-                    "Exemplo: Renda per capita = Renda familiar (Q0) / Nº de pessoas (Q1).\n" +
-                    "Com ref = 750, máx = 10:\n" +
-                    "• Aluno com renda 3000 e 4 pessoas → 3000/4 = 750 → 10pts\n" +
-                    "• Aluno com renda 5000 e 2 pessoas → 5000/2 = 2500 → 3pts"
-                  }
-                  enterTouchDelay={0}
-                  leaveTouchDelay={5000}
-                  arrow
-                  slotProps={{
-                    tooltip: {
-                      sx: { whiteSpace: "pre-line", maxWidth: 360, fontSize: "0.8rem" },
-                    },
-                  }}
-                >
-                  <IconButton size="small" sx={{ color: "info.main" }}>
-                    <Info className="h-4 w-4" />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-
-              {errors.questionId && (
-                <Alert severity="error" sx={{ mb: 1 }}>
-                  {errors.questionId}
-                </Alert>
-              )}
-
-              {/* Selected questions list */}
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1, mb: 1 }}>
-                {formData.computedQuestionIds.map((qId, index) => {
-                  const q = questions.find((q) => q._id === qId);
-                  return (
-                    <Box key={qId} sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                      <Chip
-                        label={`Q${index}`}
-                        size="small"
-                        color="primary"
-                        variant="outlined"
-                      />
-                      <Typography variant="body2" sx={{ flex: 1 }}>
-                        {q?.text ?? qId}
-                      </Typography>
-                      <IconButton
-                        size="small"
-                        color="error"
-                        onClick={() => removeComputedQuestion(index)}
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </IconButton>
-                    </Box>
-                  );
-                })}
-              </Box>
-
-              {/* Add question dropdown (limit 3 questions) */}
-              {formData.computedQuestionIds.length < 3 &&
-                numericQuestions.filter((q) => !formData.computedQuestionIds.includes(q._id)).length > 0 && (
-                <FormControl fullWidth size="small">
-                  <Select
-                    value=""
-                    onChange={(e) => addComputedQuestion(e.target.value)}
-                    displayEmpty
-                    MenuProps={{ disablePortal: true }}
-                  >
-                    <MenuItem value="" disabled>
-                      Adicionar pergunta numérica...
-                    </MenuItem>
-                    {numericQuestions
-                      .filter((q) => !formData.computedQuestionIds.includes(q._id))
-                      .map((q) => (
-                        <MenuItem key={q._id} value={q._id}>
-                          {q.text}
-                        </MenuItem>
-                      ))}
-                  </Select>
-                </FormControl>
-              )}
-            </Box>
-
-            {/* Expression field */}
-            {formData.computedQuestionIds.length >= 2 && (
-              <Box>
-                <FormLabel>Expressão Matemática *</FormLabel>
-                {(() => {
-                  const { basic, advanced } = getExpressionTemplates(
-                    formData.computedQuestionIds.length
-                  );
-                  return (
-                    <>
-                      <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 0.5 }}>
-                        Sugestões principais
-                      </Typography>
-                      <Box sx={{ display: "flex", gap: 0.5, flexWrap: "wrap", my: 1 }}>
-                        {basic.map((t) => (
-                          <Chip
-                            key={t.value}
-                            label={t.label}
-                            size="small"
-                            variant="outlined"
-                            clickable
-                            onClick={() => handleInputChange("expression", t.value)}
-                            color={formData.expression === t.value ? "primary" : "default"}
-                          />
-                        ))}
-                      </Box>
-                      {advanced.length > 0 && (
-                        <>
+                <div className="grid gap-2">
+                  <div className="flex items-center gap-1">
+                    <h3 className="text-label">
+                      Proporcional Inversa Calculada
+                      <span aria-hidden="true" className="ml-0.5 text-destructive">
+                        *
+                      </span>
+                    </h3>
+                    <TooltipProvider delayDuration={200}>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
                           <Button
-                            size="small"
-                            variant="text"
-                            onClick={() => setShowAdvancedExpressions((prev) => !prev)}
-                            sx={{ mb: 1, textTransform: "none", px: 0 }}
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Como funciona a proporcional inversa calculada"
                           >
-                            {showAdvancedExpressions
-                              ? "Ocultar combinações avançadas"
-                              : "Mostrar combinações avançadas"}
+                            <Info aria-hidden="true" />
                           </Button>
-                          {showAdvancedExpressions && (
-                            <Box
-                              sx={{
-                                display: "flex",
-                                gap: 0.5,
-                                flexWrap: "wrap",
-                                mb: 1,
-                                maxHeight: 140,
-                                overflowY: "auto",
-                                pr: 0.5,
-                              }}
-                            >
-                              {advanced.map((t) => (
-                                <Chip
-                                  key={t.value}
-                                  label={t.label}
-                                  size="small"
-                                  variant="outlined"
-                                  clickable
-                                  onClick={() => handleInputChange("expression", t.value)}
-                                  color={formData.expression === t.value ? "primary" : "default"}
-                                />
-                              ))}
-                            </Box>
+                        </TooltipTrigger>
+                        <TooltipContent className="max-w-sm whitespace-pre-line">
+                          {"Combina respostas de múltiplas perguntas numéricas usando uma expressão matemática, e aplica proporcionalidade inversa ao resultado.\n\n" +
+                            "Exemplo: Renda per capita = Renda familiar (Q0) / Nº de pessoas (Q1).\n" +
+                            "Com ref = 750, máx = 10:\n" +
+                            "• Aluno com renda 3000 e 4 pessoas → 3000/4 = 750 → 10pts\n" +
+                            "• Aluno com renda 5000 e 2 pessoas → 5000/2 = 2500 → 3pts"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </div>
+
+                  {errors.questionId && (
+                    <Alert variant="destructive" title={errors.questionId} />
+                  )}
+
+                  {/* Selected questions list */}
+                  <div className="flex flex-col gap-2">
+                    {formData.computedQuestionIds.map((qId, index) => {
+                      const q = questions.find((q) => q._id === qId);
+                      return (
+                        <div key={qId} className="flex items-center gap-2">
+                          <Badge variant="outline">{`Q${index}`}</Badge>
+                          <span className="min-w-0 flex-1 break-words text-body">
+                            {q?.text ?? qId}
+                          </span>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label={`Remover Q${index}`}
+                            onClick={() => removeComputedQuestion(index)}
+                          >
+                            <Trash2 aria-hidden="true" />
+                          </Button>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Add question dropdown (limit 3 questions) */}
+                  {formData.computedQuestionIds.length < 3 &&
+                    numericQuestions.filter((q) => !formData.computedQuestionIds.includes(q._id)).length > 0 && (
+                    <OptionsSelect
+                      aria-label="Adicionar pergunta numérica"
+                      value=""
+                      onValueChange={addComputedQuestion}
+                      placeholder="Adicionar pergunta numérica..."
+                      options={numericQuestions
+                        .filter((q) => !formData.computedQuestionIds.includes(q._id))
+                        .map((q) => ({ value: q._id, label: q.text }))}
+                    />
+                  )}
+                </div>
+
+                {/* Expression field */}
+                {formData.computedQuestionIds.length >= 2 && (
+                  <div className="grid gap-2">
+                    <h3 className="text-label">
+                      Expressão Matemática
+                      <span aria-hidden="true" className="ml-0.5 text-destructive">
+                        *
+                      </span>
+                    </h3>
+                    {(() => {
+                      const { basic, advanced } = getExpressionTemplates(
+                        formData.computedQuestionIds.length
+                      );
+                      const chip = (t: { label: string; value: string }) => (
+                        <Button
+                          key={t.value}
+                          size="sm"
+                          variant={formData.expression === t.value ? "primary" : "outline"}
+                          aria-pressed={formData.expression === t.value}
+                          onClick={() => handleInputChange("expression", t.value)}
+                        >
+                          {t.label}
+                        </Button>
+                      );
+                      return (
+                        <>
+                          <p className="text-caption text-muted-foreground">
+                            Sugestões principais
+                          </p>
+                          <div className="flex flex-wrap gap-2">{basic.map(chip)}</div>
+                          {advanced.length > 0 && (
+                            <>
+                              <Button
+                                size="sm"
+                                variant="ghost"
+                                className="justify-start px-0"
+                                onClick={() => setShowAdvancedExpressions((prev) => !prev)}
+                              >
+                                {showAdvancedExpressions
+                                  ? "Ocultar combinações avançadas"
+                                  : "Mostrar combinações avançadas"}
+                              </Button>
+                              {showAdvancedExpressions && (
+                                <div className="flex max-h-36 flex-wrap gap-2 overflow-y-auto pr-1">
+                                  {advanced.map(chip)}
+                                </div>
+                              )}
+                            </>
                           )}
                         </>
-                      )}
-                    </>
-                  );
-                })()}
-                <TextField
-                  value={formData.expression}
-                  variant="outlined"
-                  fullWidth
-                  placeholder="Q0 / Q1"
-                  size="small"
-                  InputProps={{ readOnly: true }}
-                />
-                {/* Legend */}
-                <Box sx={{ mt: 0.5 }}>
-                  {formData.computedQuestionIds.map((qId, i) => {
-                    const q = questions.find((q) => q._id === qId);
-                    return (
-                      <Typography key={qId} variant="caption" color="text.secondary" display="block">
-                        Q{i} = {q?.text ?? qId}
-                      </Typography>
-                    );
-                  })}
-                </Box>
-              </Box>
-            )}
+                      );
+                    })()}
+                    <Input
+                      value={formData.expression}
+                      placeholder="Q0 / Q1"
+                      readOnly
+                      aria-label="Expressão Matemática"
+                    />
+                    {/* Legend */}
+                    <div>
+                      {formData.computedQuestionIds.map((qId, i) => {
+                        const q = questions.find((q) => q._id === qId);
+                        return (
+                          <p key={qId} className="text-caption text-muted-foreground">
+                            Q{i} = {q?.text ?? qId}
+                          </p>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-            {/* Reference value and max score */}
-            {errors.config && (
-              <Alert severity="error">
-                {errors.config}
-              </Alert>
+                {/* Reference value and max score */}
+                {errors.config && (
+                  <Alert variant="destructive" title={errors.config} />
+                )}
+                <div className="flex flex-col gap-4 sm:flex-row">
+                  <Field label="Valor de Referência" className="flex-1">
+                    <Input
+                      type="number"
+                      value={formData.referenceValue}
+                      onChange={(e) => handleInputChange("referenceValue", e.target.value)}
+                      min={0.01}
+                      step="any"
+                    />
+                  </Field>
+                  <Field label="Pontuação Máxima" className="flex-1">
+                    <Input
+                      type="number"
+                      value={formData.maxScore}
+                      onChange={(e) => handleInputChange("maxScore", e.target.value)}
+                    />
+                  </Field>
+                </div>
+              </>
             )}
-            <Box sx={{ display: "flex", flexDirection: { xs: "column", sm: "row" }, gap: 2 }}>
-              <TextField
-                type="number"
-                value={formData.referenceValue}
-                onChange={(e) => handleInputChange("referenceValue", e.target.value)}
-                variant="outlined"
-                label="Valor de Referência"
-                inputProps={{ min: 0.01, step: "any" }}
-                sx={{ flex: 1 }}
-              />
-              <TextField
-                type="number"
-                value={formData.maxScore}
-                onChange={(e) => handleInputChange("maxScore", e.target.value)}
-                variant="outlined"
-                label="Pontuação Máxima"
-                sx={{ flex: 1 }}
-              />
-            </Box>
-          </>
-        )}
-      </Box>
+          </div>
         </DialogBody>
 
         <DialogFooter>
-          <Button onClick={handleCloseModal} variant="outlined" disabled={loading}>
+          <Button onClick={handleCloseModal} variant="outline" disabled={loading}>
             Cancelar
           </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} /> : null}
-          >
+          <Button onClick={handleSubmit} variant="primary" loading={loading}>
             {loading ? "Criando..." : "Criar Regra"}
           </Button>
         </DialogFooter>

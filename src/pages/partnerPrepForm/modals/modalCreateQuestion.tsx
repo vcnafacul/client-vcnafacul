@@ -23,26 +23,17 @@ import {
   AnswerType,
   QuestionForm,
 } from "@/types/partnerPrepForm/questionForm";
-import {
-  Alert,
-  Box,
-  Button,
-  Chip,
-  CircularProgress,
-  Divider,
-  FormControl,
-  FormControlLabel,
-  FormLabel,
-  IconButton,
-  MenuItem,
-  Radio,
-  RadioGroup,
-  Select,
-  Switch,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { useState } from "react";
+import { Alert } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { OptionsSelect } from "@/components/ui/options-select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { useId, useState } from "react";
 import { Plus, Settings, Trash2 } from "lucide-react";
 import { toast } from "react-toastify";
 import { ModalConditions } from "./modalConditions";
@@ -88,6 +79,7 @@ export function ModalCreateQuestion({
   } = useAuthStore();
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [loading, setLoading] = useState(false);
+  const idOpcoes = useId();
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const modals = useModals(["modalConditions"]);
@@ -235,205 +227,166 @@ export function ModalCreateQuestion({
         </DialogHeader>
 
         <DialogBody className="-mx-1 px-1 pt-2">
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <div className="flex flex-col gap-6">
             {/* Texto da Pergunta */}
-            <TextField
-              label="Texto da Pergunta *"
-              value={formData.text}
-              onChange={(e) => handleInputChange("text", e.target.value)}
-              error={!!errors.text}
-              helperText={errors.text}
-              multiline
-              rows={3}
-              fullWidth
-              variant="outlined"
-            />
+            <Field label="Texto da Pergunta" required error={errors.text || undefined}>
+              <Textarea
+                value={formData.text}
+                onChange={(e) => handleInputChange("text", e.target.value)}
+                rows={3}
+              />
+            </Field>
 
             {/* Help Text */}
-            <TextField
+            <Field
               label="Texto de Ajuda (Opcional)"
-              value={formData.helpText}
-              onChange={(e) => handleInputChange("helpText", e.target.value)}
-              multiline
-              rows={2}
-              fullWidth
-              variant="outlined"
-              helperText="Texto adicional que aparecerá para ajudar o usuário"
-            />
+              hint="Texto adicional que aparecerá para ajudar o usuário"
+            >
+              <Textarea
+                value={formData.helpText}
+                onChange={(e) => handleInputChange("helpText", e.target.value)}
+                rows={2}
+              />
+            </Field>
 
             {/* Tipo de Resposta */}
-            <FormControl fullWidth>
-              <FormLabel component="legend">Tipo de Resposta *</FormLabel>
-              <Select
+            <Field label="Tipo de Resposta" required>
+              <OptionsSelect
                 value={formData.answerType}
-                onChange={(e) =>
-                  handleAnswerTypeChange(e.target.value as AnswerType)
-                }
-                fullWidth
-                MenuProps={{ disablePortal: true }}
-              >
-                <MenuItem value={AnswerType.Text}>Texto</MenuItem>
-                <MenuItem value={AnswerType.Number}>Número</MenuItem>
-                <MenuItem value={AnswerType.Boolean}>Sim/Não</MenuItem>
-                <MenuItem value={AnswerType.Options}>Opções (Dropdown)</MenuItem>
-              </Select>
-            </FormControl>
+                onValueChange={(v) => handleAnswerTypeChange(v as AnswerType)}
+                options={[
+                  { value: AnswerType.Text, label: "Texto" },
+                  { value: AnswerType.Number, label: "Número" },
+                  { value: AnswerType.Boolean, label: "Sim/Não" },
+                  { value: AnswerType.Options, label: "Opções (Dropdown)" },
+                ]}
+              />
+            </Field>
 
             {/* Collection Type - Só aparece para Options */}
             {isOptionsType && (
-              <FormControl>
-                <FormLabel component="legend">Tipo de Seleção *</FormLabel>
+              <fieldset className="grid gap-1.5">
+                <legend className="mb-1.5 text-label">
+                  Tipo de Seleção
+                  <span aria-hidden="true" className="ml-0.5 text-destructive">
+                    *
+                  </span>
+                  <span className="sr-only"> (obrigatório)</span>
+                </legend>
                 <RadioGroup
                   value={formData.collection}
-                  onChange={(e) =>
-                    handleInputChange(
-                      "collection",
-                      e.target.value as AnswerCollectionType
-                    )
+                  onValueChange={(v) =>
+                    handleInputChange("collection", v as AnswerCollectionType)
                   }
-                  row
+                  className="sm:grid-flow-col sm:justify-start sm:gap-6"
                 >
-                  <FormControlLabel
+                  <RadioGroupItem
                     value={AnswerCollectionType.Single}
-                    control={<Radio />}
                     label="Resposta Única"
                   />
-                  <FormControlLabel
+                  <RadioGroupItem
                     value={AnswerCollectionType.Multiple}
-                    control={<Radio />}
                     label="Múltiplas Respostas"
                   />
                 </RadioGroup>
-              </FormControl>
+              </fieldset>
             )}
 
             {/* Opções - Só aparece para Options */}
             {isOptionsType && (
-              <Box>
-                <Box
-                  sx={{
-                    display: "flex",
-                    justifyContent: "space-between",
-                    alignItems: "center",
-                    mb: 2,
-                  }}
-                >
-                  <FormLabel component="legend">Opções de Resposta *</FormLabel>
-                  <Button
-                    startIcon={<Plus size="1em" />}
-                    onClick={addOption}
-                    size="small"
-                    variant="outlined"
-                  >
+              <div role="group" aria-labelledby={idOpcoes} className="grid gap-4">
+                <div className="flex items-center justify-between gap-2">
+                  <span id={idOpcoes} className="text-label">
+                    Opções de Resposta
+                    <span aria-hidden="true" className="ml-0.5 text-destructive">
+                      *
+                    </span>
+                    <span className="sr-only"> (obrigatório)</span>
+                  </span>
+                  <Button onClick={addOption} size="sm" variant="outline">
+                    <Plus aria-hidden="true" />
                     Adicionar Opção
                   </Button>
-                </Box>
+                </div>
 
                 {errors.options && (
-                  <Alert severity="error" sx={{ mb: 2 }}>
-                    {errors.options}
-                  </Alert>
+                  <Alert variant="destructive" title={errors.options} />
                 )}
 
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <div className="flex flex-col gap-4">
                   {formData.options.map((option, index) => (
-                    <Box
-                      key={index}
-                      sx={{ display: "flex", gap: 1, alignItems: "center" }}
-                    >
-                      <TextField
-                        label={`Opção ${index + 1}`}
-                        value={option}
-                        onChange={(e) => updateOption(index, e.target.value)}
-                        fullWidth
-                        variant="outlined"
-                        size="small"
-                      />
+                    <div key={index} className="flex items-end gap-2">
+                      <Field label={`Opção ${index + 1}`} className="flex-1">
+                        <Input
+                          value={option}
+                          onChange={(e) => updateOption(index, e.target.value)}
+                        />
+                      </Field>
                       {formData.options.length > 1 && (
-                        <IconButton
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          aria-label={`Remover opção ${index + 1}`}
                           onClick={() => removeOption(index)}
-                          color="error"
-                          size="small"
                         >
-                          <Trash2 size="1em" />
-                        </IconButton>
+                          <Trash2 aria-hidden="true" />
+                        </Button>
                       )}
-                    </Box>
+                    </div>
                   ))}
-                </Box>
-              </Box>
+                </div>
+              </div>
             )}
 
-            <Divider />
+            <Separator />
 
             {/* Condições */}
-            <Box>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 2,
-                }}
-              >
-                <Typography variant="h6">Condições</Typography>
+            <div className="grid gap-4">
+              <div className="flex items-center justify-between gap-2">
+                <h3 className="text-h4">Condições</h3>
                 <Button
-                  startIcon={<Settings size="1em" />}
                   onClick={() => modals.modalConditions.open()}
-                  variant="outlined"
-                  size="small"
+                  variant="outline"
+                  size="sm"
                 >
+                  <Settings aria-hidden="true" />
                   {formData.conditions ? "Editar Condições" : "Definir Condições"}
                 </Button>
-              </Box>
+              </div>
 
               {formData.conditions && (
-                <Box sx={{ display: "flex", gap: 1, alignItems: "center", mb: 2 }}>
-                  <Chip
-                    label={`${formData.conditions.conditions.length} condição(ões)`}
-                    color="info"
-                    variant="outlined"
-                  />
-                  <Chip
-                    label={rotuloDaLogica(formData.conditions.logic)}
-                    color="primary"
-                    variant="filled"
-                    size="small"
-                  />
-                </Box>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline">
+                    {`${formData.conditions.conditions.length} condição(ões)`}
+                  </Badge>
+                  <Badge variant="default">
+                    {rotuloDaLogica(formData.conditions.logic)}
+                  </Badge>
+                </div>
               )}
-            </Box>
+            </div>
 
-            <Divider />
+            <Separator />
 
             {/* Status Ativo */}
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={formData.active}
-                  onChange={(e) => handleInputChange("active", e.target.checked)}
-                />
-              }
+            <Switch
+              checked={formData.active}
+              onCheckedChange={(v) => handleInputChange("active", v)}
               label="Questão Ativa"
             />
-          </Box>
+          </div>
           {ConditionsModal()}
         </DialogBody>
 
         <DialogFooter>
           <Button
             onClick={handleCloseModal}
-            variant="outlined"
+            variant="outline"
             disabled={loading}
           >
             Cancelar
           </Button>
-          <Button
-            onClick={handleSubmit}
-            variant="contained"
-            disabled={loading}
-            startIcon={loading ? <CircularProgress size={20} /> : null}
-          >
+          <Button onClick={handleSubmit} variant="primary" loading={loading}>
             {loading ? "Criando..." : "Criar Questão"}
           </Button>
         </DialogFooter>
