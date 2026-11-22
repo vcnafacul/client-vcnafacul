@@ -55,14 +55,18 @@ export default function SendQuest({
     <div className="max-w-5xl w-full mx-auto p-6 space-y-8 bg-white shadow-md rounded-lg">
       {/* Áreas com mais dificuldades */}
       <section className="space-y-4">
-        <h3 className="text-h3 font-semibold text-success border-l-4 border-success pl-4">
+        <h3 id="titulo-areas" className="text-h3 font-semibold text-success border-l-4 border-success pl-4">
           Áreas com mais dificuldades
         </h3>
         <p className="text-muted-foreground text-body">
           Nos ajude a entender melhor suas expectativas. Assinale abaixo as
           áreas onde acredita ter mais dificuldades.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div
+          role="group"
+          aria-labelledby="titulo-areas"
+          className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4"
+        >
           {areas.map((area, index) => (
             <div
               key={index}

@@ -748,7 +748,11 @@ export function StudentsEnrolled() {
             ]}
             value={selectedYear === null ? NENHUM : String(selectedYear)}
             onValueChange={(v) => {
-              setSelectedYear(v === NENHUM ? null : Number(v));
+              const novo = v === NENHUM ? null : Number(v);
+              // O Combobox avisa até quando a escolha não muda: sem mudança o
+              // efeito de carga não roda e a lista ficaria vazia.
+              if (novo === selectedYear) return;
+              setSelectedYear(novo);
               setStudents([]);
             }}
             emptyText="Nenhum período letivo encontrado"
@@ -773,9 +777,10 @@ export function StudentsEnrolled() {
             ]}
             value={selectedInscription?.id ?? NENHUM}
             onValueChange={(v) => {
-              setSelectedInscription(
-                v === NENHUM ? null : (inscriptions.find((i) => i.id === v) ?? null),
-              );
+              const nova =
+                v === NENHUM ? null : (inscriptions.find((i) => i.id === v) ?? null);
+              if ((nova?.id ?? null) === (selectedInscription?.id ?? null)) return;
+              setSelectedInscription(nova);
               setStudents([]);
             }}
             emptyText="Nenhum processo seletivo encontrado"
@@ -796,7 +801,9 @@ export function StudentsEnrolled() {
             ]}
             value={selectedStatus ?? NENHUM}
             onValueChange={(v) => {
-              setSelectedStatus(v === NENHUM ? null : (v as StatusApplication));
+              const novo = v === NENHUM ? null : (v as StatusApplication);
+              if (novo === selectedStatus) return;
+              setSelectedStatus(novo);
               setStudents([]);
             }}
           />

@@ -15,6 +15,13 @@ const montar = (onSubmit = vi.fn(), cursos: string[] = []) =>
   );
 
 describe("SendQuest", () => {
+  it("agrupa as áreas sob o título da seção", () => {
+    montar();
+    expect(
+      screen.getByRole("group", { name: /Áreas com mais dificuldades/ }),
+    ).toBeInTheDocument();
+  });
+
   it("marca e desmarca as áreas com dificuldade", () => {
     montar();
     const caixas = screen.getAllByRole("checkbox");

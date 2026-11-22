@@ -182,8 +182,9 @@ export function AttendanceRecordModal({
         const quem = [o.by, formatDateTime(String(o.at))]
           .filter(Boolean)
           .join(" em ");
+        if (!quem) return <span className="truncate">{o.text}</span>;
         return (
-          <ShadcnTooltip content={quem ? `Alterado por ${quem}` : ""}>
+          <ShadcnTooltip content={`Alterado por ${quem}`}>
             <span className="truncate">{o.text}</span>
           </ShadcnTooltip>
         );

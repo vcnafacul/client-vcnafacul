@@ -685,6 +685,7 @@ function ShowProva({
                     <Button
                       onClick={() => setIsEditingFiles(true)}
                       aria-label="Editar arquivos"
+                      variant="ghost"
                       className="w-full sm:w-auto"
                       disabled={edicao ? !edicao.permitido : false}
                       title={
