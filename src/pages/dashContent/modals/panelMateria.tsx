@@ -14,15 +14,16 @@ import { MateriaCanDeleteResult } from "@/services/content/getMateriaCanDelete";
 import { MateriaDto } from "@/services/content/getMaterias";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { DataTable, type DataTableColumn, type DataTableSort } from "@/components/ui/data-table";
+import { ordenarLinhas } from "@/lib/ordenarLinhas";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Pencil, Trash2 } from "lucide-react";
 import ManagerMateria from "./managerMateria";
 import { Roles } from "@/enums/roles/roles";
@@ -97,21 +98,32 @@ export function PanelMateria({
     };
   }, [modals.confirmDelete.isOpen, selected?._id, checkCanDelete]);
 
-  const columns: GridColDef[] = [
-    { field: "nome", headerName: "Nome", flex: 1 },
+  const [sort, setSort] = useState<DataTableSort | undefined>();
+  const linhas = useMemo(
+    () =>
+      ordenarLinhas(materias, sort, {
+        nome: (m) => m.nome,
+        enemArea: (m) => m.enemArea,
+      }),
+    [materias, sort],
+  );
+
+  const columns: DataTableColumn<MateriaDto>[] = [
+    { id: "nome", header: "Nome", cell: (m) => m.nome, sortable: true },
     {
-      field: "enemArea",
-      headerName: "Área ENEM",
-      width: 180,
+      id: "enemArea",
+      header: "Área ENEM",
+      cell: (m) => m.enemArea,
+      sortable: true,
+      width: "180px",
     },
     {
-      field: "icon",
-      headerName: "Ícone",
+      id: "icon",
+      header: "Ícone",
       align: "center",
-      headerAlign: "center",
-      width: 80,
-      renderCell: (params) => {
-        const Svg = iconPresets[params.row.icon];
+      width: "80px",
+      cell: (m) => {
+        const Svg = m.icon ? iconPresets[m.icon] : undefined;
         return Svg ? <Svg className="w-6 h-6" /> : <span>-</span>;
       },
     },
@@ -119,12 +131,11 @@ export function PanelMateria({
     ...(manager
       ? [
           {
-            field: "actions",
-            headerName: "Ações",
+            id: "actions",
+            header: "Ações",
             align: "center",
-            headerAlign: "center",
-            width: 120,
-            renderCell: (params) => (
+            width: "120px",
+            cell: (m) => (
               <TooltipProvider delayDuration={200}>
                 <div className="flex gap-2 justify-center">
                   <Tooltip>
@@ -134,7 +145,7 @@ export function PanelMateria({
                         variant="ghost"
                         size="icon"
                         aria-label="Editar matéria"
-                        onClick={() => editar(params.row as MateriaDto)}
+                        onClick={() => editar(m)}
                       >
                         <Pencil />
                       </Button>
@@ -149,7 +160,7 @@ export function PanelMateria({
                         size="icon"
                         aria-label="Excluir matéria"
                         className="text-destructive"
-                        onClick={() => excluir(params.row as MateriaDto)}
+                        onClick={() => excluir(m)}
                       >
                         <Trash2 />
                       </Button>
@@ -159,7 +170,7 @@ export function PanelMateria({
                 </div>
               </TooltipProvider>
             ),
-          } as GridColDef,
+          } as DataTableColumn<MateriaDto>,
         ]
       : []),
   ];
@@ -235,12 +246,15 @@ export function PanelMateria({
         </ul>
       ) : (
         <Card className="h-full overflow-auto">
-          <DataGrid
-            rows={materias}
+          <DataTable
+            aria-label="Matérias"
             columns={columns}
-            getRowId={(row) => row._id}
-            rowHeight={40}
-            sx={{ border: 0 }}
+            rows={linhas}
+            getRowId={(m) => m._id}
+            sort={sort}
+            onSortChange={setSort}
+            density="compact"
+            className="border-0 rounded-none"
           />
         </Card>
       )}
