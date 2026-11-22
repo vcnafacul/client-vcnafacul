@@ -16,8 +16,7 @@ import {
   type ConviteDoCursinho,
 } from "@/services/prepCourse/conviteColaborador";
 import { useAuthStore } from "@/store/auth";
-import { IconButton } from "@mui/material";
-import Tooltip from "@mui/material/Tooltip";
+import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import { useCallback, useEffect, useState } from "react";
 import { Check, CircleX, Send, Undo2 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -226,10 +225,12 @@ export function ModalConvites({
                       {c.situacao === "pendente" &&
                         (confirmarCancelar === c.id ? (
                           <>
-                            <Tooltip title="Confirmar cancelamento">
-                              <IconButton
-                                size="small"
-                                color="error"
+                            <ShadcnTooltip content="Confirmar cancelamento">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                aria-label="Confirmar cancelamento"
+                                className="text-destructive"
                                 data-confirmar-cancelar={c.id}
                                 onClick={async () => {
                                   setConfirmarCancelar(null);
@@ -240,22 +241,26 @@ export function ModalConvites({
                                 }}
                               >
                                 <Check size="1em" />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Manter convite">
-                              <IconButton
-                                size="small"
+                              </Button>
+                            </ShadcnTooltip>
+                            <ShadcnTooltip content="Manter convite">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                aria-label="Manter convite"
                                 onClick={() => setConfirmarCancelar(null)}
                               >
                                 <Undo2 size="1em" />
-                              </IconButton>
-                            </Tooltip>
+                              </Button>
+                            </ShadcnTooltip>
                           </>
                         ) : (
                           <>
-                            <Tooltip title={AVISO_REENVIAR}>
-                              <IconButton
-                                size="small"
+                            <ShadcnTooltip content={AVISO_REENVIAR}>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                aria-label={AVISO_REENVIAR}
                                 data-reenviar={c.id}
                                 onClick={() =>
                                   agir(
@@ -265,17 +270,19 @@ export function ModalConvites({
                                 }
                               >
                                 <Send size="1em" />
-                              </IconButton>
-                            </Tooltip>
-                            <Tooltip title="Cancelar convite">
-                              <IconButton
-                                size="small"
+                              </Button>
+                            </ShadcnTooltip>
+                            <ShadcnTooltip content="Cancelar convite">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                aria-label="Cancelar convite"
                                 data-cancelar={c.id}
                                 onClick={() => setConfirmarCancelar(c.id)}
                               >
                                 <CircleX size="1em" />
-                              </IconButton>
-                            </Tooltip>
+                              </Button>
+                            </ShadcnTooltip>
                           </>
                         ))}
                     </td>

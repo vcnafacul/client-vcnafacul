@@ -2,7 +2,8 @@ import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import { Eye, Edit3 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { EssayListItem, EssayTheme } from "@/dtos/essay";
@@ -198,28 +199,32 @@ export default function EssayReviewList({ mode }: Props) {
                       {e.reviews?.length ?? 0}
                     </td>
                     <td className="p-3">
-                      <Box className="flex gap-1">
-                        <Tooltip title="Ver redação" arrow>
-                          <IconButton
-                            size="small"
+                      <div className="flex gap-1">
+                        <ShadcnTooltip content="Ver redação">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            aria-label="Ver redação"
                             onClick={() => navigate(`${detailBasePath}/${e.id}/ver`)}
-                            sx={{ color: "primary.main" }}
+                            className="text-primary"
                           >
                             <Eye className="h-4 w-4" />
-                          </IconButton>
-                        </Tooltip>
+                          </Button>
+                        </ShadcnTooltip>
                         {podeRevisar(e) && (
-                          <Tooltip title="Revisar" arrow>
-                            <IconButton
-                              size="small"
+                          <ShadcnTooltip content="Revisar">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              aria-label="Revisar"
                               onClick={() => navigate(`${detailBasePath}/${e.id}`)}
-                              sx={{ color: "warning.main" }}
+                              className="text-warning"
                             >
                               <Edit3 className="h-4 w-4" />
-                            </IconButton>
-                          </Tooltip>
+                            </Button>
+                          </ShadcnTooltip>
                         )}
-                      </Box>
+                      </div>
                     </td>
                   </tr>
                 ))}

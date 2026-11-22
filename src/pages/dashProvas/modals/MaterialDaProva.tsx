@@ -5,7 +5,7 @@ import { ErroCadernoComAnuladas } from "@/services/caderno/baixarCaderno";
 import { ModalCadernoComAnuladas } from "@/components/molecules/anulacao/ModalCadernoComAnuladas";
 import { baixarCartaoDaProva } from "@/services/cartaoResposta/baixarCartaoDaProva";
 import { BookOpen, ClipboardCheck } from "lucide-react";
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { ModalBaixarCartao } from "./ModalBaixarCartao";
@@ -138,11 +138,9 @@ export function MaterialDaProva({
         <Button
           onClick={() => setCartaoPedido(true)}
           disabled={motivo !== undefined}
-          variant="outlined"
-          color="primary"
+          variant="outline"
           className="w-full sm:w-auto"
           data-testid="cartao-da-prova"
-          sx={{ display: "flex", alignItems: "center", gap: "8px" }}
         >
           <ClipboardCheck className="h-4 w-4" />
           {TEXTO_CARTAO_DA_PROVA}
@@ -152,11 +150,9 @@ export function MaterialDaProva({
         <Button
           onClick={() => baixarCaderno()}
           disabled={motivo !== undefined || baixandoCaderno}
-          variant="outlined"
-          color="primary"
+          variant="outline"
           className="w-full sm:w-auto"
           data-testid="caderno-da-prova"
-          sx={{ display: "flex", alignItems: "center", gap: "8px" }}
         >
           <BookOpen className="h-4 w-4" />
           {TEXTO_CADERNO_DA_PROVA}

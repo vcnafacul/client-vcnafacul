@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { optionsGender, stateOptions } from "@/pages/register/data";
 import { UserMe } from "@/types/user/userMe";
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
@@ -280,19 +280,13 @@ export function AccountForm({
         <div className="flex flex-col md:flex-row justify-between w-full col-span-1 md:col-span-2 lg:col-span-3">
           <div className="w-full max-w-md">
             <Button
-              variant={hasChanges ? "contained" : "outlined"}
-              disabled={!hasChanges || isSaving}
+              variant={hasChanges ? "primary" : "outline"}
+              loading={isSaving}
+              disabled={!hasChanges}
               className="transition-all duration-300 w-full"
               type="submit"
             >
-              {isSaving ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  Salvando...
-                </div>
-              ) : (
-                "Salvar"
-              )}
+              {isSaving ? "Salvando..." : "Salvar"}
             </Button>
           </div>
         </div>

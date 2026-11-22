@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GraduationCap, CloudUpload, FileText } from "lucide-react";
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import type { FormFieldInput } from "@/components/formulario/tipos";
@@ -27,7 +27,6 @@ import { createProva } from "../../../services/prova/createProva";
 import { useAuthStore } from "../../../store/auth";
 import { useEffect, useState } from "react";
 import { OpcaoNovasVersoes } from "../components/OpcaoNovasVersoes";
-import { palette } from "@/lib/palette";
 
 export const TEXTO_CARREGANDO_CATEGORIAS = "Carregando categorias…";
 export const TEXTO_ERRO_CATEGORIAS =
@@ -380,18 +379,7 @@ function NewProva({
             <Button
               type="submit"
               form="form-new-prova"
-              variant="contained"
               disabled={!categoria || (!isCustom && !uploadFile)}
-              sx={{
-                backgroundColor: palette.marine[700],
-                "&:hover": {
-                  backgroundColor: palette.marine[800],
-                },
-                "&:disabled": {
-                  backgroundColor: palette.neutral[400],
-                },
-                fontWeight: 600,
-              }}
             >
               Criar Prova
             </Button>

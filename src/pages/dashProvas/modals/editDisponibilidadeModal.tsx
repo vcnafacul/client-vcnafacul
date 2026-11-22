@@ -8,7 +8,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useToastAsync } from "@/hooks/useToastAsync";
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
 import { updateDisponibilidade } from "../../../services/simulado/updateDisponibilidade";
@@ -134,10 +134,10 @@ function EditDisponibilidadeModal({
           </div>
         </DialogBody>
         <DialogFooter>
-          <Button variant="outlined" onClick={onClose}>
+          <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button variant="contained" onClick={handleSalvar}>
+          <Button variant="primary" onClick={handleSalvar}>
             Salvar
           </Button>
         </DialogFooter>

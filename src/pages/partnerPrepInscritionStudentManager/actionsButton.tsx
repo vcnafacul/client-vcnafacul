@@ -9,8 +9,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { IconButton } from "@mui/material";
-import Tooltip from "@mui/material/Tooltip";
+import { Button } from "@/components/ui/button";
+import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import { ReactNode } from "react";
 
 interface ActionButtonProps {
@@ -28,11 +28,13 @@ interface ActionButtonProps {
 export function ActionButton(props: ActionButtonProps) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger>
-        <Tooltip title={props.tooltipTitle}>
-          <IconButton>{props.children}</IconButton>
-        </Tooltip>
-      </AlertDialogTrigger>
+      <ShadcnTooltip content={props.tooltipTitle}>
+        <AlertDialogTrigger asChild>
+          <Button size="icon" variant="ghost" aria-label={props.tooltipTitle}>
+            {props.children}
+          </Button>
+        </AlertDialogTrigger>
+      </ShadcnTooltip>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{props.titleAlert}</AlertDialogTitle>

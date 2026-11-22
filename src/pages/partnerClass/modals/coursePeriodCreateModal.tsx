@@ -12,7 +12,7 @@ import {
   CoursePeriodOutput,
 } from "@/services/prepCourse/coursePeriod/createCoursePeriod";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Button from "@mui/material/Button";
+import { Button } from "@/components/ui/button";
 import { Calendar } from "primereact/calendar";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -189,14 +189,12 @@ export function CoursePeriodCreateEditModal({
         </form>
 
         <DialogFooter>
-          <Button type="button" onClick={handleClose} variant="outlined">
+          <Button type="button" onClick={handleClose} variant="outline">
             Cancelar
           </Button>
           <Button
             type="submit"
             form="form-periodo-letivo"
-            variant="contained"
-            color="primary"
           >
             {isEdit ? "Salvar Alterações" : "Criar Período Letivo"}
           </Button>

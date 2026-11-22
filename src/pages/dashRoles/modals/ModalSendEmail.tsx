@@ -25,7 +25,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { getUserByName, SearchUser } from "@/services/auth/getUserByName";
 import { sendBulkEmail } from "@/services/auth/sendBulkEmail";
 import { useAuthStore } from "@/store/auth";
-import Button from "@mui/material/Button";
+import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { CircleX, Mail, Search } from "lucide-react";
 import { toast } from "react-toastify";
@@ -344,17 +344,14 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
 
           <DialogFooter>
             <Button
-              variant="outlined"
-              color="primary"
+              variant="outline"
               onClick={handleCloseModal}
               disabled={isSending}
             >
               Cancelar
             </Button>
             <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSendEmail}
+                            onClick={handleSendEmail}
               disabled={isSending}
             >
               {isSending ? "Enviando..." : "Enviar Email"}

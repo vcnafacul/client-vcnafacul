@@ -16,7 +16,7 @@ import { editClass } from "@/services/prepCourse/class/editClass";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Button from "@mui/material/Button";
+import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -142,10 +142,10 @@ export function ClassCreateEditModal({
         </form>
 
         <DialogFooter>
-          <Button variant="outlined" onClick={handleClose}>
+          <Button variant="outline" onClick={handleClose}>
             Cancelar
           </Button>
-          <Button variant="contained" type="submit" form="form-turma">
+          <Button type="submit" form="form-turma">
             Salvar
           </Button>
         </DialogFooter>

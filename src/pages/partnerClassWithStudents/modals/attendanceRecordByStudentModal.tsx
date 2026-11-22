@@ -22,7 +22,7 @@ import {
   attendancePeriodLabel,
 } from "@/types/partnerPrepCourse/attendancePeriod";
 import { AttendanceRecordByStudent } from "@/types/partnerPrepCourse/attendanceRecord";
-import Paper from "@mui/material/Paper";
+import { Card } from "@/components/ui/card";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -287,17 +287,7 @@ export function AttendanceRecordByStudentModal({
           No celular a caixa cresce e rola junto com a página: com altura
           fixa, as justificativas abertas espremiam a grade até sumir.
         */}
-          <Paper
-            sx={{
-              flex: { xs: "none", sm: 1 },
-              height: { xs: 420, sm: "auto" },
-              minHeight: 0,
-              width: "100%",
-              display: "flex",
-              flexDirection: "column",
-              overflow: "hidden",
-            }}
-          >
+          <Card className="flex h-[420px] w-full min-h-0 flex-none flex-col overflow-hidden sm:h-auto sm:flex-1">
             <DataGrid
               disableColumnMenu
               pageSizeOptions={[paginationModel.pageSize]}
@@ -325,7 +315,7 @@ export function AttendanceRecordByStudentModal({
                 );
               }}
             />
-          </Paper>
+          </Card>
           {ModalApplyJustification()}
           <PeriodJustificationModal
             isOpen={showPeriodModal}

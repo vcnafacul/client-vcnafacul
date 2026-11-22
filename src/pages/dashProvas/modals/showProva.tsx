@@ -27,7 +27,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { Prova, ProvaDetalhada } from "../../../dtos/prova/prova";
 import { getProvaFile } from "../../../services/prova/getFile";
@@ -47,7 +47,6 @@ import {
   indicadorDeVersoes,
   OpcaoNovasVersoes,
 } from "../components/OpcaoNovasVersoes";
-import { palette } from "@/lib/palette";
 
 const TEXTO_SEM_PDF = "Sem PDF da prova";
 
@@ -616,10 +615,8 @@ function ShowProva({
                   <>
                     <Button
                       onClick={() => setView("simulados")}
-                      variant="outlined"
-                      color="primary"
+                      variant="outline"
                       className="w-full sm:w-auto"
-                      sx={{ display: "flex", alignItems: "center", gap: "8px" }}
                     >
                       <Table className="h-4 w-4" />
                       Ver simulados
@@ -638,15 +635,9 @@ function ShowProva({
                         <Button
                           onClick={relatorioDaProva.aoAbrir}
                           disabled={motivoRelatorioDaProva !== undefined}
-                          variant="outlined"
-                          color="primary"
+                          variant="outline"
                           className="w-full sm:w-auto"
                           data-testid="relatorio-da-prova"
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px",
-                          }}
                         >
                           <ChartColumn className="h-4 w-4" />
                           Relatório da prova
@@ -666,17 +657,8 @@ function ShowProva({
                     {prova.gabarito && (
                       <Button
                         onClick={handleDownloadGabarito}
-                        variant="contained"
+                        variant="secondary"
                         className="w-full sm:w-auto"
-                        sx={{
-                          backgroundColor: palette.neutral[600],
-                          "&:hover": {
-                            backgroundColor: palette.neutral[700],
-                          },
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
                       >
                         <Download className="h-4 w-4" />
                         Download do Gabarito
@@ -687,14 +669,7 @@ function ShowProva({
                     {prova.filename ? (
                       <Button
                         onClick={handleDownloadProva}
-                        variant="contained"
-                        color="primary"
                         className="w-full sm:w-auto"
-                        sx={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "8px",
-                        }}
                       >
                         <Download className="h-4 w-4" />
                         Download da Prova
@@ -709,7 +684,6 @@ function ShowProva({
 
                     <Button
                       onClick={() => setIsEditingFiles(true)}
-                      size="small"
                       aria-label="Editar arquivos"
                       className="w-full sm:w-auto"
                       disabled={edicao ? !edicao.permitido : false}
@@ -717,7 +691,7 @@ function ShowProva({
                         edicao && !edicao.permitido ? edicao.motivo : undefined
                       }
                     >
-                      <SquarePen className="size-8" />
+                      <SquarePen className="size-4" />
                       <span className="sm:hidden ml-2">Editar arquivos</span>
                     </Button>
                   </>
@@ -752,7 +726,7 @@ function ShowProva({
                           setNewFile(null);
                           setNewGabarito(null);
                         }}
-                        variant="outlined"
+                        variant="outline"
                       >
                         Cancelar
                       </Button>
@@ -762,7 +736,6 @@ function ShowProva({
                         <AlertDialogTrigger asChild>
                           <Button
                             disabled={!newFile && !newGabarito}
-                            variant="contained"
                           >
                             Salvar Alterações
                           </Button>

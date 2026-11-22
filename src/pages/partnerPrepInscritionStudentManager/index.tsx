@@ -31,9 +31,8 @@ import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensivei
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { RankingItem } from "@/types/partnerPrepForm/ruleForm";
 import { capitalizeWords } from "@/utils/capitalizeWords";
-import { IconButton } from "@mui/material";
-import Paper from "@mui/material/Paper";
-import Tooltip from "@mui/material/Tooltip";
+import { Card } from "@/components/ui/card";
+import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Check, Eye, Mail, MailMinus, MailPlus, RefreshCw, Timer, TimerOff, X } from "lucide-react";
@@ -410,11 +409,16 @@ export function PartnerPrepInscritionStudentManager() {
   */
   const renderAcoes = (row: XLSXStudentCourseFull) => (
     <div className="flex justify-center items-center gap-2 h-8 flex-wrap">
-      <Tooltip title="Visualizar">
-        <IconButton onClick={() => handleModalDetaild(row.id)}>
+      <ShadcnTooltip content="Visualizar">
+        <Button
+          size="icon"
+          variant="ghost"
+          aria-label="Visualizar"
+          onClick={() => handleModalDetaild(row.id)}
+        >
           <Eye className="h-6 w-6 text-muted-foreground opacity-60 hover:opacity-100" />
-        </IconButton>
-      </Tooltip>
+        </Button>
+      </ShadcnTooltip>
       {row.isento === "Sim" &&
         shouldProcessApplication(
           row.status,
@@ -517,30 +521,35 @@ export function PartnerPrepInscritionStudentManager() {
         </ActionButton>
       )}
       {row.status === StatusApplication.DeclaredInterest && (
-        <Tooltip title="Confirmação de Matrícula">
-          <IconButton
+        <ShadcnTooltip content="Confirmação de Matrícula">
+          <Button
+            size="icon"
+            variant="ghost"
+            aria-label="Confirmação de Matrícula"
             onClick={() => handleOpenSelectClassModal(row.id)}
           >
             <Check className="h-6 w-6 text-success opacity-60 hover:opacity-100" />
-          </IconButton>
-        </Tooltip>
+          </Button>
+        </ShadcnTooltip>
       )}
       {(row.status === StatusApplication.DeclaredInterest ||
         row.status === StatusApplication.MissedDeadline ||
         row.status === StatusApplication.UnderReview) && (
-        <Tooltip title="Indeferir">
-          <IconButton>
-            <X
-              onClick={() => {
-                setStudentSelected(
-                  students.find((student) => student.id === row.id)!,
-                );
-                modals.reject.open();
-              }}
-              className="h-6 w-6 text-destructive/60 hover:text-destructive cursor-pointer"
-            />
-          </IconButton>
-        </Tooltip>
+        <ShadcnTooltip content="Indeferir">
+          <Button
+            size="icon"
+            variant="ghost"
+            aria-label="Indeferir"
+            onClick={() => {
+              setStudentSelected(
+                students.find((student) => student.id === row.id)!,
+              );
+              modals.reject.open();
+            }}
+          >
+            <X className="h-6 w-6 text-destructive/60 hover:text-destructive" />
+          </Button>
+        </ShadcnTooltip>
       )}
       {shouldProcessApplication(
         row.status,
@@ -830,7 +839,7 @@ export function PartnerPrepInscritionStudentManager() {
           mascarar={mascarar}
         />
       ) : (
-        <Paper sx={{ height: "100%", width: "100%" }}>
+        <Card className="h-full w-full">
           <DataGrid
             rows={sortedStudents}
             columns={columns}
@@ -843,7 +852,7 @@ export function PartnerPrepInscritionStudentManager() {
             sx={{ border: 0 }}
             rowSelectionModel={selectedRows}
           />
-        </Paper>
+        </Card>
       )}
       {ModalWaitingList()}
       {ScheduleEnrolled()}

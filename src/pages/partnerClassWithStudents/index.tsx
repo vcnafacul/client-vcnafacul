@@ -1,5 +1,5 @@
 import logo from "@/assets/images/logo_carteirinha.png";
-import { Button } from "@/components/ui/button";
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Roles } from "@/enums/roles/roles";
 import { useModals } from "@/hooks/useModal";
@@ -12,8 +12,9 @@ import { ClassStudent } from "@/types/partnerPrepCourse/classStudent";
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { downloadPDF } from "@/utils/get-pdf";
 import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
-import { IconButton, Tooltip } from "@mui/material";
-import Paper from "@mui/material/Paper";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { format } from "date-fns";
 import { turmaEncerrada } from "./turmaEncerrada";
@@ -199,26 +200,32 @@ export function PartnerClassWithStudents() {
   */
   const renderAcoes = (aluno: ClassStudent) => (
     <div className="flex gap-2 justify-center">
-      <Tooltip title="Ver carteirinha">
-        <IconButton
+      <ShadcnTooltip content="Ver carteirinha">
+        <Button
+          size="icon"
+          variant="ghost"
+          aria-label="Ver carteirinha"
           onClick={() => {
             setStudentSelected(aluno);
             modals.modalStudentCard.open();
           }}
         >
           <Eye className="h-6 w-6 text-muted-foreground hover:text-primary opacity-60 hover:opacity-100" />
-        </IconButton>
-      </Tooltip>
-      <Tooltip title="Registro de presença">
-        <IconButton
+        </Button>
+      </ShadcnTooltip>
+      <ShadcnTooltip content="Registro de presença">
+        <Button
+          size="icon"
+          variant="ghost"
+          aria-label="Registro de presença"
           onClick={() => {
             setStudentSelected(aluno);
             modals.modalAttendanceRecordByStudent.open();
           }}
         >
           <ListChecks className="h-5 w-5 text-muted-foreground hover:text-primary opacity-60 hover:opacity-100" />
-        </IconButton>
-      </Tooltip>
+        </Button>
+      </ShadcnTooltip>
     </div>
   );
 
@@ -581,7 +588,7 @@ export function PartnerClassWithStudents() {
               />
             )
           ) : (
-            <Paper sx={{ height: "100%", width: "100%" }}>
+            <Card className="h-full w-full">
               <DataGrid
                 rows={showCancelled ? cancelledStudents : students}
                 columns={showCancelled ? cancelledColumns : columns}
@@ -596,7 +603,7 @@ export function PartnerClassWithStudents() {
                 }
                 sx={{ border: 0 }}
               />
-            </Paper>
+            </Card>
           )}
         </TabsContent>
 

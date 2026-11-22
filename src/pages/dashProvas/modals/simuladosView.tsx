@@ -3,7 +3,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSimuladosComCartao";
 import { ArrowLeft, BookOpen, CalendarDays, ChartColumn, ClipboardCheck, FileText } from "lucide-react";
-import { Button } from "@mui/material";
+import { Button } from "@/components/ui/button";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -394,7 +394,7 @@ function SimuladosView({
             <p className="mb-3 text-body text-destructive">
               Não foi possível carregar os simulados.
             </p>
-            <Button variant="outlined" size="small" onClick={onRetry}>
+            <Button variant="outline" size="sm" onClick={onRetry}>
               Tentar novamente
             </Button>
           </div>

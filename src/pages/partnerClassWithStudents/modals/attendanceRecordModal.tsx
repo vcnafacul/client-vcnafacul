@@ -19,9 +19,9 @@ import {
 } from "@/types/partnerPrepCourse/attendancePeriod";
 import { SimpleStudentAttendance } from "@/types/partnerPrepCourse/attendanceRecord";
 import { formatDateTime } from "@/utils/date";
-import { IconButton } from "@mui/material";
-import Paper from "@mui/material/Paper";
-import Tooltip from "@mui/material/Tooltip";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { Pencil } from "lucide-react";
@@ -121,11 +121,16 @@ export function AttendanceRecordModal({
       headerAlign: "center",
       renderCell: (params) => (
         <div>
-          <Tooltip title="Editar Presença">
-            <IconButton onClick={() => handleActionUpdate(params.row)}>
+          <ShadcnTooltip content="Editar Presença">
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Editar Presença"
+              onClick={() => handleActionUpdate(params.row)}
+            >
               <Pencil className="h-6 w-6 text-primary opacity-70 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
+            </Button>
+          </ShadcnTooltip>
         </div>
       ),
     },
@@ -178,9 +183,9 @@ export function AttendanceRecordModal({
           .filter(Boolean)
           .join(" em ");
         return (
-          <Tooltip title={quem ? `Alterado por ${quem}` : ""}>
+          <ShadcnTooltip content={quem ? `Alterado por ${quem}` : ""}>
             <span className="truncate">{o.text}</span>
-          </Tooltip>
+          </ShadcnTooltip>
         );
       },
     },
@@ -229,7 +234,7 @@ export function AttendanceRecordModal({
         </DialogHeader>
         {/* flex-1 em vez de 95%: somado à linha da data passava da caixa. */}
         <DialogBody className="flex flex-col overflow-hidden">
-          <Paper sx={{ flex: 1, minHeight: 0, width: "100%" }}>
+          <Card className="min-h-0 w-full flex-1">
             <DataGrid
               disableColumnMenu
               pageSizeOptions={[paginationModel.pageSize]}
@@ -241,7 +246,7 @@ export function AttendanceRecordModal({
               disableRowSelectionOnClick
               sx={{ border: 0 }}
             />
-          </Paper>
+          </Card>
           {ModalEditRegister()}
         </DialogBody>
       </DialogContent>
