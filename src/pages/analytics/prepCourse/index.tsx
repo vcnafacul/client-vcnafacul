@@ -22,8 +22,7 @@ import { nomeDoArquivo } from "../nomeDoArquivo";
 import { periodoDoProcesso } from "../periodoDoProcesso";
 import { UltimosProcessos } from "../UltimosProcessos";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import { Button } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -169,14 +168,14 @@ function AnalyticsPrepCourse({
     <AnalyticsSection
       title={cursinhoId ? "Processos seletivos do cursinho" : "Cursinhos"}
       actions={
-        <Button size="small" variant="outlined" onClick={handleExportCsv}>
+        <Button size="sm" variant="outline" onClick={handleExportCsv}>
           Exportar CSV
         </Button>
       }
     >
-      <Grid size={{ xs: 12, md: 7 }}>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 6, sm: 4 }}>
+      <div className="min-w-0 md:w-7/12">
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-6 sm:col-span-4 min-w-0">
             <StatCard
               label="Total de processos seletivos realizados"
               value={numeros?.processosNaoTeste ?? 0}
@@ -184,30 +183,30 @@ function AnalyticsPrepCourse({
               color="marine"
               loading={loading}
             />
-          </Grid>
-          <Grid size={{ xs: 6, sm: 4 }}>
+          </div>
+          <div className="col-span-6 sm:col-span-4 min-w-0">
             <StatCard
               label="Total de inscrições realizadas"
               value={numeros?.inscricoesNaoTeste ?? 0}
               color="green"
               loading={loading}
             />
-          </Grid>
-          <Grid size={{ xs: 6, sm: 4 }}>
+          </div>
+          <div className="col-span-6 sm:col-span-4 min-w-0">
             <StatCard
               label="Total de matrículas realizadas"
               value={numeros?.matriculasNaoTeste ?? 0}
               color="red"
               loading={loading}
             />
-          </Grid>
-        </Grid>
+          </div>
+        </div>
         <p className="text-caption text-muted-foreground mt-2">
           Totais sem processos seletivos de teste. Entre parênteses, o total
           incluindo testes.
         </p>
-      </Grid>
-      <Grid size={{ xs: 12, md: 6 }}>
+      </div>
+      <div className="min-w-0 md:w-1/2">
         <div className="shadow-md bg-white p-2 rounded-sm">
           {loading ? (
             <Skeleton className="h-[320px] w-full" />
@@ -219,7 +218,7 @@ function AnalyticsPrepCourse({
             />
           )}
         </div>
-      </Grid>
+      </div>
       <div className="mt-4">
         <UltimosProcessos
           processos={processos}

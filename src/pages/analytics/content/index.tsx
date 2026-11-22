@@ -13,13 +13,15 @@ import {
 } from "@/services/analytics/content/statsByFrente";
 import { useAuthStore } from "@/store/auth";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import { Button } from "@mui/material";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Grid from "@mui/material/Grid2";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -67,26 +69,26 @@ function renderFrentesTable(
 ) {
   const frentesArray = frentes as ContentStatsByFrente[];
   return (
-    <Table size="small" aria-label="frentes">
-      <TableHead>
+    <Table aria-label="frentes">
+      <TableHeader>
         <TableRow>
-          <TableCell>Frente</TableCell>
-          <TableCell align="right">Pendente Upload</TableCell>
-          <TableCell align="right">Pendentes</TableCell>
-          <TableCell align="right">Aprovados</TableCell>
-          <TableCell align="right">Reprovados</TableCell>
-          <TableCell align="right">Total</TableCell>
+          <TableHead>Frente</TableHead>
+          <TableHead className="text-right">Pendente Upload</TableHead>
+          <TableHead className="text-right">Pendentes</TableHead>
+          <TableHead className="text-right">Aprovados</TableHead>
+          <TableHead className="text-right">Reprovados</TableHead>
+          <TableHead className="text-right">Total</TableHead>
         </TableRow>
-      </TableHead>
+      </TableHeader>
       <TableBody>
         {frentesArray.map((frente) => (
           <TableRow key={frente.frente}>
             <TableCell>{frente.frente}</TableCell>
-            <TableCell align="right">{frente.pendentes_upload}</TableCell>
-            <TableCell align="right">{frente.pendentes}</TableCell>
-            <TableCell align="right">{frente.aprovados}</TableCell>
-            <TableCell align="right">{frente.reprovados}</TableCell>
-            <TableCell align="right">{frente.total}</TableCell>
+            <TableCell className="text-right">{frente.pendentes_upload}</TableCell>
+            <TableCell className="text-right">{frente.pendentes}</TableCell>
+            <TableCell className="text-right">{frente.aprovados}</TableCell>
+            <TableCell className="text-right">{frente.reprovados}</TableCell>
+            <TableCell className="text-right">{frente.total}</TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -186,13 +188,13 @@ export function AnalyticsContent() {
     <AnalyticsSection
       title="Conteúdos"
       actions={
-        <Button size="small" variant="outlined" onClick={handleExportCsv}>
+        <Button size="sm" variant="outline" onClick={handleExportCsv}>
           Exportar CSV
         </Button>
       }
     >
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-12 md:col-span-6 min-w-0">
           <div className="shadow-md bg-white p-2 rounded-sm">
             {loading ? (
               <Skeleton className="h-[400px] w-full" />
@@ -204,11 +206,12 @@ export function AnalyticsContent() {
                 aggregate={aggregateMateria}
                 expandableContent={renderFrentesTable}
                 expandableTitle="Frentes"
+                rotulo="Conteúdos por matéria"
               />
             )}
           </div>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
+        </div>
+        <div className="col-span-12 md:col-span-6 min-w-0">
           <div className="shadow-md bg-white p-2 rounded-sm">
             {loading ? (
               <Skeleton className="h-[400px] w-full" />
@@ -216,8 +219,8 @@ export function AnalyticsContent() {
               <LineChartMui {...dataContentStatus} />
             )}
           </div>
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </AnalyticsSection>
   );
 }

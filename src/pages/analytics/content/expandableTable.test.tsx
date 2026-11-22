@@ -61,4 +61,24 @@ describe("ExpandableTable", () => {
     fireEvent.click(aberto);
     expect(screen.queryByText("Álgebra")).toBeNull();
   });
+
+  it("só tira a divisória da linha principal quando ela está aberta", () => {
+    montar();
+    const linha = screen
+      .getByRole("rowheader", { name: "Matemática" })
+      .closest("tr") as HTMLElement;
+    expect(linha).not.toHaveClass("border-b-0");
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Expandir frentes de Matemática" }),
+    );
+    expect(linha).toHaveClass("border-b-0");
+  });
+
+  it("nomeia a tabela em português", () => {
+    montar();
+    expect(
+      screen.getByRole("table", { name: "Tabela com linhas expansíveis" }),
+    ).toBeInTheDocument();
+  });
 });

@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { cursos } from "@/utils/listOfCourses";
-import { Autocomplete, Checkbox, TextField } from "@mui/material";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Combobox } from "@/components/ui/combobox";
+import { Field } from "@/components/ui/field";
 import { useState } from "react";
 import { X } from "lucide-react";
 import { toast } from "react-toastify";
 import { areas } from "../area";
-import { palette } from "@/lib/palette";
 
 interface Props {
   onSubmit: (areas: string[], cursos: string[]) => Promise<void>;
@@ -63,14 +64,15 @@ export default function SendQuest({
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {areas.map((area, index) => (
-            <label
+            <div
               key={index}
-              className="flex items-center space-x-2 bg-page px-4 rounded-md shadow-sm"
+              className="bg-page px-4 rounded-md shadow-sm"
             >
               <Checkbox
+                label={area}
                 checked={areaInterest.includes(area)}
-                onChange={(e) => {
-                  if (e.target.checked) {
+                onCheckedChange={(checked) => {
+                  if (checked === true) {
                     setAreaInterest([...areaInterest, area]);
                   } else {
                     setAreaInterest(
@@ -78,10 +80,8 @@ export default function SendQuest({
                     );
                   }
                 }}
-                color="primary"
               />
-              <span className="text-foreground">{area}</span>
-            </label>
+            </div>
           ))}
         </div>
       </section>
@@ -92,38 +92,22 @@ export default function SendQuest({
           Cursos de Interesse
         </h3>
         <div className="flex flex-col md:flex-row items-start gap-4">
-          <Autocomplete
-            options={cursos}
-            value={null}
-            onChange={(_, newValue) => {
-              if (newValue && !selectedCursos.includes(newValue)) {
-                setSelectedCursos([...selectedCursos, newValue]);
-              }
-            }}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Digite para buscar um curso"
-                placeholder="Ex: Medicina, Engenharia..."
-                variant="outlined"
-              />
-            )}
-            noOptionsText="Nenhum curso encontrado"
+          <Field
+            label="Digite para buscar um curso"
             className="w-full md:max-w-sm self-start"
-            sx={{
-              '& .MuiOutlinedInput-root': {
-                '& fieldset': {
-                  borderColor: palette.neutral[300],
-                },
-                '&:hover fieldset': {
-                  borderColor: palette.blue[500],
-                },
-                '&.Mui-focused fieldset': {
-                  borderColor: palette.blue[500],
-                },
-              },
-            }}
-          />
+          >
+            <Combobox
+              options={cursos.map((c) => ({ value: c, label: c }))}
+              value={undefined}
+              onValueChange={(newValue) => {
+                if (newValue && !selectedCursos.includes(newValue)) {
+                  setSelectedCursos([...selectedCursos, newValue]);
+                }
+              }}
+              placeholder="Ex: Medicina, Engenharia..."
+              emptyText="Nenhum curso encontrado"
+            />
+          </Field>
           <div className="w-full p-2 rounded-lg h-60 overflow-y-auto scrollbar-hide">
             {selectedCursos.length > 0 ? (
               <ul className="space-y-2">
@@ -133,10 +117,14 @@ export default function SendQuest({
                     className="flex items-center justify-between p-1 bg-page shadow-md rounded-sm"
                   >
                     <span className="text-foreground">{curso}</span>
-                    <X
-                      className="text-destructive w-6 h-6 cursor-pointer hover:text-destructive/80 transition-colors"
+                    <button
+                      type="button"
+                      aria-label={`Remover ${curso}`}
+                      className="text-destructive hover:text-destructive/80 transition-colors"
                       onClick={() => handleRemoveCurso(curso)}
-                    />
+                    >
+                      <X aria-hidden="true" className="w-6 h-6" />
+                    </button>
                   </li>
                 ))}
               </ul>

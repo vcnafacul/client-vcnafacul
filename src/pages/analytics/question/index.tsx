@@ -11,8 +11,7 @@ import {
 } from "@/services/analytics/questoes/summary";
 import { useAuthStore } from "@/store/auth";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import { Button } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -106,79 +105,76 @@ function AnalyticsQuestion() {
     <AnalyticsSection
       title="Questões e Provas"
       actions={
-        <Button size="small" variant="outlined" onClick={handleExportCsv}>
+        <Button size="sm" variant="outline" onClick={handleExportCsv}>
           Exportar CSV
         </Button>
       }
     >
-      <Grid container spacing={2} alignItems="center">
-        <Grid size={{ xs: 12, md: 7 }}>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 6, sm: 4 }}>
+      <div className="grid grid-cols-12 gap-4 items-center">
+        <div className="col-span-12 md:col-span-7 min-w-0">
+          <div className="grid grid-cols-12 gap-4">
+            <div className="col-span-6 sm:col-span-4 min-w-0">
               <StatCard
                 label="Total"
                 value={dataQuestionSummary.questionTotal}
                 color="marine"
                 loading={loading}
               />
-            </Grid>
-            <Grid size={{ xs: 6, sm: 4 }}>
+            </div>
+            <div className="col-span-6 sm:col-span-4 min-w-0">
               <StatCard
                 label="Aprovadas"
                 value={dataQuestionSummary.questionApproved}
                 color="green"
                 loading={loading}
               />
-            </Grid>
-            <Grid size={{ xs: 6, sm: 4 }}>
+            </div>
+            <div className="col-span-6 sm:col-span-4 min-w-0">
               <StatCard
                 label="Rejeitadas"
                 value={dataQuestionSummary.questionRejected}
                 color="red"
                 loading={loading}
               />
-            </Grid>
-            <Grid size={{ xs: 6, sm: 4 }}>
+            </div>
+            <div className="col-span-6 sm:col-span-4 min-w-0">
               <StatCard
                 label="Pendentes"
                 value={dataQuestionSummary.questionPending}
                 color="orange"
                 loading={loading}
               />
-            </Grid>
-            <Grid size={{ xs: 6, sm: 4 }}>
+            </div>
+            <div className="col-span-6 sm:col-span-4 min-w-0">
               <StatCard
                 label="Reportadas"
                 value={dataQuestionSummary.questionReported}
                 color="pink"
                 loading={loading}
               />
-            </Grid>
-            <Grid size={{ xs: 6, sm: 4 }}>
+            </div>
+            <div className="col-span-6 sm:col-span-4 min-w-0">
               <StatCard
                 label="Classificadas"
                 value={dataQuestionSummary.questionClassified}
                 color="marine"
                 loading={loading}
               />
-            </Grid>
-            <Grid size={{ xs: 6, sm: 4 }}>
+            </div>
+            <div className="col-span-6 sm:col-span-4 min-w-0">
               <StatCard
                 label="Provas Total"
                 value={dataProvaSummary.provaTotal}
                 color="marine"
                 loading={loading}
               />
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid
-          size={{ xs: 12, md: 5 }}
-          className="flex justify-center"
-        >
+            </div>
+          </div>
+        </div>
+        <div className="col-span-12 md:col-span-5 flex justify-center min-w-0">
           {!loading && <PieChartMui data={questionPieData} />}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </AnalyticsSection>
   );
 }

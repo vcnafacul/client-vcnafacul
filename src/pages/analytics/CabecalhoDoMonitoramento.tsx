@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Period } from "@/enums/analytics/period";
-import { MenuItem, Select, Typography } from "@mui/material";
+import { OptionsSelect } from "@/components/ui/options-select";
 import { CursinhoDoFiltro, FORA_DO_RECORTE } from "./recorte";
 import { SeletorDeCursinho } from "@/components/molecules/seletorDeCursinho";
 
@@ -25,9 +25,7 @@ export function CabecalhoDoMonitoramento({
   return (
     <div className="px-4 py-3">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <Typography variant="h4" fontWeight="bold" className="text-foreground">
-          Monitoramento de Atividades
-        </Typography>
+        <h1 className="text-h2 text-foreground">Monitoramento de Atividades</h1>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start">
           <SeletorDeCursinho
             cursinhos={cursinhos}
@@ -36,18 +34,17 @@ export function CabecalhoDoMonitoramento({
             carregando={carregandoCursinhos}
           />
           <div>
-            <Select
+            <OptionsSelect
               value={period}
-              onChange={(e) => onPeriod(e.target.value as Period)}
-              size="small"
-              sx={{ minWidth: 150 }}
-              className="w-full sm:w-auto"
-              inputProps={{ "aria-label": "Período" }}
-            >
-              <MenuItem value={Period.day}>Diário</MenuItem>
-              <MenuItem value={Period.month}>Mensal</MenuItem>
-              <MenuItem value={Period.year}>Anual</MenuItem>
-            </Select>
+              onValueChange={onPeriod}
+              options={[
+                { value: Period.day, label: "Diário" },
+                { value: Period.month, label: "Mensal" },
+                { value: Period.year, label: "Anual" },
+              ]}
+              aria-label="Período"
+              className="w-full sm:w-auto sm:min-w-[150px]"
+            />
             <p className="text-caption text-muted-foreground mt-1">Afeta gráficos temporais</p>
           </div>
         </div>

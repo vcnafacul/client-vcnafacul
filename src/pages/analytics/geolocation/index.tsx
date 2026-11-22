@@ -7,8 +7,7 @@ import {
 } from "@/services/analytics/geolocation/summary-status";
 import { useAuthStore } from "@/store/auth";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import { Button } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -102,108 +101,108 @@ function AnalyticsGeolocation() {
     <AnalyticsSection
       title="Geolocalização"
       actions={
-        <Button size="small" variant="outlined" onClick={handleExportCsv}>
+        <Button size="sm" variant="outline" onClick={handleExportCsv}>
           Exportar CSV
         </Button>
       }
     >
       {/* Cursinhos */}
       <h3 className="text-h3 font-bold text-foreground mb-3">Cursinhos</h3>
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+        <div className="min-w-0">
           <StatCard
             label="Total"
             value={data.totalCourses}
             color="marine"
             loading={loading}
           />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+        </div>
+        <div className="min-w-0">
           <StatCard
             label="Aprovados"
             value={data.approvedCourses}
             color="green"
             loading={loading}
           />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+        </div>
+        <div className="min-w-0">
           <StatCard
             label="Rejeitados"
             value={data.rejectedCourses}
             color="red"
             loading={loading}
           />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+        </div>
+        <div className="min-w-0">
           <StatCard
             label="Pendentes"
             value={data.pendingCourses}
             color="orange"
             loading={loading}
           />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+        </div>
+        <div className="min-w-0">
           <StatCard
             label="Reportados"
             value={data.withReportCourses}
             color="pink"
             loading={loading}
           />
-        </Grid>
-        <Grid size={12} className="flex justify-center">
+        </div>
+        <div className="col-span-full flex justify-center">
           {!loading && <PieChartMui data={coursesPieData} />}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
 
       {/* Universidades */}
       <h3 className="text-h3 font-bold text-foreground mt-6 mb-3">
         Universidades
       </h3>
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-5">
+        <div className="min-w-0">
           <StatCard
             label="Total"
             value={data.totalUniversities}
             color="marine"
             loading={loading}
           />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+        </div>
+        <div className="min-w-0">
           <StatCard
             label="Aprovados"
             value={data.approvedUniversities}
             color="green"
             loading={loading}
           />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+        </div>
+        <div className="min-w-0">
           <StatCard
             label="Rejeitados"
             value={data.rejectedUniversities}
             color="red"
             loading={loading}
           />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+        </div>
+        <div className="min-w-0">
           <StatCard
             label="Pendentes"
             value={data.pendingUniversities}
             color="orange"
             loading={loading}
           />
-        </Grid>
-        <Grid size={{ xs: 6, sm: 4, md: 2.4 }}>
+        </div>
+        <div className="min-w-0">
           <StatCard
             label="Reportados"
             value={data.withReportUniversities}
             color="pink"
             loading={loading}
           />
-        </Grid>
-        <Grid size={12} className="flex justify-center">
+        </div>
+        <div className="col-span-full flex justify-center">
           {!loading && <PieChartMui data={universitiesPieData} />}
-        </Grid>
-      </Grid>
+        </div>
+      </div>
     </AnalyticsSection>
   );
 }

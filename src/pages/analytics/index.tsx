@@ -31,7 +31,6 @@ import {
   PartnerPrepCourseLogo,
 } from "@/services/prepCourse/partnerLogos";
 import { useAuthStore } from "@/store/auth";
-import Grid from "@mui/material/Grid2";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -156,84 +155,84 @@ function Analytics() {
 
       {/* KPI Bar */}
       <div className="px-4 pb-2">
-        <Grid container spacing={2}>
+        <div className="grid grid-cols-12 gap-4">
           {!cursinhoId && (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+            <div className="col-span-6 sm:col-span-4 md:col-span-2 min-w-0">
               <StatCard
                 label="Total Cursinhos"
                 value={geoSummary?.totalCourses ?? 0}
                 color="marine"
                 loading={kpiLoading}
               />
-            </Grid>
+            </div>
           )}
           {!cursinhoId && (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+            <div className="col-span-6 sm:col-span-4 md:col-span-2 min-w-0">
               <StatCard
                 label="Conteúdos Aprovados"
                 value={contentSummary?.contentApproved ?? 0}
                 color="green"
                 loading={kpiLoading}
               />
-            </Grid>
+            </div>
           )}
           {!cursinhoId && (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+            <div className="col-span-6 sm:col-span-4 md:col-span-2 min-w-0">
               <StatCard
                 label="Conteúdos Pendentes"
                 value={contentSummary?.contentPending ?? 0}
                 color="orange"
                 loading={kpiLoading}
               />
-            </Grid>
+            </div>
           )}
           {!cursinhoId && (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+            <div className="col-span-6 sm:col-span-4 md:col-span-2 min-w-0">
               <StatCard
                 label="Questões Total"
                 value={questionSummaryData?.questionTotal ?? 0}
                 color="marine"
                 loading={kpiLoading}
               />
-            </Grid>
+            </div>
           )}
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+          <div className="col-span-6 sm:col-span-4 md:col-span-2 min-w-0">
             <StatCard
               label="Simulados Completos"
               value={historicoSummaryData?.historicCompleted ?? 0}
               color="green"
               loading={kpiLoading}
             />
-          </Grid>
-          <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+          </div>
+          <div className="col-span-6 sm:col-span-4 md:col-span-2 min-w-0">
             <StatCard
               label="Simulados Total"
               value={historicoSummaryData?.historicTotal ?? 0}
               color="marine"
               loading={kpiLoading}
             />
-          </Grid>
+          </div>
           {studentsServedData !== null && (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+            <div className="col-span-6 sm:col-span-4 md:col-span-2 min-w-0">
               <StatCard
                 label="Estudantes Atendidos"
                 value={studentsServedData?.total ?? 0}
                 color="green"
                 loading={kpiLoading}
               />
-            </Grid>
+            </div>
           )}
           {studentsEnrolledData !== null && (
-            <Grid size={{ xs: 6, sm: 4, md: 2 }}>
+            <div className="col-span-6 sm:col-span-4 md:col-span-2 min-w-0">
               <StatCard
                 label="Estudantes Ativos"
                 value={studentsEnrolledData?.total ?? 0}
                 color="marine"
                 loading={kpiLoading}
               />
-            </Grid>
+            </div>
           )}
-        </Grid>
+        </div>
       </div>
 
       <AnalyticsUsers

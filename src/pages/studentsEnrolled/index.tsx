@@ -1,4 +1,9 @@
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Combobox } from "@/components/ui/combobox";
+import { Field } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,9 +36,6 @@ import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensivei
 import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { capitalizeWords } from "@/utils/capitalizeWords";
 import { formatDate } from "@/utils/date";
-import { Autocomplete, IconButton, TextField } from "@mui/material";
-import Paper from "@mui/material/Paper";
-import Tooltip from "@mui/material/Tooltip";
 import {
   DataGrid,
   getGridDateOperators,
@@ -55,6 +57,9 @@ import { PrinterStudentCards } from "./modals/printerStudentCards";
 import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
 import { EstudantesMobile } from "./EstudantesMobile";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
+/** O `Combobox` não aceita valor vazio: a opção "todos" usa este valor por dentro. */
+const NENHUM = "__nenhum__";
+
 export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
@@ -449,28 +454,39 @@ export function StudentsEnrolled() {
   */
   const renderAcoes = (estudante: StudentsDtoOutput) => (
     <div className="flex gap-2 justify-center">
-      <Tooltip title="Visualizar">
-        <IconButton onClick={() => handleModalDetaild(estudante.id)}>
+      <ShadcnTooltip content="Visualizar">
+        <Button
+          size="icon"
+          variant="ghost"
+          aria-label="Visualizar"
+          onClick={() => handleModalDetaild(estudante.id)}
+        >
           <Eye className="h-6 w-6 text-muted-foreground opacity-60 hover:opacity-100" />
-        </IconButton>
-      </Tooltip>
+        </Button>
+      </ShadcnTooltip>
       {permissao[Roles.gerenciarEstudantes] &&
         estudante.applicationStatus === StatusApplication.Enrolled &&
         estudante.class?.id && (
-          <Tooltip title="Declaração de matrícula">
-            <IconButton
+          <ShadcnTooltip content="Declaração de matrícula">
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Declaração de matrícula"
               onClick={() =>
                 handleDownloadEnrollmentCertificate(estudante.id)
               }
             >
               <Download className="h-6 w-6 text-primary opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
+            </Button>
+          </ShadcnTooltip>
         )}
       {permissao[Roles.gerenciarEstudantes] &&
         acoesDeMatricula(estudante.applicationStatus).cancelar && (
-          <Tooltip title="Cancelar matrícula">
-            <IconButton
+          <ShadcnTooltip content="Cancelar matrícula">
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Cancelar matrícula"
               onClick={() => {
                 const student = students.find(
                   (student) => student.id === estudante.id,
@@ -484,13 +500,16 @@ export function StudentsEnrolled() {
               }}
             >
               <X className="h-6 w-6 text-destructive opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
+            </Button>
+          </ShadcnTooltip>
         )}
       {permissao[Roles.gerenciarEstudantes] &&
         acoesDeMatricula(estudante.applicationStatus).reativar && (
-          <Tooltip title="Reativar matrícula">
-            <IconButton
+          <ShadcnTooltip content="Reativar matrícula">
+            <Button
+              size="icon"
+              variant="ghost"
+              aria-label="Reativar matrícula"
               onClick={() => {
                 const student = students.find(
                   (student) => student.id === estudante.id,
@@ -504,13 +523,16 @@ export function StudentsEnrolled() {
               }}
             >
               <Check className="h-6 w-6 text-success opacity-60 hover:opacity-100" />
-            </IconButton>
-          </Tooltip>
+            </Button>
+          </ShadcnTooltip>
         )}
       {permissao[Roles.gerenciarTurmas] &&
         acoesDeMatricula(estudante.applicationStatus).alterarTurma && (
-        <Tooltip title="Alterar Turma">
-          <IconButton
+        <ShadcnTooltip content="Alterar Turma">
+          <Button
+            size="icon"
+            variant="ghost"
+            aria-label="Alterar Turma"
             onClick={() => {
               const student = students.find(
                 (student) => student.id === estudante.id,
@@ -524,8 +546,8 @@ export function StudentsEnrolled() {
             }}
           >
             <Presentation className="h-6 w-6 text-primary opacity-60 hover:opacity-100" />
-          </IconButton>
-        </Tooltip>
+          </Button>
+        </ShadcnTooltip>
       )}
     </div>
   );
@@ -705,88 +727,80 @@ export function StudentsEnrolled() {
         busca e processo na linha inteira, período e status lado a lado.
       */}
       <div className="w-full px-4 grid grid-cols-2 gap-2 sm:flex sm:gap-4 sm:items-center sm:justify-between sm:flex-wrap">
-        <TextField
-          value={busca}
-          onChange={(e) => setBusca(e.target.value)}
-          label="Buscar"
-          placeholder="Nome, matrícula ou email"
-          type="search"
-          size={acimaDeSm ? "medium" : "small"}
-          inputProps={{ maxLength: 100, "aria-label": "Buscar estudante" }}
-          className="col-span-2"
-          sx={{ minWidth: { sm: 260 }, flex: { sm: 1 } }}
-        />
-        <Autocomplete
-          size={acimaDeSm ? "medium" : "small"}
-          value={selectedYear}
-          onChange={(_, newValue) => {
-            setSelectedYear(newValue);
-            setStudents([]);
-          }}
-          options={years}
-          getOptionLabel={(option) => option.toString()}
-          isOptionEqualToValue={(option, value) => option === value}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={acimaDeSm ? "Período Letivo" : "Período"}
-              placeholder="Todos os períodos"
-            />
-          )}
-          sx={{ minWidth: { xs: 0, sm: 160 }, width: { xs: "100%", sm: "auto" } }}
-          noOptionsText="Nenhum período letivo encontrado"
-        />
-        <Autocomplete
-          size={acimaDeSm ? "medium" : "small"}
-          className="col-span-2 row-start-3 sm:row-start-auto"
-          value={selectedInscription}
-          onChange={(_, newValue) => {
-            setSelectedInscription(newValue);
-            setStudents([]);
-          }}
-          options={inscriptions}
-          getOptionLabel={(option) =>
-            option.name +
-            " - " +
-            formatDate(option.startDate.toString()) +
-            " - " +
-            formatDate(option.endDate.toString())
-          }
-          isOptionEqualToValue={(option, value) => option.id === value.id}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Processo Seletivo"
-              placeholder="Todos os processos"
-            />
-          )}
-          sx={{ minWidth: { xs: 0, sm: 300 }, flex: 1, width: { xs: "100%", sm: "auto" } }}
-          noOptionsText="Nenhum processo seletivo encontrado"
-          loadingText="Carregando..."
-        />
-        <Autocomplete
-          size={acimaDeSm ? "medium" : "small"}
-          value={selectedStatus}
-          onChange={(_, newValue) => {
-            setSelectedStatus(newValue);
-            setStudents([]);
-          }}
-          options={[
-            StatusApplication.Enrolled,
-            StatusApplication.EnrollmentCancelled,
-            StatusApplication.EnrollmentClosed,
-          ]}
-          getOptionLabel={(option) => option}
-          isOptionEqualToValue={(option, value) => option === value}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label={acimaDeSm ? "Status de Matrícula" : "Status"}
-              placeholder="Todos os status"
-            />
-          )}
-          sx={{ minWidth: { xs: 0, sm: 220 }, width: { xs: "100%", sm: "auto" } }}
-        />
+        <Field label="Buscar" className="col-span-2 sm:min-w-[260px] sm:flex-1">
+          <Input
+            value={busca}
+            onChange={(e) => setBusca(e.target.value)}
+            placeholder="Nome, matrícula ou email"
+            type="search"
+            maxLength={100}
+            aria-label="Buscar estudante"
+          />
+        </Field>
+        <Field
+          label={acimaDeSm ? "Período Letivo" : "Período"}
+          className="sm:w-auto sm:min-w-[160px]"
+        >
+          <Combobox
+            options={[
+              { value: NENHUM, label: "Todos os períodos" },
+              ...years.map((y) => ({ value: String(y), label: String(y) })),
+            ]}
+            value={selectedYear === null ? NENHUM : String(selectedYear)}
+            onValueChange={(v) => {
+              setSelectedYear(v === NENHUM ? null : Number(v));
+              setStudents([]);
+            }}
+            emptyText="Nenhum período letivo encontrado"
+          />
+        </Field>
+        <Field
+          label="Processo Seletivo"
+          className="col-span-2 row-start-3 sm:row-start-auto sm:min-w-[300px] sm:flex-1"
+        >
+          <Combobox
+            options={[
+              { value: NENHUM, label: "Todos os processos" },
+              ...inscriptions.map((i) => ({
+                value: i.id,
+                label:
+                  i.name +
+                  " - " +
+                  formatDate(i.startDate.toString()) +
+                  " - " +
+                  formatDate(i.endDate.toString()),
+              })),
+            ]}
+            value={selectedInscription?.id ?? NENHUM}
+            onValueChange={(v) => {
+              setSelectedInscription(
+                v === NENHUM ? null : (inscriptions.find((i) => i.id === v) ?? null),
+              );
+              setStudents([]);
+            }}
+            emptyText="Nenhum processo seletivo encontrado"
+          />
+        </Field>
+        <Field
+          label={acimaDeSm ? "Status de Matrícula" : "Status"}
+          className="sm:w-auto sm:min-w-[220px]"
+        >
+          <Combobox
+            options={[
+              { value: NENHUM, label: "Todos os status" },
+              ...[
+                StatusApplication.Enrolled,
+                StatusApplication.EnrollmentCancelled,
+                StatusApplication.EnrollmentClosed,
+              ].map((st) => ({ value: st, label: st })),
+            ]}
+            value={selectedStatus ?? NENHUM}
+            onValueChange={(v) => {
+              setSelectedStatus(v === NENHUM ? null : (v as StatusApplication));
+              setStudents([]);
+            }}
+          />
+        </Field>
         {/* exportar leva contato e documento para fora num arquivo, entao
             exige mais que ver a tela — o endpoint tambem checa */}
         {permissao[Roles.gerenciarEstudantes] && (
@@ -840,7 +854,7 @@ export function StudentsEnrolled() {
           }
         />
       ) : (
-        <Paper sx={{ height: "100%", width: "100%" }}>
+        <Card className="h-full w-full">
           <DataGrid
             rows={students}
             columns={columns}
@@ -897,7 +911,7 @@ export function StudentsEnrolled() {
               }
             }}
           />
-        </Paper>
+        </Card>
       )}
       {ModalInfo()}
       {ModalReject()}

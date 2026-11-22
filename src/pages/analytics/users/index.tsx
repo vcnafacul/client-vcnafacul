@@ -4,6 +4,7 @@ import LineChartMui, {
   LineChartMuiProps,
 } from "@/components/atoms/lineChartMui";
 import AnalyticsSection from "@/components/molecules/analyticsSection";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Period } from "@/enums/analytics/period";
 import { aggregateUserByLastAccess } from "@/services/analytics/user/aggregateLUserByLastAccess";
@@ -16,8 +17,7 @@ import {
 import { useAuthStore } from "@/store/auth";
 import { nomeDoArquivo } from "../nomeDoArquivo";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import { Button, Checkbox, FormControlLabel } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -133,23 +133,18 @@ function AnalyticsUsers({
     <AnalyticsSection
       title="Usuários"
       actions={
-        <Button size="small" variant="outlined" onClick={handleExportCsv}>
+        <Button size="sm" variant="outline" onClick={handleExportCsv}>
           Exportar CSV
         </Button>
       }
     >
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-12 md:col-span-6 min-w-0">
           <div className="shadow-md bg-white p-2 rounded-sm">
             <div className="flex items-center gap-4 px-2 pb-2">
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={baseOnly}
-                    onChange={(e) => setBaseOnly(e.target.checked)}
-                    size="small"
-                  />
-                }
+              <Checkbox
+                checked={baseOnly}
+                onCheckedChange={(checked) => setBaseOnly(checked === true)}
                 label="Somente roles base"
               />
             </div>
@@ -162,10 +157,10 @@ function AnalyticsUsers({
               />
             )}
           </div>
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Grid container direction="column" spacing={2}>
-            <Grid>
+        </div>
+        <div className="col-span-12 md:col-span-6 min-w-0">
+          <div className="flex flex-col gap-4">
+            <div>
               <div className="shadow-md bg-white p-2 rounded-sm">
                 {loading ? (
                   <Skeleton className="h-[320px] w-full" />
@@ -177,10 +172,10 @@ function AnalyticsUsers({
                   />
                 )}
               </div>
-            </Grid>
+            </div>
             {/* Agrupa pela criação da conta: não diz nada sobre o cursinho (D4). */}
             {!cursinhoId && (
-              <Grid>
+              <div>
                 <div className="shadow-md bg-white p-2 rounded-sm">
                   {loading ? (
                     <Skeleton className="h-[320px] w-full" />
@@ -192,11 +187,11 @@ function AnalyticsUsers({
                     />
                   )}
                 </div>
-              </Grid>
+              </div>
             )}
-          </Grid>
-        </Grid>
-      </Grid>
+          </div>
+        </div>
+      </div>
     </AnalyticsSection>
   );
 }

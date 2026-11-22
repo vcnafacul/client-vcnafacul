@@ -33,6 +33,8 @@ export interface ExpandableTableProps<T, K> {
   aggregate: (items: T[]) => K;
   expandableContent: (items: T[]) => ReactNode;
   expandableTitle?: string;
+  /** Nome acessível da tabela. */
+  rotulo?: string;
 }
 
 function ExpandableTableRow<T, K>({
@@ -56,7 +58,7 @@ function ExpandableTableRow<T, K>({
   return (
     <>
       {/* Linha principal */}
-      <TableRow className="border-b-0">
+      <TableRow className={open ? "border-b-0" : undefined}>
         <TableCell className="w-5">
           <Button
             type="button"
@@ -120,6 +122,7 @@ export function ExpandableTable<T, K>({
   aggregate,
   expandableContent,
   expandableTitle,
+  rotulo = "Tabela com linhas expansíveis",
 }: ExpandableTableProps<T, K>) {
   // Agrupar dados
   const groupedData = data.reduce((acc, item) => {
@@ -138,7 +141,7 @@ export function ExpandableTable<T, K>({
 
   return (
     <Card className="px-4">
-      <Table aria-label="collapsible table">
+      <Table aria-label={rotulo}>
         <TableHeader>
           <TableRow>
             <TableHead className="w-5">

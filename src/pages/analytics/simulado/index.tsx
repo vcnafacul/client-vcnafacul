@@ -15,8 +15,7 @@ import { useAuthStore } from "@/store/auth";
 import { Indisponivel } from "../Indisponivel";
 import { nomeDoArquivo } from "../nomeDoArquivo";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
-import { Button } from "@mui/material";
-import Grid from "@mui/material/Grid2";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -124,10 +123,10 @@ function AnalyticsSimulado({
       title={cursinhoId ? "Simulados das provas do cursinho" : "Simulados"}
       actions={
         <>
-          <Button size="small" variant="outlined" onClick={handleExportPeriod}>
+          <Button size="sm" variant="outline" onClick={handleExportPeriod}>
             CSV Período
           </Button>
-          <Button size="small" variant="outlined" onClick={handleExportType}>
+          <Button size="sm" variant="outline" onClick={handleExportType}>
             CSV Tipo
           </Button>
         </>
@@ -136,8 +135,8 @@ function AnalyticsSimulado({
       {indisponivel ? (
         <Indisponivel altura={200} />
       ) : (
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6 }}>
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-6 min-w-0">
             <div className="shadow-md bg-white p-2 rounded-sm">
               {loading ? (
                 <Skeleton className="h-[400px] w-full" />
@@ -149,8 +148,8 @@ function AnalyticsSimulado({
                 />
               )}
             </div>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6 }}>
+          </div>
+          <div className="col-span-12 md:col-span-6 min-w-0">
             <div className="shadow-md bg-white p-2 rounded-sm">
               {loading ? (
                 <Skeleton className="h-[400px] w-full" />
@@ -162,8 +161,8 @@ function AnalyticsSimulado({
                 />
               )}
             </div>
-          </Grid>
-        </Grid>
+          </div>
+        </div>
       )}
     </AnalyticsSection>
   );
