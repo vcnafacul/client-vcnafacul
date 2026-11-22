@@ -1,15 +1,8 @@
-import { Chip } from "@mui/material";
+import { StatusBadge as StatusBadgeUi } from "@/components/ui/status-badge";
 
-// Componente para badge de status
+// Badge de status do período: dentro da tabela, com o ponto (look="dot").
 export const StatusBadge = ({ active }: { active: boolean }) => (
-  <Chip
-    label={active ? "Ativo" : "Inativo"}
-    color={active ? "success" : "default"}
-    size="small"
-    variant={active ? "filled" : "outlined"}
-    sx={{
-      fontWeight: 500,
-      fontSize: "0.75rem",
-    }}
-  />
+  <StatusBadgeUi variant={active ? "success" : "neutral"} look="dot">
+    {active ? "Ativo" : "Inativo"}
+  </StatusBadgeUi>
 );

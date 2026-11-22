@@ -1,15 +1,14 @@
 import { CoursePeriodEntity } from "@/services/prepCourse/coursePeriod/createCoursePeriod";
 import { formatDate } from "@/utils/date";
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 import {
-  Box,
-  Collapse,
-  IconButton,
-  TableCell,
-  TableRow,
   Tooltip,
-  Typography,
-} from "@mui/material";
-import { useState } from "react";
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import { ActionMenu } from "./actionMenu";
@@ -37,6 +36,8 @@ export function ExpandableCoursePeriod({
   podeGerenciar,
 }: ExpandableCoursePeriodProps) {
   const [open, setOpen] = useState<boolean>(false);
+  const idDetalhes = useId();
+  const rotulo = open ? "Recolher" : "Expandir";
 
   const totalClassesCount = coursePeriod.classes.length;
 
@@ -57,88 +58,64 @@ export function ExpandableCoursePeriod({
     <>
       <TableRow
         key={coursePeriod.id}
-        sx={{
-          backgroundColor: open ? "action.selected" : "transparent",
-          "&:hover": {
-            backgroundColor: "action.hover",
-          },
-          borderLeft: "4px solid",
-          borderLeftColor: "primary.main",
-        }}
+        data-state={open ? "selected" : undefined}
+        className="hover:bg-accent"
       >
-        <TableCell size="small" className="w-16">
+        <TableCell className="w-16 border-l-4 border-l-primary">
           {coursePeriod.classes.length > 0 && (
-            <Tooltip title={open ? "Recolher" : "Expandir"} arrow>
-              <IconButton
-                aria-label="expand row"
-                size="small"
-                onClick={() => setOpen(!open)}
-                sx={{
-                  transition: "transform 0.2s ease-in-out",
-                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
-                }}
-              >
-                <ChevronDown className="w-5 h-5" />
-              </IconButton>
-            </Tooltip>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`${rotulo} turmas de ${coursePeriod.name}`}
+                    aria-expanded={open}
+                    aria-controls={open ? idDetalhes : undefined}
+                    onClick={() => setOpen(!open)}
+                    className="sm:h-8 sm:w-8"
+                  >
+                    <ChevronDown
+                      className={`transition-transform ${open ? "rotate-180" : ""}`}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{rotulo}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </TableCell>
         <TableCell>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              {coursePeriod.name}
-            </Typography>
+          <div className="flex items-center gap-2">
+            <span className="text-body font-bold">{coursePeriod.name}</span>
             <StatusBadge
               active={new Date(coursePeriod.endDate) >= new Date()}
             />
-          </Box>
+          </div>
         </TableCell>
-        <TableCell align="right">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <Typography variant="body2" fontWeight="bold">
-              {totalClassesCount}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              total
-            </Typography>
-          </Box>
+        <TableCell className="text-right">
+          <div className="flex flex-col items-end">
+            <span className="text-body font-bold">{totalClassesCount}</span>
+            <span className="text-caption text-muted-foreground">total</span>
+          </div>
         </TableCell>
-        <TableCell align="right">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <Typography variant="body2" fontWeight="bold" color="success.main">
-              {coursePeriod.year}
-            </Typography>
-          </Box>
+        <TableCell className="text-right">
+          <span className="text-body font-bold">{coursePeriod.year}</span>
         </TableCell>
-        <TableCell align="right">
-          <Typography variant="body2">
-            {formatDate(coursePeriod.startDate.toString(), "dd/MM/yyyy")}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
+        <TableCell className="text-right">
+          <div>{formatDate(coursePeriod.startDate.toString(), "dd/MM/yyyy")}</div>
+          <div className="text-caption text-muted-foreground">
             {formatDate(coursePeriod.startDate.toString(), "HH:mm")}
-          </Typography>
+          </div>
         </TableCell>
-        <TableCell align="right">
-          <Typography variant="body2">
-            {formatDate(coursePeriod.endDate.toString(), "dd/MM/yyyy")}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
+        <TableCell className="text-right">
+          <div>{formatDate(coursePeriod.endDate.toString(), "dd/MM/yyyy")}</div>
+          <div className="text-caption text-muted-foreground">
             {formatDate(coursePeriod.endDate.toString(), "HH:mm")}
-          </Typography>
+          </div>
         </TableCell>
-        <TableCell align="right" className="w-10">
+        <TableCell className="w-10 text-right">
           <ActionMenu
             onAdd={
               podeGerenciar ? () => handleAddClass(coursePeriod.id) : undefined
@@ -157,43 +134,23 @@ export function ExpandableCoursePeriod({
           />
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 2,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  component="div"
-                  sx={{
-                    fontWeight: "bold",
-                    color: "primary.main",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  Turmas ({totalClassesCount})
-                </Typography>
-              </Box>
+      {open && (
+        <TableRow className="hover:bg-transparent">
+          <TableCell colSpan={8} className="py-0">
+            <div id={idDetalhes} className="m-2">
+              <h4 className="mb-2 text-h4 font-bold text-primary">
+                Turmas ({totalClassesCount})
+              </h4>
               <RenderClassesTable
                 classes={coursePeriod.classes}
                 handleEditClass={handleEditClass}
                 onDeleteClass={onDeleteClass}
                 podeGerenciar={podeGerenciar}
               />
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+            </div>
+          </TableCell>
+        </TableRow>
+      )}
     </>
   );
 }

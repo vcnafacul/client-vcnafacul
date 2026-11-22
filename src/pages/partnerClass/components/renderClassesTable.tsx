@@ -6,16 +6,15 @@ import { DASH, PARTNER_CLASS } from "@/routes/path";
 import { deleteClass } from "@/services/prepCourse/class/deleteClass";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
+import { Card } from "@/components/ui/card";
 import {
-  Paper,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Typography,
-} from "@mui/material";
+} from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 import { ActionMenu } from "./actionMenu";
 
@@ -75,58 +74,33 @@ export function RenderClassesTable({
 
   return (
     <>
-      <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2 }}>
-        <Table aria-label="turmas" size="small">
-          <TableHead>
-            <TableRow sx={{ backgroundColor: "grey.50" }}>
-              <TableCell sx={{ fontWeight: "bold" }}>Nome</TableCell>
-              <TableCell sx={{ fontWeight: "bold" }}>Descrição</TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Inscritos
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Ações
-              </TableCell>
+      <Card>
+        <Table aria-label="turmas">
+          <TableHeader>
+            <TableRow className="bg-muted">
+              <TableHead>Nome</TableHead>
+              <TableHead>Descrição</TableHead>
+              <TableHead className="text-center">Inscritos</TableHead>
+              <TableHead className="text-center">Ações</TableHead>
             </TableRow>
-          </TableHead>
+          </TableHeader>
           <TableBody>
             {classes.map((classItem) => (
-              <TableRow
-                key={classItem.id}
-                sx={{
-                  "&:hover": {
-                    backgroundColor: "action.hover",
-                  },
-                }}
-              >
-                <TableCell sx={{ maxWidth: 100 }}>
-                  <Typography variant="body2" fontWeight="medium">
-                    {classItem.name}
-                  </Typography>
+              <TableRow key={classItem.id}>
+                <TableCell className="max-w-[100px]">
+                  <span className="text-body font-medium">{classItem.name}</span>
                 </TableCell>
-                <TableCell sx={{ maxWidth: 200 }}>
-                  {classItem.description ? (
-                    <Typography variant="body2" color="text.secondary">
-                      {classItem.description.length > 100
-                        ? `${classItem.description.slice(0, 100)}...`
-                        : classItem.description}
-                    </Typography>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      -
-                    </Typography>
-                  )}
+                <TableCell className="max-w-[200px] text-muted-foreground">
+                  {classItem.description
+                    ? classItem.description.length > 100
+                      ? `${classItem.description.slice(0, 100)}...`
+                      : classItem.description
+                    : "-"}
                 </TableCell>
-                <TableCell align="center">
-                  <Typography
-                    variant="body2"
-                    fontWeight="medium"
-                    color="primary.main"
-                  >
-                    {classItem.number_students}
-                  </Typography>
+                <TableCell className="text-center font-medium text-primary">
+                  {classItem.number_students}
                 </TableCell>
-                <TableCell align="right" className="w-10">
+                <TableCell className="w-10 text-right">
                   <ActionMenu
                     onView={() => handleViewClass(classItem)}
                     onEdit={
@@ -146,7 +120,7 @@ export function RenderClassesTable({
             ))}
           </TableBody>
         </Table>
-      </TableContainer>
+      </Card>
     </>
   );
 }

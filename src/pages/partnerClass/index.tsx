@@ -19,23 +19,17 @@ import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { Paginate } from "@/utils/paginate";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  AppBar,
-  Box,
-  Button,
-  Paper,
-  Skeleton,
   Table,
   TableBody,
-  TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import Grid from "@mui/material/Grid2";
-import { useEffect, useState } from "react";
+} from "@/components/ui/table";
+import { useEffect, useState, type ReactNode } from "react";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ExpandableCoursePeriod } from "./components/expandableCoursePeriod";
 import { BotaoAlertaEvasao } from "./alertaEvasao/botaoAlertaEvasao";
@@ -43,6 +37,16 @@ import { PeriodosMobile } from "./components/PeriodosMobile";
 import { ClassCreateEditModal } from "./modals/classCreateEditModal";
 import { CoursePeriodCreateEditModal } from "./modals/coursePeriodCreateEditModal";
 import { useModals } from "@/hooks/useModal";
+
+// Um único h1 por tela; o cabeçalho é o mesmo nos três estados.
+function Cabecalho({ children }: { children?: ReactNode }) {
+  return (
+    <header className="flex flex-wrap items-center justify-between gap-2 py-2">
+      <h1 className="text-h1 text-foreground">Períodos Letivos</h1>
+      {children}
+    </header>
+  );
+}
 
 export function PartnerClass() {
   const [entities, setEntities] = useState<CoursePeriodEntity[]>([]);
@@ -100,39 +104,23 @@ export function PartnerClass() {
 
   // Componente de loading skeleton
   const LoadingSkeleton = () => (
-    <Box sx={{ p: 2 }}>
+    <div className="flex flex-col gap-4 p-4" aria-busy="true">
       {[...Array(3)].map((_, index) => (
-        <Box key={index} sx={{ mb: 2 }}>
-          <Skeleton
-            variant="rectangular"
-            height={60}
-            sx={{ borderRadius: 2 }}
-          />
-        </Box>
+        <Skeleton key={index} className="h-[60px] w-full rounded-lg" />
       ))}
-    </Box>
+    </div>
   );
 
   // Componente de estado vazio
   const EmptyState = () => (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        py: 8,
-        px: 4,
-        textAlign: "center",
-      }}
-    >
-      <Typography variant="h6" color="text.secondary" gutterBottom>
+    <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
+      <p className="text-h4 text-muted-foreground">
         Nenhum período letivo encontrado
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
+      </p>
+      <p className="text-body text-muted-foreground">
         Comece criando seu primeiro período letivo
-      </Typography>
-    </Box>
+      </p>
+    </div>
   );
 
   // Handlers para modais
@@ -292,24 +280,11 @@ export function PartnerClass() {
   if (loading) {
     return (
       <>
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h4" fontWeight="bold" className="text-foreground">
-              Períodos Letivos
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Box p={0}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            component="div"
-            className="pl-5"
-          >
-            Períodos Letivos
-          </Typography>
+        <Cabecalho />
+        <section>
+          <h2 className="pl-5 text-h4 text-foreground">Períodos Letivos</h2>
           {LoadingSkeleton()}
-        </Box>
+        </section>
       </>
     );
   }
@@ -317,39 +292,23 @@ export function PartnerClass() {
   if (entities.length === 0) {
     return (
       <>
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h4" fontWeight="bold" className="text-foreground">
-              Períodos Letivos
-            </Typography>
-          </Toolbar>
-        </AppBar>
+        <Cabecalho />
         {podeGerenciar && (
-          <div className="flex justify-end items-center gap-2 w-full">
-            <BotaoAlertaEvasao />
-            <Box p={0}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleCreateCoursePeriod}
-              >
-                Criar Período Letivo
-              </Button>
-            </Box>
+          <div className="flex w-full flex-col items-stretch justify-end gap-2 sm:flex-row sm:items-center">
+            <BotaoAlertaEvasao fullWidth={!acimaDeSm} />
+            <Button
+              variant="cta"
+              onClick={handleCreateCoursePeriod}
+              className={!acimaDeSm ? "w-full" : undefined}
+            >
+              Criar Período Letivo
+            </Button>
           </div>
         )}
-        <br />
-        <Box p={0}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            component="div"
-            className="pl-5"
-          >
-            Períodos Letivos
-          </Typography>
+        <section className="mt-4">
+          <h2 className="pl-5 text-h4 text-foreground">Períodos Letivos</h2>
           {EmptyState()}
-        </Box>
+        </section>
         {ModalCreateCoursePeriod()}
         {ModalEditCoursePeriod()}
       </>
@@ -358,50 +317,27 @@ export function PartnerClass() {
 
   return (
     <>
-      {/* Header */}
-      <AppBar position="static" color="transparent" elevation={0}>
-        <Toolbar
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 1,
-            py: { xs: 1, sm: 0 },
-          }}
-        >
-          <Typography variant="h4" fontWeight="bold" className="text-foreground">
-            Períodos Letivos
-          </Typography>
-          {podeGerenciar && (
-            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-              <BotaoAlertaEvasao fullWidth={!acimaDeSm} />
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleCreateCoursePeriod}
-                fullWidth={!acimaDeSm}
-              >
-                Novo Período Letivo
-              </Button>
-            </div>
-          )}
-        </Toolbar>
-      </AppBar>
+      <Cabecalho>
+        {podeGerenciar && (
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+            <BotaoAlertaEvasao fullWidth={!acimaDeSm} />
+            <Button
+              variant="cta"
+              onClick={handleCreateCoursePeriod}
+              className={!acimaDeSm ? "w-full" : undefined}
+            >
+              Novo Período Letivo
+            </Button>
+          </div>
+        )}
+      </Cabecalho>
 
-      <Box p={0}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
-            px: 2,
-          }}
-        >
-          <Typography variant="h6" gutterBottom component="div">
+      <section>
+        <div className="mb-2 flex items-center justify-between px-2">
+          <h2 className="text-h4 text-foreground">
             Períodos Letivos ({entities.length})
-          </Typography>
-        </Box>
+          </h2>
+        </div>
 
         {!acimaDeSm ? (
           <PeriodosMobile
@@ -418,58 +354,56 @@ export function PartnerClass() {
             podeGerenciar={podeGerenciar}
           />
         ) : (
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12 }}>
-              <TableContainer
-                component={Paper}
-                elevation={2}
-                sx={{ borderRadius: 2 }}
-              >
-                <Table>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: "primary.50" }}>
-                      <TableCell size="small" className="w-5" />
-                      {columns.map((column) => (
-                        <TableCell
-                          size="small"
-                          key={column.key as string}
-                          align={column.align || "left"}
-                          sx={{ fontWeight: "bold", color: "primary.main" }}
-                        >
-                          {column.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+          <Card>
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted">
+                  <TableHead className="w-5">
+                    <span className="sr-only">Expandir</span>
                   </TableHead>
-                  <TableBody>
-                    {entities.map((entity) => {
-                      return (
-                        <ExpandableCoursePeriod
-                          key={entity.id}
-                          coursePeriod={entity}
-                          setCoursePeriod={(period) => {
-                            setEntities((prev) =>
-                              prev.map((e) => (e.id === period.id ? period : e))
-                            );
-                          }}
-                          handleAddClass={handleAddClass}
-                          handleEditClass={handleEditClass}
-                          handleEditCoursePeriod={handleEditCoursePeriod}
-                          handleDeleteCoursePeriod={handleDeleteCoursePeriod}
-                          podeGerenciar={podeGerenciar}
-                        />
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-          </Grid>
+                  {columns.map((column) => (
+                    <TableHead
+                      key={column.key as string}
+                      className={`font-bold text-primary ${
+                        column.align === "right"
+                          ? "text-right"
+                          : column.align === "center"
+                            ? "text-center"
+                            : ""
+                      }`.trim()}
+                    >
+                      {column.label}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {entities.map((entity) => {
+                  return (
+                    <ExpandableCoursePeriod
+                      key={entity.id}
+                      coursePeriod={entity}
+                      setCoursePeriod={(period) => {
+                        setEntities((prev) =>
+                          prev.map((e) => (e.id === period.id ? period : e))
+                        );
+                      }}
+                      handleAddClass={handleAddClass}
+                      handleEditClass={handleEditClass}
+                      handleEditCoursePeriod={handleEditCoursePeriod}
+                      handleDeleteCoursePeriod={handleDeleteCoursePeriod}
+                      podeGerenciar={podeGerenciar}
+                    />
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </Card>
         )}
 
         {/* Paginação */}
         {totalPages > 1 && (
-          <Box sx={{ display: "flex", justifyContent: "center", mt: 3 }}>
+          <div className="mt-6 flex justify-center">
             <Pagination>
               <PaginationContent>
                 <PaginationItem>
@@ -529,9 +463,9 @@ export function PartnerClass() {
                 </PaginationItem>
               </PaginationContent>
             </Pagination>
-          </Box>
+          </div>
         )}
-      </Box>
+      </section>
 
       {ModalCreateCoursePeriod()}
       {ModalEditCoursePeriod()}
