@@ -350,7 +350,7 @@ export function ModalRules({
                 {/* Botões de Ação */}
                 <div className="flex flex-wrap gap-4">
                   <Button
-                    variant="outline"
+                    variant="primary"
                     size="sm"
                     onClick={() => modals.createRule.open()}
                   >

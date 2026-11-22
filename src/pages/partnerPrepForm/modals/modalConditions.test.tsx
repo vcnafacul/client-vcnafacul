@@ -30,11 +30,11 @@ describe("ModalConditions (tickets-documentacao, 27)", () => {
         onSave={vi.fn()}
       />,
     );
-    fireEvent.keyDown(screen.getAllByRole("combobox")[0], { key: "Enter" });
+    fireEvent.keyDown(screen.getByRole("combobox", { name: /Questão de Referência/ }), { key: "Enter" });
     // O pop-up do ui/select fica dentro do Dialog e continua na árvore de acessibilidade.
     const lista = within(screen.getByRole("listbox"));
     expect(lista.queryByText("Renda")).toBeNull();
-    expect(lista.getByText("Idade")).toBeInTheDocument();
-    expect(lista.getByText("Número")).toBeInTheDocument();
+    expect(lista.getByText(/Idade/)).toBeInTheDocument();
+    expect(lista.getByText(/Número/)).toBeInTheDocument();
   });
 });

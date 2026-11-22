@@ -14,13 +14,11 @@ import {
   Operator,
 } from "@/types/partnerPrepForm/condition";
 import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { OptionsSelect } from "@/components/ui/options-select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { memo, useState } from "react";
 import { resumo, ROTULO_DO_TIPO } from "../textosDeCondicao";
@@ -409,39 +407,16 @@ export function ModalConditions({
                           label="Questão de Referência"
                           error={errors[`${index}-questionId`] || undefined}
                         >
-                          <Select
+<OptionsSelect
                             value={condition.questionId}
                             onValueChange={(v) =>
                               updateCondition(index, "questionId", v)
                             }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {activeQuestions.length > 0 ? (
-                                activeQuestions.map((question) => (
-                                  <SelectItem
-                                    key={question._id}
-                                    value={question._id}
-                                  >
-                                    <span className="flex items-center gap-2">
-                                      <Badge variant="outline">
-                                        {ROTULO_DO_TIPO[question.answerType]}
-                                      </Badge>
-                                      <span className="text-body">
-                                        {resumo(question.text)}
-                                      </span>
-                                    </span>
-                                  </SelectItem>
-                                ))
-                              ) : (
-                                <p className="px-2 py-1.5 text-body text-muted-foreground">
-                                  Nenhuma questão ativa disponível
-                                </p>
-                              )}
-                            </SelectContent>
-                          </Select>
+                            options={activeQuestions.map((question) => ({
+                              value: question._id,
+                              label: `${ROTULO_DO_TIPO[question.answerType]} · ${resumo(question.text)}`,
+                            }))}
+                          />
                         </Field>
 
                         {/* Seleção do Operador */}
