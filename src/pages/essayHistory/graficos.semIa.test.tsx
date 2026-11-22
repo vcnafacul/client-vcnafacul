@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { EssayStatsTimelineEntry } from "@/dtos/essay";
 import CompetencyEvolutionChart from "./CompetencyEvolutionChart";
@@ -63,7 +63,7 @@ describe("histórico de redações sem correção por IA", () => {
     expect(screen.getByText("Evolução por Competência")).toBeInTheDocument();
     expect(screen.getByTestId("linhas")).toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "IA" }),
+      screen.queryByRole("radio", { name: "IA" }),
     ).not.toBeInTheDocument();
   });
 
@@ -74,5 +74,15 @@ describe("histórico de redações sem correção por IA", () => {
     expect(screen.getAllByText("Humana")).toHaveLength(5);
     expect(screen.queryByText("IA")).not.toBeInTheDocument();
     expect(screen.getAllByText("140")).toHaveLength(5);
+  });
+
+  it("com as duas correções, o seletor troca entre IA e Humana", () => {
+    const duas = soHumana.map((e) => ({ ...e, aiReview: nota(100) }));
+    render(<CompetencyEvolutionChart timeline={duas} />);
+
+    expect(screen.getByRole("radio", { name: "IA" })).toBeChecked();
+    fireEvent.click(screen.getByRole("radio", { name: "Humana" }));
+    expect(screen.getByRole("radio", { name: "Humana" })).toBeChecked();
+    expect(screen.getByRole("radio", { name: "IA" })).not.toBeChecked();
   });
 });

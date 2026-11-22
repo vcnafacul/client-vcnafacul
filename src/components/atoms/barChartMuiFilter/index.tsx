@@ -1,9 +1,10 @@
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
-import { Chip, Typography } from "@mui/material";
 import { BarChart } from "@mui/x-charts";
 import { useEffect, useMemo, useState } from "react";
 import { BarChartMuiProps } from "../barChartMui";
 import { palette } from "@/lib/palette";
+import { badgeVariants } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export interface BarChartWithFilterProps extends BarChartMuiProps {
   title?: string;
@@ -38,7 +39,7 @@ export default function BarChartWithFilter({
 
   const sorted = useMemo(
     () => [...data].sort((a, b) => b.value - a.value),
-    [data]
+    [data],
   );
 
   const handleToggle = (id: string) => {
@@ -56,7 +57,7 @@ export default function BarChartWithFilter({
 
   const longestLabel = displayData.reduce(
     (max, d) => Math.max(max, d.label.length),
-    0
+    0,
   );
   // No celular a margem dos rótulos (até 220px) deixava as barras com ~70px.
   const acimaDeSm = useAcimaDeSm();
@@ -67,11 +68,7 @@ export default function BarChartWithFilter({
 
   return (
     <div>
-      {title && (
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-          {title}
-        </Typography>
-      )}
+      {title && <h3 className="text-h4 text-foreground mb-2">{title}</h3>}
 
       {/* Chips toggle — scrollable single row */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-2 mb-1 scrollbar-thin flex-wrap">
@@ -79,24 +76,24 @@ export default function BarChartWithFilter({
           const isHidden = hidden.has(item.id);
           const chipColor = COLORS[i % COLORS.length];
           return (
-            <Chip
+            <button
               key={item.id}
-              label={item.label}
-              size="small"
+              type="button"
+              aria-pressed={!isHidden}
               onClick={() => handleToggle(item.id)}
-              sx={{
-                flexShrink: 0,
+              className={cn(
+                badgeVariants({ variant: "outline" }),
+                "shrink-0 cursor-pointer border-[1.5px] hover:opacity-90",
+                isHidden && "opacity-50",
+              )}
+              style={{
                 backgroundColor: isHidden ? "transparent" : chipColor,
                 color: isHidden ? chipColor : "white",
-                border: `1.5px solid ${chipColor}`,
-                fontWeight: 600,
-                fontSize: "0.7rem",
-                opacity: isHidden ? 0.5 : 1,
-                "&:hover": {
-                  backgroundColor: isHidden ? `${chipColor}18` : chipColor,
-                },
+                borderColor: chipColor,
               }}
-            />
+            >
+              {item.label}
+            </button>
           );
         })}
       </div>
@@ -138,9 +135,7 @@ export default function BarChartWithFilter({
           className="text-caption text-foreground underline mt-1 hover:text-primary"
           onClick={() => setShowAll((v) => !v)}
         >
-          {showAll
-            ? "Mostrar menos"
-            : `Mostrar todos (${visibleData.length})`}
+          {showAll ? "Mostrar menos" : `Mostrar todos (${visibleData.length})`}
         </button>
       )}
     </div>

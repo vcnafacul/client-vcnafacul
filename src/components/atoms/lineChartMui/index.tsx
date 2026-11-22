@@ -1,4 +1,3 @@
-import { Box, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts";
 import { chartSeries, palette } from "@/lib/palette";
 
@@ -41,13 +40,9 @@ export default function LineChartMui({
   compacto = false,
 }: LineChartMuiProps) {
   return (
-    <Box sx={{ width, display: "flex", flexDirection: "column" }}>
-      {title && (
-        <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
-          {title}
-        </Typography>
-      )}
-      <Box sx={{ height, minHeight: 0 }}>
+    <div className="flex flex-col" style={{ width }}>
+      {title && <h3 className="text-h4 text-foreground mb-2">{title}</h3>}
+      <div className="min-h-0" style={{ height }}>
         <LineChart
           xAxis={[
             {
@@ -64,7 +59,7 @@ export default function LineChartMui({
           }
           yAxis={[
             {
-              label: compacto ? undefined : yAxisLabel ?? "Quantidade",
+              label: compacto ? undefined : (yAxisLabel ?? "Quantidade"),
               ...(yAxisMax !== undefined && { max: yAxisMax }),
               labelStyle: {
                 translate: -15,
@@ -83,7 +78,7 @@ export default function LineChartMui({
             legend: { hidden: true },
           }}
         />
-      </Box>
+      </div>
       {/* Custom legend outside the SVG */}
       {series.length > 0 && (
         <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 mt-1">
@@ -96,11 +91,13 @@ export default function LineChartMui({
                     s.color || DEFAULT_COLORS[i % DEFAULT_COLORS.length],
                 }}
               />
-              <span className="text-caption text-muted-foreground">{s.label}</span>
+              <span className="text-caption text-muted-foreground">
+                {s.label}
+              </span>
             </div>
           ))}
         </div>
       )}
-    </Box>
+    </div>
   );
 }

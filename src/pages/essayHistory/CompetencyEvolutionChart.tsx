@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import LineChartMui from "@/components/atoms/lineChartMui";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import { EssayStatsTimelineEntry } from "@/dtos/essay";
 import { chartSeries } from "@/lib/palette";
 
@@ -14,7 +14,11 @@ const COMPETENCY_LABELS = [
 ];
 
 const COMP_FIELDS = [
-  "comp1Score", "comp2Score", "comp3Score", "comp4Score", "comp5Score",
+  "comp1Score",
+  "comp2Score",
+  "comp3Score",
+  "comp4Score",
+  "comp5Score",
 ] as const;
 
 const COLORS = chartSeries.slice(0, 5);
@@ -55,15 +59,16 @@ export default function CompetencyEvolutionChart({ timeline }: Props) {
       <div className="flex items-center justify-between mb-2">
         <p className="text-body font-bold">Evolução por Competência</p>
         {hasAi && hasHuman && (
-          <ToggleButtonGroup
-            size="small"
+          <SegmentedControl
+            size="sm"
+            aria-label="Tipo de correção"
             value={reviewType}
-            exclusive
-            onChange={(_, val) => val && setReviewType(val)}
-          >
-            <ToggleButton value="ai">IA</ToggleButton>
-            <ToggleButton value="human">Humana</ToggleButton>
-          </ToggleButtonGroup>
+            onValueChange={(val) => setReviewType(val as "ai" | "human")}
+            options={[
+              { value: "ai", label: "IA" },
+              { value: "human", label: "Humana" },
+            ]}
+          />
         )}
       </div>
       <LineChartMui

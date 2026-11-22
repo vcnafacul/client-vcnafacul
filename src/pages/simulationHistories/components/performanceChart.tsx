@@ -1,10 +1,10 @@
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { formatDate } from "@/utils/date";
-import { Box, Chip, Paper, Typography } from "@mui/material";
 import { LineChart } from "@mui/x-charts";
 import { Activity, TrendingDown, TrendingUp } from "lucide-react";
 import { AproveitamentoHitoriesDTO } from "../../../dtos/historico/getPerformanceDTO";
 import { palette } from "@/lib/palette";
+import { Card } from "@/components/ui/card";
 
 interface PerformanceChartProps {
   aproveitamento: AproveitamentoHitoriesDTO;
@@ -13,6 +13,41 @@ interface PerformanceChartProps {
 }
 
 const ULTIMOS = 10;
+
+const cartaoEstatistica =
+  "rounded-lg bg-white/20 backdrop-blur-md p-3 sm:p-4 min-w-0 sm:min-w-[150px] sm:flex-[1_1_200px]";
+
+function Estatistica({
+  rotulo,
+  children,
+}: {
+  rotulo: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={cartaoEstatistica}>
+      <span className="text-caption opacity-90">{rotulo}</span>
+      {children}
+    </div>
+  );
+}
+
+function Dica({
+  icone,
+  children,
+}: {
+  icone: React.ReactNode;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="mt-4">
+      <p className="inline-flex items-start gap-2 rounded-full bg-white/20 px-3 py-2 text-body-sm font-bold text-white">
+        {icone}
+        <span>{children}</span>
+      </p>
+    </div>
+  );
+}
 
 export function PerformanceChart({
   aproveitamento,
@@ -55,174 +90,110 @@ export function PerformanceChart({
     fim > inicio ? "crescente" : fim < inicio ? "decrescente" : "estável";
 
   return (
-    <Paper
-      elevation={3}
-      sx={{
-        p: acimaDeSm ? 3 : 2,
-        mb: 3,
+    <Card
+      className="mb-6 border-0 p-4 sm:p-6 text-white"
+      style={{
         background: `linear-gradient(135deg, ${palette.marine[900]} 0%, ${palette.neutral[950]} 100%)`,
-        color: "white",
-        borderRadius: 2,
       }}
     >
       {/* Título e Estatísticas */}
-      <Box sx={{ mb: 3 }}>
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1, mb: 2 }}>
-          <Activity className="h-6 w-6" />
-          <Typography variant="h5" fontWeight="bold">
-            Evolução do Desempenho
-          </Typography>
-        </Box>
+      <div className="mb-6">
+        <div className="flex items-center gap-2 mb-4">
+          <Activity className="h-6 w-6" aria-hidden="true" />
+          <h2 className="text-h2 font-bold">Evolução do Desempenho</h2>
+        </div>
 
         {/* Cards de Estatísticas */}
-        <Typography
-          variant="caption"
-          sx={{ display: "block", opacity: 0.8, mb: 1.5 }}
-        >
+        <p className="text-caption block opacity-80 mb-3">
           Estatísticas dos últimos {historicos.length} simulados
-        </Typography>
+        </p>
         {/* No celular 2 por linha: um por linha eram ~450px antes do gráfico. */}
-        <Box
-          sx={{
-            display: acimaDeSm ? "flex" : "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: acimaDeSm ? 2 : 1.5,
-            flexWrap: "wrap",
-            mb: 2,
-          }}
-        >
-          <Box
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              backdropFilter: "blur(10px)",
-              p: acimaDeSm ? 2 : 1.5,
-              borderRadius: 2,
-              flex: "1 1 200px",
-              minWidth: acimaDeSm ? "150px" : 0,
-            }}
-          >
-            <Typography variant="caption" sx={{ opacity: 0.9 }}>
-              Pior Desempenho
-            </Typography>
-            <Typography
-              variant={acimaDeSm ? "h4" : "h5"}
-              fontWeight="bold"
-              color={palette.red[400]}
+        <div className="grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:gap-4 mb-4">
+          <Estatistica rotulo="Pior Desempenho">
+            <p
+              className="text-h1 font-bold"
+              style={{ color: palette.red[400] }}
             >
               {piorDesempenho.toFixed(1)}%
-            </Typography>
-          </Box>
+            </p>
+          </Estatistica>
 
-          <Box
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              backdropFilter: "blur(10px)",
-              p: acimaDeSm ? 2 : 1.5,
-              borderRadius: 2,
-              flex: "1 1 200px",
-              minWidth: acimaDeSm ? "150px" : 0,
-            }}
-          >
-            <Typography variant="caption" sx={{ opacity: 0.9 }}>
-              Melhor Desempenho
-            </Typography>
-            <Typography
-              variant={acimaDeSm ? "h4" : "h5"}
-              fontWeight="bold"
-              color={palette.mint[400]}
+          <Estatistica rotulo="Melhor Desempenho">
+            <p
+              className="text-h1 font-bold"
+              style={{ color: palette.mint[400] }}
             >
               {melhorDesempenho.toFixed(1)}%
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              backdropFilter: "blur(10px)",
-              p: acimaDeSm ? 2 : 1.5,
-              borderRadius: 2,
-              flex: "1 1 200px",
-              minWidth: acimaDeSm ? "150px" : 0,
-            }}
-          >
-            <Typography variant="caption" sx={{ opacity: 0.9 }}>
-              Média Geral
-            </Typography>
-            <Typography variant={acimaDeSm ? "h4" : "h5"} fontWeight="bold">
-              {mediaGeral.toFixed(1)}%
-            </Typography>
-          </Box>
+            </p>
+          </Estatistica>
 
-          <Box
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              backdropFilter: "blur(10px)",
-              p: acimaDeSm ? 2 : 1.5,
-              borderRadius: 2,
-              flex: "1 1 200px",
-              minWidth: acimaDeSm ? "150px" : 0,
-            }}
-          >
-            <Typography variant="caption" sx={{ opacity: 0.9 }}>
-              Total de Simulados
-            </Typography>
-            <Typography variant={acimaDeSm ? "h4" : "h5"} fontWeight="bold">
+          <Estatistica rotulo="Média Geral">
+            <p className="text-h1 font-bold">{mediaGeral.toFixed(1)}%</p>
+          </Estatistica>
+
+          <Estatistica rotulo="Total de Simulados">
+            <p className="text-h1 font-bold">
               {totalSimulados ?? aproveitamento.historicos.length}
-            </Typography>
-          </Box>
+            </p>
+          </Estatistica>
 
-          <Box
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              backdropFilter: "blur(10px)",
-              p: acimaDeSm ? 2 : 1.5,
-              borderRadius: 2,
-              flex: "1 1 200px",
-              minWidth: acimaDeSm ? "150px" : 0,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              gridColumn: "1 / -1",
-            }}
+          <div
+            className={`${cartaoEstatistica} col-span-2 sm:col-span-1 flex flex-col justify-center`}
           >
-            <Typography variant="caption" sx={{ opacity: 0.9, mb: 0.5 }}>
-              Tendência
-            </Typography>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <span className="text-caption opacity-90 mb-1">Tendência</span>
+            <div className="flex items-center gap-2">
               {tendencia === "crescente" ? (
                 <>
-                  <TrendingUp className="h-6 w-6" color={palette.mint[400]} />
-                  <Typography variant="body1" fontWeight="bold" color={palette.mint[400]}>
+                  <TrendingUp
+                    className="h-6 w-6"
+                    color={palette.mint[400]}
+                    aria-hidden="true"
+                  />
+                  <p
+                    className="text-body font-bold"
+                    style={{ color: palette.mint[400] }}
+                  >
                     Crescente
-                  </Typography>
+                  </p>
                 </>
               ) : tendencia === "decrescente" ? (
                 <>
-                  <TrendingDown className="h-6 w-6" color={palette.red[400]} />
-                  <Typography variant="body1" fontWeight="bold" color={palette.red[400]}>
+                  <TrendingDown
+                    className="h-6 w-6"
+                    color={palette.red[400]}
+                    aria-hidden="true"
+                  />
+                  <p
+                    className="text-body font-bold"
+                    style={{ color: palette.red[400] }}
+                  >
                     Decrescente
-                  </Typography>
+                  </p>
                 </>
               ) : (
                 <>
-                  <Activity className="h-6 w-6" color={palette.yellow[400]} />
-                  <Typography variant="body1" fontWeight="bold" color={palette.yellow[400]}>
+                  <Activity
+                    className="h-6 w-6"
+                    color={palette.yellow[400]}
+                    aria-hidden="true"
+                  />
+                  <p
+                    className="text-body font-bold"
+                    style={{ color: palette.yellow[400] }}
+                  >
                     Estável
-                  </Typography>
+                  </p>
                 </>
               )}
-            </Box>
-          </Box>
-        </Box>
-      </Box>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Gráfico */}
-      <Box
-        sx={{
-          bgcolor: "rgba(255, 255, 255, 0.95)",
-          borderRadius: 2,
-          p: acimaDeSm ? 2 : 1,
-          height: acimaDeSm ? 400 : 280,
-        }}
+      <div
+        className="rounded-lg bg-white/95 p-2 sm:p-4"
+        style={{ height: acimaDeSm ? 400 : 280 }}
       >
         <LineChart
           xAxis={[
@@ -310,66 +281,43 @@ export function PerformanceChart({
             },
           }}
         />
-      </Box>
+      </div>
 
       {/* Dicas de Melhoria */}
       {mediaGeral < 70 && (
-        <Box sx={{ mt: 2 }}>
-          <Chip
-            icon={<TrendingUp className="h-4 w-4" />}
-            label="💡 Dica: Continue praticando! A consistência é a chave para melhorar seu desempenho."
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              color: "white",
-              fontWeight: "bold",
-              // O rótulo do Chip não quebra: no celular a dica saía cortada.
-              height: "auto",
-              "& .MuiChip-label": { whiteSpace: "normal", py: 1 },
-              "& .MuiChip-icon": {
-                color: "white",
-              },
-            }}
-          />
-        </Box>
+        <Dica
+          icone={
+            <TrendingUp
+              className="h-4 w-4 shrink-0 mt-0.5"
+              aria-hidden="true"
+            />
+          }
+        >
+          💡 Dica: Continue praticando! A consistência é a chave para melhorar
+          seu desempenho.
+        </Dica>
       )}
       {mediaGeral >= 70 && mediaGeral < 85 && (
-        <Box sx={{ mt: 2 }}>
-          <Chip
-            icon={<Activity className="h-4 w-4" />}
-            label="🎯 Muito bem! Você está no caminho certo. Continue se desafiando!"
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              color: "white",
-              fontWeight: "bold",
-              // O rótulo do Chip não quebra: no celular a dica saía cortada.
-              height: "auto",
-              "& .MuiChip-label": { whiteSpace: "normal", py: 1 },
-              "& .MuiChip-icon": {
-                color: "white",
-              },
-            }}
-          />
-        </Box>
+        <Dica
+          icone={
+            <Activity className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />
+          }
+        >
+          🎯 Muito bem! Você está no caminho certo. Continue se desafiando!
+        </Dica>
       )}
       {mediaGeral >= 85 && (
-        <Box sx={{ mt: 2 }}>
-          <Chip
-            icon={<TrendingUp className="h-4 w-4" />}
-            label="🏆 Excelente! Seu desempenho está acima da média. Continue assim!"
-            sx={{
-              bgcolor: "rgba(255, 255, 255, 0.2)",
-              color: "white",
-              fontWeight: "bold",
-              // O rótulo do Chip não quebra: no celular a dica saía cortada.
-              height: "auto",
-              "& .MuiChip-label": { whiteSpace: "normal", py: 1 },
-              "& .MuiChip-icon": {
-                color: "white",
-              },
-            }}
-          />
-        </Box>
+        <Dica
+          icone={
+            <TrendingUp
+              className="h-4 w-4 shrink-0 mt-0.5"
+              aria-hidden="true"
+            />
+          }
+        >
+          🏆 Excelente! Seu desempenho está acima da média. Continue assim!
+        </Dica>
       )}
-    </Paper>
+    </Card>
   );
 }
