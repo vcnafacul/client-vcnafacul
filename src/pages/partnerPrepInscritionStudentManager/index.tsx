@@ -33,8 +33,13 @@ import { RankingItem } from "@/types/partnerPrepForm/ruleForm";
 import { capitalizeWords } from "@/utils/capitalizeWords";
 import { Card } from "@/components/ui/card";
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  DataTable,
+  type DataTableColumn,
+  type DataTableSort,
+} from "@/components/ui/data-table";
+import { ordenarLinhas } from "@/lib/ordenarLinhas";
+import { useEffect, useMemo, useState } from "react";
 import { Check, Eye, Mail, MailMinus, MailPlus, RefreshCw, Timer, TimerOff, X } from "lucide-react";
 import { useParams } from "react-router-dom";
 import { ReactComponent as IsentoIcon } from "../../assets/icons/partnerPrepCourse/pagante_add_dk.svg";
@@ -149,13 +154,6 @@ export function PartnerPrepInscritionStudentManager() {
   const executeAsync = useToastAsync();
   // Abaixo de 768px (o `sm` do projeto) a tabela vira lista de cards.
   const acimaDeSm = useAcimaDeSm();
-
-  const [selectedRows, setSelectedRows] = useState<string[]>([]);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSelectionChange = useCallback((selectionModel: any) => {
-    setSelectedRows(selectionModel);
-  }, []);
 
   const handleIsFreeInfo = async (studentId: string, isFree: boolean) => {
     await executeAsync({
@@ -404,7 +402,7 @@ export function PartnerPrepInscritionStudentManager() {
   };
 
   /*
-    As ações de um inscrito. Mesma função na coluna do DataGrid (desktop) e no
+    As ações de um inscrito. Mesma função na coluna da DataTable (desktop) e no
     card da lista do celular, para as duas nunca divergirem.
   */
   const renderAcoes = (row: XLSXStudentCourseFull) => (
@@ -585,87 +583,118 @@ export function PartnerPrepInscritionStudentManager() {
     </div>
   );
 
-  const columns: GridColDef[] = [
+  const dia = (d: Date | string | null) =>
+    d ? new Date(d).toLocaleDateString("pt-BR") : "";
+
+  const columns: DataTableColumn<XLSXStudentCourseFull>[] = [
     {
-      field: "actions",
-      headerName: "Ações",
-      flex: 1,
-      minWidth: 300,
-      disableColumnMenu: true,
-      sortable: false,
+      id: "actions",
+      header: "Ações",
       align: "center",
-      renderCell: (params) => renderAcoes(params.row),
+      width: "320px",
+      cell: (row) => renderAcoes(row),
     },
     {
-      field: "rankPosition",
-      headerName: "Pos.",
-      description: "Posição no Ranking",
-      width: 70,
+      id: "rankPosition",
+      header: (
+        <span title="Posição no Ranking">Pos.</span>
+      ),
       align: "center",
-      headerAlign: "center",
-      renderCell: (params) => {
+      sortable: true,
+      width: "70px",
+      cell: (row) => {
         if (!rankingMap) return "—";
-        const rank = rankingMap.get(params.row.userId);
+        const rank = rankingMap.get(row.userId);
         return rank != null ? `${rank}º` : "—";
       },
     },
     {
-      field: "email",
-      headerName: "Email",
-      width: 250,
-      renderCell: (params) => mascarar.email(params.value),
+      id: "email",
+      header: "Email",
+      sortable: true,
+      width: "250px",
+      cell: (row) => mascarar.email(row.email),
     },
     {
-      field: "cpf",
-      headerName: "CPF",
-      flex: 1,
-      minWidth: 120,
-      renderCell: (params) => mascarar.cpf(params.value),
+      id: "cpf",
+      header: "CPF",
+      sortable: true,
+      cell: (row) => mascarar.cpf(row.cpf),
     },
-    { field: "status", headerName: "Status", width: 200 },
     {
-      field: "isento",
-      headerName: "Isento",
-      flex: 1,
-      display: "flex",
+      id: "status",
+      header: "Status",
+      sortable: true,
+      width: "200px",
+      cell: (row) => row.status,
+    },
+    {
+      id: "isento",
+      header: "Isento",
       align: "center",
+      sortable: true,
+      cell: (row) => row.isento,
     },
     {
-      field: "lista_de_espera",
-      headerName: "L. Espera",
-      description: "Lista de Espera",
-      flex: 1,
-      display: "text",
+      id: "lista_de_espera",
+      header: <span title="Lista de Espera">L. Espera</span>,
       align: "center",
+      sortable: true,
+      cell: (row) => row.lista_de_espera,
     },
     {
-      field: "convocar",
-      headerName: "L. Convoc",
-      description: "Lista de Convocação",
-      flex: 1,
-      display: "flex",
+      id: "convocar",
+      header: <span title="Lista de Convocação">L. Convoc</span>,
       align: "center",
-      filterable: false,
+      sortable: true,
+      cell: (row) => row.convocar,
     },
     {
-      field: "data_convocacao",
-      headerName: "Data Conv",
-      description: "Data de Convocação para Matrícula",
-      flex: 1,
-      type: "date",
+      id: "data_convocacao",
+      header: <span title="Data de Convocação para Matrícula">Data Conv</span>,
+      sortable: true,
+      cell: (row) => dia(row.data_convocacao),
     },
     {
-      field: "data_limite_convocacao",
-      headerName: "Prazo M.",
-      description: "Prazo Confirmação Matrícula",
-      flex: 1,
-      type: "date",
+      id: "data_limite_convocacao",
+      header: <span title="Prazo Confirmação Matrícula">Prazo M.</span>,
+      sortable: true,
+      cell: (row) => dia(row.data_limite_convocacao),
     },
-
-    { field: "nome", headerName: "Nome", flex: 1 },
-    { field: "sobrenome", headerName: "Sobrenome", flex: 1 },
+    { id: "nome", header: "Nome", sortable: true, cell: (row) => row.nome },
+    {
+      id: "sobrenome",
+      header: "Sobrenome",
+      sortable: true,
+      cell: (row) => row.sobrenome,
+    },
   ];
-  const paginationModel = { page: 0, pageSize: 10 };
+
+  // A ordem inicial é a do ranking (`sortedStudents`); o cabeçalho reordena por cima.
+  const [sort, setSort] = useState<DataTableSort | undefined>();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const linhas = useMemo(
+    () =>
+      ordenarLinhas(sortedStudents, sort, {
+        rankPosition: (r) => rankingMap?.get(r.userId),
+        email: (r) => r.email,
+        cpf: (r) => r.cpf,
+        status: (r) => r.status,
+        isento: (r) => r.isento,
+        lista_de_espera: (r) => r.lista_de_espera,
+        convocar: (r) => r.convocar,
+        data_convocacao: (r) =>
+          r.data_convocacao ? new Date(r.data_convocacao).getTime() : null,
+        data_limite_convocacao: (r) =>
+          r.data_limite_convocacao
+            ? new Date(r.data_limite_convocacao).getTime()
+            : null,
+        nome: (r) => r.nome,
+        sobrenome: (r) => r.sobrenome,
+      }),
+    [sortedStudents, sort, rankingMap],
+  );
 
   const ModalWaitingList = () => {
     return modals.waitingList.isOpen ? (
@@ -839,18 +868,28 @@ export function PartnerPrepInscritionStudentManager() {
           mascarar={mascarar}
         />
       ) : (
-        <Card className="h-full w-full">
-          <DataGrid
-            rows={sortedStudents}
+        // Muitas colunas: a largura mínima faz o cartão rolar na horizontal, como a grade rolava.
+        <Card className="h-full w-full overflow-x-auto">
+          <DataTable
+            aria-label="Inscritos do processo seletivo"
             columns={columns}
-            initialState={{ pagination: { paginationModel } }}
-            // checkboxSelection
-            rowHeight={40}
-            disableRowSelectionOnClick
-            pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-            onRowSelectionModelChange={handleSelectionChange}
-            sx={{ border: 0 }}
-            rowSelectionModel={selectedRows}
+            rows={linhas}
+            getRowId={(row) => row.id}
+            sort={sort}
+            onSortChange={setSort}
+            density="compact"
+            className="min-w-[1400px] rounded-none border-0"
+            pagination={{
+              page,
+              pageSize,
+              total: linhas.length,
+              onPageChange: setPage,
+              pageSizeOptions: [5, 10, 15, 30, 50, 100],
+              onPageSizeChange: (n) => {
+                setPageSize(n);
+                setPage(1);
+              },
+            }}
           />
         </Card>
       )}
