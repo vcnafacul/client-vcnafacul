@@ -30,31 +30,6 @@ vi.mock("@/store/auth", () => ({
     },
   }),
 }));
-// O DataGrid não roda no jsdom: o dublê desenha só as células com ação.
-vi.mock("@mui/x-data-grid", () => ({
-  DataGrid: ({
-    rows,
-    columns,
-  }: {
-    rows: { id: string }[];
-    columns: {
-      field: string;
-      renderCell?: (p: { row: unknown }) => React.ReactNode;
-    }[];
-  }) => (
-    <div data-testid="data-grid">
-      {rows.map((r) => (
-        <div key={r.id}>
-          {columns.map((c) =>
-            c.renderCell ? (
-              <span key={c.field}>{c.renderCell({ row: r })}</span>
-            ) : null,
-          )}
-        </div>
-      ))}
-    </div>
-  ),
-}));
 vi.mock(
   "@/services/prepCourse/attendanceRecord/getStudentToAttendanceRecord",
   () => ({ getStudentsToAttendanceRecord: svc.alunos }),

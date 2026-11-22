@@ -22,12 +22,19 @@ import { formatDateTime } from "@/utils/date";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import {
+  DataTable,
+  type DataTableColumn,
+  type DataTableSort,
+} from "@/components/ui/data-table";
+import { ordenarLinhas } from "@/lib/ordenarLinhas";
+import { useEffect, useMemo, useState } from "react";
 import { Pencil } from "lucide-react";
 import { toast } from "react-toastify";
 import { EditStudentRecordModal } from "./editStudentRecordModal";
 import { useModals } from "@/hooks/useModal";
+
+const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
 interface AttendanceRecordProps {
   isOpen: boolean;
@@ -111,87 +118,94 @@ export function AttendanceRecordModal({
     }
   };
 
-  const columns: GridColDef[] = [
+  const [sort, setSort] = useState<DataTableSort | undefined>();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGE_SIZE_OPTIONS[0]);
+  const linhas = useMemo(
+    () =>
+      ordenarLinhas(students, sort, {
+        studentName: (s) => s.studentName,
+        cod_enrolled: (s) => s.cod_enrolled,
+        present: (s) => (s.present ? "Presente" : "Ausente"),
+        justification: (s) => s.justification,
+      }),
+    [students, sort],
+  );
+
+  const acaoEditar = (s: SimpleStudentAttendance) => (
+    <ShadcnTooltip content="Editar Presença">
+      <Button
+        size="icon"
+        variant="ghost"
+        aria-label="Editar Presença"
+        onClick={() => handleActionUpdate(s)}
+      >
+        <Pencil className="h-6 w-6 text-primary opacity-70 hover:opacity-100" />
+      </Button>
+    </ShadcnTooltip>
+  );
+
+  const observacao = (s: SimpleStudentAttendance) => {
+    // Por que a presença foi editada (card 05) — não entra no cálculo.
+    const o = s.observation;
+    if (!o) return null;
+    const quem = [o.by, formatDateTime(String(o.at))]
+      .filter(Boolean)
+      .join(" em ");
+    if (!quem) return <span className="truncate">{o.text}</span>;
+    return (
+      <ShadcnTooltip content={`Alterado por ${quem}`}>
+        <span className="truncate">{o.text}</span>
+      </ShadcnTooltip>
+    );
+  };
+
+  const columns: DataTableColumn<SimpleStudentAttendance>[] = [
     {
-      field: "Action",
-      headerName: "Ações",
-      disableColumnMenu: true,
-      sortable: false,
+      id: "Action",
+      header: "Ações",
       align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <div>
-          <ShadcnTooltip content="Editar Presença">
-            <Button
-              size="icon"
-              variant="ghost"
-              aria-label="Editar Presença"
-              onClick={() => handleActionUpdate(params.row)}
-            >
-              <Pencil className="h-6 w-6 text-primary opacity-70 hover:opacity-100" />
-            </Button>
-          </ShadcnTooltip>
-        </div>
-      ),
+      width: "90px",
+      mobile: "hidden",
+      cell: (s) => acaoEditar(s),
     },
     {
-      field: "studentName",
-      headerName: "Nome",
+      id: "studentName",
+      header: "Nome",
       align: "center",
-      headerAlign: "center",
-      flex: 1,
-      minWidth: 200,
+      sortable: true,
+      mobile: "title",
+      cell: (s) => s.studentName,
     },
     {
-      field: "cod_enrolled",
-      headerName: "Código de Matrícula",
+      id: "cod_enrolled",
+      header: "Código de Matrícula",
       align: "center",
-      headerAlign: "center",
-      flex: 1,
-      minWidth: 200,
+      sortable: true,
+      cell: (s) => s.cod_enrolled,
     },
     {
-      field: "present",
-      headerName: "Presença",
+      id: "present",
+      header: "Presença",
       align: "center",
-      headerAlign: "center",
-      flex: 1,
-      minWidth: 200,
-      valueGetter: (params) => ((params as boolean) ? "Presente" : "Ausente"),
+      sortable: true,
+      cell: (s) => (s.present ? "Presente" : "Ausente"),
     },
     {
-      field: "justification",
-      headerName: "Justificativa",
+      id: "justification",
+      header: "Justificativa",
       align: "center",
-      headerAlign: "center",
-      flex: 1,
-      minWidth: 200,
+      sortable: true,
+      cell: (s) => s.justification,
     },
     {
-      // Por que a presença foi editada (card 05) — não entra no cálculo.
-      field: "observation",
-      headerName: "Observação",
+      id: "observation",
+      header: "Observação",
       align: "center",
-      headerAlign: "center",
-      flex: 1,
-      minWidth: 220,
-      sortable: false,
-      renderCell: (params) => {
-        const o = (params.row as SimpleStudentAttendance).observation;
-        if (!o) return null;
-        const quem = [o.by, formatDateTime(String(o.at))]
-          .filter(Boolean)
-          .join(" em ");
-        if (!quem) return <span className="truncate">{o.text}</span>;
-        return (
-          <ShadcnTooltip content={`Alterado por ${quem}`}>
-            <span className="truncate">{o.text}</span>
-          </ShadcnTooltip>
-        );
-      },
+      width: "220px",
+      cell: (s) => observacao(s),
     },
   ];
-  const paginationModel = { page: 0, pageSize: 10 };
 
   useEffect(() => {
     getAttendanceRecordById(token, attendanceId).then((res) => {
@@ -235,17 +249,44 @@ export function AttendanceRecordModal({
         </DialogHeader>
         {/* flex-1 em vez de 95%: somado à linha da data passava da caixa. */}
         <DialogBody className="flex flex-col overflow-hidden">
-          <Card className="min-h-0 w-full flex-1">
-            <DataGrid
-              disableColumnMenu
-              pageSizeOptions={[paginationModel.pageSize]}
-              rows={students}
+          <Card className="min-h-0 w-full flex-1 overflow-auto">
+            <DataTable
+              aria-label="Registro de chamada"
               columns={columns}
-              rowCount={students.length}
-              initialState={{ pagination: { paginationModel } }}
-              rowHeight={43}
-              disableRowSelectionOnClick
-              sx={{ border: 0 }}
+              rows={linhas}
+              getRowId={(s) => s.id}
+              sort={sort}
+              onSortChange={setSort}
+              density="compact"
+              className="rounded-none border-0"
+              pagination={{
+                page,
+                pageSize,
+                total: linhas.length,
+                onPageChange: setPage,
+                pageSizeOptions: PAGE_SIZE_OPTIONS,
+                onPageSizeChange: (n) => {
+                  setPageSize(n);
+                  setPage(1);
+                },
+              }}
+              renderMobileCard={(s) => (
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="min-w-0 break-words font-semibold">
+                      {s.studentName}
+                    </p>
+                    {acaoEditar(s)}
+                  </div>
+                  <p className="text-body-sm text-muted-foreground">
+                    {s.cod_enrolled} · {s.present ? "Presente" : "Ausente"}
+                  </p>
+                  {s.justification && (
+                    <p className="text-body-sm">{s.justification}</p>
+                  )}
+                  {observacao(s)}
+                </div>
+              )}
             />
           </Card>
           {ModalEditRegister()}
