@@ -9,8 +9,46 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Box, IconButton, Tooltip } from "@mui/material";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Copy, Edit3, Eye, Plus, ToggleLeft, ToggleRight, Trash2 } from "lucide-react";
+import { type ReactNode } from "react";
+
+/** Botão de ícone com o nome acessível e o tooltip com o mesmo texto. */
+function AcaoIcone({
+  rotulo,
+  onClick,
+  className,
+  children,
+}: {
+  rotulo: string;
+  onClick?: () => void;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={rotulo}
+          onClick={onClick}
+          className={className}
+        >
+          {children}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>{rotulo}</TooltipContent>
+    </Tooltip>
+  );
+}
 
 export function ActionMenu({
   onView,
@@ -35,106 +73,84 @@ export function ActionMenu({
   /** `medium` (~40px) no celular, onde o alvo de toque pequeno erra. */
   tamanho?: "small" | "medium";
 }) {
+  // `small` encolhe o alvo a partir de sm (tabela densa); `medium` mantém o do botão.
+  const tamanhoClasse = tamanho === "small" ? "sm:h-8 sm:w-8" : "";
+
   return (
-    <Box className="flex flex-wrap gap-1">
-      {onAdd && (
-        <Tooltip title="Adicionar Questão" arrow>
-          <IconButton
-            size={tamanho}
-            onClick={onAdd}
-            sx={{ color: "primary.main" }}
-          >
-            <Plus className="h-4 w-4" />
-          </IconButton>
-        </Tooltip>
-      )}
-      {onToggle && (
-        <Tooltip title={isActive ? "Desativar Seção" : "Ativar Seção"} arrow>
-          <IconButton
-            size={tamanho}
+    <TooltipProvider delayDuration={200}>
+      <div className="flex flex-wrap gap-1">
+        {onAdd && (
+          <AcaoIcone rotulo="Adicionar Questão" onClick={onAdd} className={tamanhoClasse}>
+            <Plus />
+          </AcaoIcone>
+        )}
+        {onToggle && (
+          <AcaoIcone
+            rotulo={isActive ? "Desativar Seção" : "Ativar Seção"}
             onClick={onToggle}
-            sx={{
-              color: isActive ? "success.main" : "text.secondary",
-              "&:hover": {
-                color: isActive ? "error.main" : "success.main",
-              },
-            }}
+            className={`${
+              isActive
+                ? "text-success hover:text-destructive"
+                : "text-muted-foreground hover:text-success"
+            } ${tamanhoClasse}`.trim()}
           >
-            {isActive ? (
-              <ToggleRight className="h-4 w-4" />
-            ) : (
-              <ToggleLeft className="h-4 w-4" />
-            )}
-          </IconButton>
-        </Tooltip>
-      )}
-      {onView && (
-        <Tooltip title="Visualizar" arrow>
-          <IconButton
-            size={tamanho}
-            onClick={onView}
-            sx={{ color: "primary.main" }}
-          >
-            <Eye className="h-4 w-4" />
-          </IconButton>
-        </Tooltip>
-      )}
-      {onEdit && (
-        <Tooltip title="Editar" arrow>
-          <IconButton
-            size={tamanho}
-            onClick={onEdit}
-            sx={{ color: "warning.main" }}
-          >
-            <Edit3 className="h-4 w-4" />
-          </IconButton>
-        </Tooltip>
-      )}
-      {onDuplicate && (
-        <Tooltip title="Duplicar Seção" arrow>
-          <IconButton
-            size={tamanho}
+            {isActive ? <ToggleRight /> : <ToggleLeft />}
+          </AcaoIcone>
+        )}
+        {onView && (
+          <AcaoIcone rotulo="Visualizar" onClick={onView} className={tamanhoClasse}>
+            <Eye />
+          </AcaoIcone>
+        )}
+        {onEdit && (
+          <AcaoIcone rotulo="Editar" onClick={onEdit} className={tamanhoClasse}>
+            <Edit3 />
+          </AcaoIcone>
+        )}
+        {onDuplicate && (
+          <AcaoIcone
+            rotulo="Duplicar Seção"
             onClick={onDuplicate}
-            sx={{ color: "info.main" }}
+            className={tamanhoClasse}
           >
-            <Copy className="h-4 w-4" />
-          </IconButton>
-        </Tooltip>
-      )}
-      {onDelete && (
-        <Tooltip title="Excluir" arrow>
-          <span>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <IconButton
-                  size={tamanho}
-                  aria-label="Excluir"
-                  sx={{ color: "error.main" }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </IconButton>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>{mensagemExclusao}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Esta ação não pode ser desfeita.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                  <AlertDialogAction
-                    variant="destructive"
-                    onClick={onDelete}
+            <Copy />
+          </AcaoIcone>
+        )}
+        {onDelete && (
+          <AlertDialog>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Excluir"
+                    className={`text-destructive ${tamanhoClasse}`.trim()}
                   >
-                    Excluir
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </span>
-        </Tooltip>
-      )}
-    </Box>
+                    <Trash2 />
+                  </Button>
+                </AlertDialogTrigger>
+              </TooltipTrigger>
+              <TooltipContent>Excluir</TooltipContent>
+            </Tooltip>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{mensagemExclusao}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação não pode ser desfeita.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction variant="destructive" onClick={onDelete}>
+                  Excluir
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        )}
+      </div>
+    </TooltipProvider>
   );
 }

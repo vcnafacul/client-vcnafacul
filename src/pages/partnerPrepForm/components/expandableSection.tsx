@@ -1,17 +1,17 @@
 import { QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import { formatDate } from "@/utils/date";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { StatusBadge as StatusBadgeUi } from "@/components/ui/status-badge";
+import { TableCell, TableRow } from "@/components/ui/table";
 import {
-  Box,
-  Chip,
-  Collapse,
-  IconButton,
-  TableCell,
-  TableRow,
   Tooltip,
-  Typography,
-} from "@mui/material";
-import { useState } from "react";
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { StatusBadge } from "..";
 import { ActionMenu } from "./actionMenu";
@@ -78,6 +78,8 @@ export function ExpandableSection({
   updateQuestionFn,
 }: ExpandableSectionProps) {
   const [open, setOpen] = useState<boolean>(false);
+  const idDetalhes = useId();
+  const rotulo = open ? "Recolher" : "Expandir";
 
   const activeQuestionsCount = section.questions.filter(
     (question) => question.active
@@ -94,113 +96,83 @@ export function ExpandableSection({
     <>
       <TableRow
         key={section._id}
-        sx={{
-          opacity: section.active ? 1 : 0.6,
-          backgroundColor: open
-            ? "action.selected"
-            : section.active
-            ? "transparent"
-            : "grey.50",
-          "&:hover": {
-            backgroundColor: section.active ? "action.hover" : "grey.100",
-          },
-          borderLeft: "4px solid",
-          borderLeftColor: section.isGlobal
-            ? "info.main"
-            : section.active
-            ? "primary.main"
-            : "grey.300",
-        }}
+        data-state={open ? "selected" : undefined}
+        className={`hover:bg-accent ${
+          section.active ? "" : "bg-muted opacity-60"
+        }`.trim()}
       >
-        <TableCell size="small" className="w-16">
+        <TableCell
+          className={`w-16 border-l-4 ${
+            section.isGlobal
+              ? "border-l-chart-6"
+              : section.active
+                ? "border-l-primary"
+                : "border-l-border"
+          }`}
+        >
           {section.questions.length > 0 && (
-            <Tooltip title={open ? "Recolher" : "Expandir"} arrow>
-              <IconButton
-                aria-label="expand row"
-                size="small"
-                onClick={() => setOpen(!open)}
-                sx={{
-                  transition: "transform 0.2s ease-in-out",
-                  transform: open ? "rotate(180deg)" : "rotate(0deg)",
-                }}
-              >
-                <ChevronDown className="w-5 h-5" />
-              </IconButton>
-            </Tooltip>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    aria-label={`${rotulo} questões de ${section.name}`}
+                    aria-expanded={open}
+                    aria-controls={open ? idDetalhes : undefined}
+                    onClick={() => setOpen(!open)}
+                    className="sm:h-8 sm:w-8"
+                  >
+                    <ChevronDown
+                      className={`transition-transform ${open ? "rotate-180" : ""}`}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{rotulo}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
         </TableCell>
         <TableCell>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-            <Typography variant="subtitle1" fontWeight="bold">
-              {section.name}
-            </Typography>
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="text-body font-bold">{section.name}</span>
             <StatusBadge active={section.active} />
-            {section.isGlobal && (
-              <Chip
-                label="Global"
-                size="small"
-                color="info"
-                variant="filled"
-                sx={{ fontWeight: 500, fontSize: "0.7rem" }}
-              />
-            )}
-          </Box>
+            {section.isGlobal && <Badge variant="secondary">Global</Badge>}
+          </div>
         </TableCell>
-        <TableCell align="right">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <Typography variant="body2" fontWeight="bold">
-              {totalQuestionsCount}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              total
-            </Typography>
-          </Box>
+        <TableCell className="text-right">
+          <div className="flex flex-col items-end">
+            <span className="text-body font-bold">{totalQuestionsCount}</span>
+            <span className="text-caption text-muted-foreground">total</span>
+          </div>
         </TableCell>
-        <TableCell align="right">
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-end",
-            }}
-          >
-            <Typography variant="body2" fontWeight="bold" color="success.main">
+        <TableCell className="text-right">
+          <div className="flex flex-col items-end">
+            <span className="text-body font-bold text-success">
               {activeQuestionsCount}
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              ativas
-            </Typography>
-          </Box>
+            </span>
+            <span className="text-caption text-muted-foreground">ativas</span>
+          </div>
         </TableCell>
-        <TableCell align="right">
-          <Typography variant="body2">
-            {formatDate(section.createdAt.toString(), "dd/MM/yyyy")}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
+        <TableCell className="text-right">
+          <div>{formatDate(section.createdAt.toString(), "dd/MM/yyyy")}</div>
+          <div className="text-caption text-muted-foreground">
             {formatDate(section.createdAt.toString(), "HH:mm")}
-          </Typography>
+          </div>
         </TableCell>
-        <TableCell align="right">
-          <Typography variant="body2">
-            {formatDate(section.updatedAt.toString(), "dd/MM/yyyy")}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
+        <TableCell className="text-right">
+          <div>{formatDate(section.updatedAt.toString(), "dd/MM/yyyy")}</div>
+          <div className="text-caption text-muted-foreground">
             {formatDate(section.updatedAt.toString(), "HH:mm")}
-          </Typography>
+          </div>
         </TableCell>
-        <TableCell align="right" className="w-10">
+        <TableCell className="w-10 text-right">
           {section.isGlobal ? (
-            <Tooltip title="Seção global (somente leitura)" arrow>
-              <Typography variant="caption" color="text.secondary">
-                Somente leitura
-              </Typography>
-            </Tooltip>
+            <span className="text-caption text-muted-foreground">
+              Somente leitura
+              <span className="sr-only"> (seção global)</span>
+            </span>
           ) : (
             <ActionMenu
               onAdd={() => {
@@ -220,41 +192,18 @@ export function ExpandableSection({
           )}
         </TableCell>
       </TableRow>
-      <TableRow>
-        <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={7}>
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 2 }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  mb: 2,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  component="div"
-                  sx={{
-                    fontWeight: "bold",
-                    color: "primary.main",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  }}
-                >
-                  Questões ({totalQuestionsCount})
-                  {activeQuestionsCount !== totalQuestionsCount && (
-                    <Chip
-                      label={`${activeQuestionsCount} ativas`}
-                      size="small"
-                      color="success"
-                      variant="outlined"
-                    />
-                  )}
-                </Typography>
-              </Box>
+      {open && (
+        <TableRow className="hover:bg-transparent">
+          <TableCell colSpan={7} className="py-0">
+            <div id={idDetalhes} className="m-2">
+              <h4 className="mb-2 flex items-center gap-2 text-h4 font-bold text-primary">
+                Questões ({totalQuestionsCount})
+                {activeQuestionsCount !== totalQuestionsCount && (
+                  <StatusBadgeUi variant="success" look="dot">
+                    {activeQuestionsCount} ativas
+                  </StatusBadgeUi>
+                )}
+              </h4>
               <RenderQuestionsTable
                 questions={section.questions}
                 allQuestions={allQuestions}
@@ -268,10 +217,10 @@ export function ExpandableSection({
                 updateQuestionFn={updateQuestionFn}
                 readOnly={section.isGlobal}
               />
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+            </div>
+          </TableCell>
+        </TableRow>
+      )}
     </>
   );
 }

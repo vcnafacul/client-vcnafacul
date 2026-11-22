@@ -2,7 +2,8 @@ import { QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { formatDate } from "@/utils/date";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { IconButton, TableCell, TableRow, Typography } from "@mui/material";
+import { Button } from "@/components/ui/button";
+import { TableCell, TableRow } from "@/components/ui/table";
 import { GripVertical } from "lucide-react";
 import {
   AnswerTypeBadge,
@@ -35,102 +36,84 @@ export function SortableQuestionRow({
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-    opacity: isDragging ? 0.5 : 1,
-    backgroundColor: isDragging ? "rgba(25, 118, 210, 0.05)" : "transparent",
   };
 
   return (
     <TableRow
       ref={setNodeRef}
       style={style}
-      sx={{
-        "&:hover": {
-          backgroundColor: isDragging
-            ? "rgba(25, 118, 210, 0.05)"
-            : "action.hover",
-        },
-        borderLeft: question.active ? "4px solid" : "4px solid",
-        borderLeftColor: question.active ? "success.main" : "grey.300",
-        cursor: isDragging ? "grabbing" : "default",
-      }}
+      data-state={isDragging ? "selected" : undefined}
+      className={isDragging ? "opacity-50" : undefined}
     >
       {/* Coluna de Drag Handle */}
-      <TableCell sx={{ width: 40, padding: "8px" }}>
-        <IconButton
+      <TableCell
+        className={`w-10 border-l-4 p-2 ${
+          question.active ? "border-l-success" : "border-l-border"
+        }`}
+      >
+        <Button
           {...attributes}
           {...listeners}
-          size="small"
-          sx={{
-            // Sem isto o toque vira rolagem e o arraste é cancelado.
-            touchAction: "none",
-            cursor: "grab",
-            "&:active": {
-              cursor: "grabbing",
-            },
-            color: "grey.500",
-            "&:hover": {
-              color: "primary.main",
-              backgroundColor: "primary.50",
-            },
-          }}
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label="Arrastar a questão para reordenar"
+          // Sem touch-none o toque vira rolagem e o arraste é cancelado.
+          className={`touch-none text-muted-foreground hover:text-primary sm:h-8 sm:w-8 ${
+            isDragging ? "cursor-grabbing" : "cursor-grab"
+          }`}
         >
-          <GripVertical className="h-5 w-5" />
-        </IconButton>
+          <GripVertical />
+        </Button>
       </TableCell>
 
       {/* Coluna da Pergunta */}
-      <TableCell sx={{ maxWidth: 300 }}>
+      <TableCell className="max-w-[300px]">
         <TruncatedText text={question.text} maxLength={50} />
       </TableCell>
 
       {/* Coluna do Help Text */}
-      <TableCell align="right" sx={{ maxWidth: 200 }}>
+      <TableCell className="max-w-[200px] text-right">
         {question.helpText ? (
           <TruncatedText text={question.helpText} maxLength={30} />
         ) : (
-          <Typography variant="body2" color="text.secondary">
-            -
-          </Typography>
+          <span className="text-muted-foreground">-</span>
         )}
       </TableCell>
 
       {/* Coluna do Tipo */}
-      <TableCell align="center">
+      <TableCell className="text-center">
         <AnswerTypeBadge answerType={question.answerType} />
       </TableCell>
 
       {/* Coluna da Coleção */}
-      <TableCell align="center">
+      <TableCell className="text-center">
         <CollectionBadge collection={question.collection} />
       </TableCell>
 
       {/* Coluna do Status */}
-      <TableCell align="center">
+      <TableCell className="text-center">
         <StatusBadge active={question.active} />
       </TableCell>
 
       {/* Coluna Criado em */}
-      <TableCell align="right">
-        <Typography variant="body2">
-          {formatDate(question.createdAt.toString(), "dd/MM/yyyy")}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
+      <TableCell className="text-right">
+        <div>{formatDate(question.createdAt.toString(), "dd/MM/yyyy")}</div>
+        <div className="text-caption text-muted-foreground">
           {formatDate(question.createdAt.toString(), "HH:mm")}
-        </Typography>
+        </div>
       </TableCell>
 
       {/* Coluna Atualizado em */}
-      <TableCell align="right">
-        <Typography variant="body2">
-          {formatDate(question.updatedAt.toString(), "dd/MM/yyyy")}
-        </Typography>
-        <Typography variant="caption" color="text.secondary">
+      <TableCell className="text-right">
+        <div>{formatDate(question.updatedAt.toString(), "dd/MM/yyyy")}</div>
+        <div className="text-caption text-muted-foreground">
           {formatDate(question.updatedAt.toString(), "HH:mm")}
-        </Typography>
+        </div>
       </TableCell>
 
       {/* Coluna de Ações */}
-      <TableCell align="right" className="w-10">
+      <TableCell className="w-10 text-right">
         <ActionMenu
           onView={onView}
           onDelete={onDelete}

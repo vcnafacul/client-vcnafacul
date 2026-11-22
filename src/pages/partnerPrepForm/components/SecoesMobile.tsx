@@ -1,7 +1,7 @@
 import { questoesDeReferencia } from "../questoesDeReferencia";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import { formatDate } from "@/utils/date";
-import { Chip } from "@mui/material";
+import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { StatusBadge } from "..";
@@ -78,7 +78,7 @@ function SecaoCard({
         </p>
         <StatusBadge active={section.active} />
         {section.isGlobal && (
-          <Chip label="Global" size="small" color="info" />
+          <Badge variant="secondary">Global</Badge>
         )}
       </div>
       <p className="text-caption text-muted-foreground">

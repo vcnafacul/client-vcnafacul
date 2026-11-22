@@ -13,25 +13,31 @@ import { AnswerType, QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
 import { secoesVisiveis } from "./secoesVisiveis";
 import { questoesDeReferencia } from "./questoesDeReferencia";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { StatusBadge as StatusBadgeUi } from "@/components/ui/status-badge";
 import {
-  AppBar,
-  Box,
-  Button,
-  Chip,
-  Paper,
-  Skeleton,
   Table,
   TableBody,
-  TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Toolbar,
+} from "@/components/ui/table";
+import {
   Tooltip,
-  Typography,
-} from "@mui/material";
-import Grid from "@mui/material/Grid2";
-import { useCallback, useEffect, useMemo, useState } from "react";
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { toast } from "react-toastify";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ExpandableSection } from "./components/expandableSection";
@@ -46,37 +52,15 @@ type AggregatedSection = {
   questions: number;
 };
 
-// Componente para badge de status
+// Componente para badge de status (dentro de tabela/lista: com o ponto)
 export const StatusBadge = ({ active }: { active: boolean }) => (
-  <Chip
-    label={active ? "Ativo" : "Inativo"}
-    color={active ? "success" : "default"}
-    size="small"
-    variant={active ? "filled" : "outlined"}
-    sx={{
-      fontWeight: 500,
-      fontSize: "0.75rem",
-    }}
-  />
+  <StatusBadgeUi variant={active ? "success" : "neutral"} look="dot">
+    {active ? "Ativo" : "Inativo"}
+  </StatusBadgeUi>
 );
 
-// Componente para badge de tipo de resposta
+// Componente para badge de tipo de resposta (categoria, não estado)
 export const AnswerTypeBadge = ({ answerType }: { answerType: AnswerType }) => {
-  const getColor = (type: AnswerType) => {
-    switch (type) {
-      case AnswerType.Text:
-        return "primary";
-      case AnswerType.Number:
-        return "secondary";
-      case AnswerType.Boolean:
-        return "warning";
-      case AnswerType.Options:
-        return "info";
-      default:
-        return "default";
-    }
-  };
-
   const getLabel = (type: AnswerType) => {
     switch (type) {
       case AnswerType.Text:
@@ -92,32 +76,14 @@ export const AnswerTypeBadge = ({ answerType }: { answerType: AnswerType }) => {
     }
   };
 
-  return (
-    <Chip
-      label={getLabel(answerType)}
-      color={getColor(answerType)}
-      size="small"
-      variant="outlined"
-      sx={{
-        fontWeight: 500,
-        fontSize: "0.75rem",
-      }}
-    />
-  );
+  return <Badge variant="outline">{getLabel(answerType)}</Badge>;
 };
 
-// Componente para badge de coleção
+// Componente para badge de coleção (categoria, não estado)
 export const CollectionBadge = ({ collection }: { collection: string }) => (
-  <Chip
-    label={collection === "single" ? "Única" : "Múltipla"}
-    color={collection === "single" ? "success" : "info"}
-    size="small"
-    variant="outlined"
-    sx={{
-      fontWeight: 500,
-      fontSize: "0.75rem",
-    }}
-  />
+  <Badge variant="outline">
+    {collection === "single" ? "Única" : "Múltipla"}
+  </Badge>
 );
 
 // Componente para texto truncado com tooltip
@@ -136,13 +102,34 @@ export const TruncatedText = ({
   }
 
   return (
-    <Tooltip title={text} arrow placement="top">
-      <span style={{ cursor: "help", textDecoration: "underline dotted" }}>
-        {truncated}
-      </span>
-    </Tooltip>
+    <TooltipProvider delayDuration={200}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {/* Focável, para o texto completo também abrir pelo teclado. */}
+          <button
+            type="button"
+            className="cursor-help text-left underline decoration-dotted"
+          >
+            {truncated}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="top" className="max-w-xs">
+          {text}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 };
+
+// Um único h1 por tela; o cabeçalho é o mesmo nos três estados.
+function Cabecalho({ children }: { children?: ReactNode }) {
+  return (
+    <header className="flex flex-wrap items-center justify-between gap-2 py-2">
+      <h1 className="text-h1 text-foreground">Formulários de Preparação</h1>
+      {children}
+    </header>
+  );
+}
 
 export default function PartnerPrepForm() {
   const {
@@ -226,39 +213,21 @@ export default function PartnerPrepForm() {
 
   // Componente de loading skeleton
   const LoadingSkeleton = () => (
-    <Box sx={{ p: 2 }}>
+    <div className="flex flex-col gap-4 p-4" aria-busy="true">
       {[...Array(3)].map((_, index) => (
-        <Box key={index} sx={{ mb: 2 }}>
-          <Skeleton
-            variant="rectangular"
-            height={60}
-            sx={{ borderRadius: 2 }}
-          />
-        </Box>
+        <Skeleton key={index} className="h-[60px] w-full rounded-lg" />
       ))}
-    </Box>
+    </div>
   );
 
   // Componente de estado vazio
   const EmptyState = () => (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        py: 8,
-        px: 4,
-        textAlign: "center",
-      }}
-    >
-      <Typography variant="h6" color="text.secondary" gutterBottom>
-        Nenhuma seção encontrada
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
+    <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
+      <p className="text-h4 text-muted-foreground">Nenhuma seção encontrada</p>
+      <p className="text-body text-muted-foreground">
         Comece criando sua primeira seção de formulário
-      </Typography>
-    </Box>
+      </p>
+    </div>
   );
 
   const CreateQuestion = () => {
@@ -447,24 +416,11 @@ export default function PartnerPrepForm() {
   if (loading) {
     return (
       <>
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 1 }}>
-            <Typography variant="h4" fontWeight="bold" className="text-foreground">
-              Formulários de Preparação
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <Box p={0}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            component="div"
-            className="pl-5"
-          >
-            Seções
-          </Typography>
+        <Cabecalho />
+        <section>
+          <h2 className="pl-5 text-h4 text-foreground">Seções</h2>
           {LoadingSkeleton()}
-        </Box>
+        </section>
       </>
     );
   }
@@ -472,38 +428,20 @@ export default function PartnerPrepForm() {
   if (entities.length === 0) {
     return (
       <>
-        <AppBar position="static" color="transparent" elevation={0}>
-          <Toolbar sx={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: 1 }}>
-            <Typography variant="h4" fontWeight="bold" className="text-foreground">
-              Formulários de Preparação
-            </Typography>
-          </Toolbar>
-        </AppBar>
-        <div className="flex justify-end items-center w-full px-4">
-          {/* criar um header para por um botão de criação de seção */}
-          <Box p={0} sx={{ width: { xs: "100%", sm: "auto" } }}>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth={!acimaDeSm}
-              onClick={() => modals.modalCreateSection.open()}
-            >
-              Criar Seção
-            </Button>
-          </Box>
-        </div>
-        <br />
-        <Box p={0}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            component="div"
-            className="pl-5"
+        <Cabecalho />
+        <div className="flex w-full justify-end px-4">
+          <Button
+            variant="cta"
+            className={!acimaDeSm ? "w-full" : undefined}
+            onClick={() => modals.modalCreateSection.open()}
           >
-            Seções
-          </Typography>
+            Criar Seção
+          </Button>
+        </div>
+        <section className="mt-4">
+          <h2 className="pl-5 text-h4 text-foreground">Seções</h2>
           {EmptyState()}
-        </Box>
+        </section>
         {CreateSection()}
       </>
     );
@@ -511,55 +449,30 @@ export default function PartnerPrepForm() {
 
   return (
     <>
-      {/* Header */}
-      <AppBar position="static" color="transparent" elevation={0}>
-        <Toolbar
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            gap: 1,
-            py: { xs: 1, sm: 0 },
-          }}
+      <Cabecalho>
+        <Button
+          variant="cta"
+          onClick={handleCreateSection}
+          className={!acimaDeSm ? "w-full" : undefined}
         >
-          <Typography variant="h4" fontWeight="bold" className="text-foreground">
-            Formulários de Preparação
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCreateSection}
-            fullWidth={!acimaDeSm}
-          >
-            Nova Seção
-          </Button>
-        </Toolbar>
-      </AppBar>
+          Nova Seção
+        </Button>
+      </Cabecalho>
 
-      <Box p={0}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            columnGap: 2,
-            mb: 2,
-            px: 2,
-          }}
-        >
-          <Typography variant="h6" gutterBottom component="div">
+      <section>
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4 px-2">
+          <h2 className="text-h4 text-foreground">
             Seções ({entities.length})
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            <Typography variant="body2" color="text.secondary">
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            <p className="text-body text-muted-foreground">
               Total de questões:{" "}
               {entities.reduce(
                 (acc, section) => acc + section.questions.length,
                 0
               )}
-            </Typography>
-            <Typography variant="body2" color="success.main">
+            </p>
+            <p className="text-body text-success">
               • Ativas:{" "}
               {entities.reduce((acc, section) => {
                 if (section.active) {
@@ -567,9 +480,9 @@ export default function PartnerPrepForm() {
                 }
                 return acc;
               }, 0)}
-            </Typography>
-          </Box>
-        </Box>
+            </p>
+          </div>
+        </div>
 
         {!acimaDeSm ? (
           <SecoesMobile
@@ -589,55 +502,53 @@ export default function PartnerPrepForm() {
             handleDuplicateSection={handleOpenDuplicateModal}
           />
         ) : (
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12 }}>
-              <TableContainer
-                component={Paper}
-                elevation={2}
-                sx={{ borderRadius: 2 }}
-              >
-                <Table>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: "primary.50" }}>
-                      <TableCell size="small" className="w-5" />
-                      {columns.map((column) => (
-                        <TableCell
-                          size="small"
-                          key={column.key as string}
-                          align={column.align || "left"}
-                          sx={{ fontWeight: "bold", color: "primary.main" }}
-                        >
-                          {column.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+          <Card>
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted">
+                  <TableHead className="w-5">
+                    <span className="sr-only">Expandir</span>
                   </TableHead>
-                  <TableBody>
-                    {entities.map((entity) => (
-                      <ExpandableSection
-                        key={entity._id}
-                        section={entity}
-                        // Só seções até esta podem ser referência (card 27).
-                        allQuestions={questoesDeReferencia(entities, entity._id)}
-                        setSection={handleSetSection} // ✅ Usa handler memoizado
-                        handleAddQuestion={handleAddQuestion}
-                        handleEditSection={() => {
-                          setSectionSelected(entity);
-                          modals.modalUpdateSection.open();
-                        }}
-                        handleDeleteSection={handleDeleteSection}
-                        handleToggleSection={handleToggleSection}
-                        handleReorderQuestions={handleReorderQuestions}
-                        handleDuplicateSection={handleOpenDuplicateModal}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-          </Grid>
+                  {columns.map((column) => (
+                    <TableHead
+                      key={column.key as string}
+                      className={`font-bold text-primary ${
+                        column.align === "right"
+                          ? "text-right"
+                          : column.align === "center"
+                            ? "text-center"
+                            : ""
+                      }`.trim()}
+                    >
+                      {column.label}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {entities.map((entity) => (
+                  <ExpandableSection
+                    key={entity._id}
+                    section={entity}
+                    // Só seções até esta podem ser referência (card 27).
+                    allQuestions={questoesDeReferencia(entities, entity._id)}
+                    setSection={handleSetSection} // ✅ Usa handler memoizado
+                    handleAddQuestion={handleAddQuestion}
+                    handleEditSection={() => {
+                      setSectionSelected(entity);
+                      modals.modalUpdateSection.open();
+                    }}
+                    handleDeleteSection={handleDeleteSection}
+                    handleToggleSection={handleToggleSection}
+                    handleReorderQuestions={handleReorderQuestions}
+                    handleDuplicateSection={handleOpenDuplicateModal}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
         )}
-      </Box>
+      </section>
       {CreateQuestion()}
       {CreateSection()}
       {UpdateSection()}

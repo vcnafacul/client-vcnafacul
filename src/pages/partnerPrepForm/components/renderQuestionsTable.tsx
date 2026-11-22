@@ -6,19 +6,22 @@ import { deleteQuestion } from "@/services/partnerPrepForm/deleteQuestion";
 import { useAuthStore } from "@/store/auth";
 import { QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { formatDate } from "@/utils/date";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
-  Box,
-  Paper,
   Table,
   TableBody,
-  TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Typography,
-} from "@mui/material";
+} from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
-import { IconButton, Tooltip } from "@mui/material";
 import { useState } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import {
@@ -160,108 +163,89 @@ export function RenderQuestionsTable({
   if (isMobile) {
     return (
       <>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          {questions.map((question, indice) => (
-            <Paper
-              key={question._id}
-              elevation={1}
-              sx={{
-                p: 2,
-                borderRadius: 2,
-                border: "1px solid",
-                borderColor: question.active ? "success.light" : "grey.300",
-                backgroundColor: question.active
-                  ? "success.50"
-                  : "background.paper",
-                transition: "all 0.2s ease-in-out",
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "flex-start",
-                  mb: 1,
-                }}
+        <TooltipProvider delayDuration={200}>
+          <div className="flex flex-col gap-4">
+            {questions.map((question, indice) => (
+              <Card
+                key={question._id}
+                className={`p-4 ${
+                  question.active ? "border-success" : "border-border"
+                }`}
               >
-                <Typography
-                  variant="subtitle2"
-                  fontWeight="bold"
-                  sx={{ flex: 1, mr: 1 }}
-                >
-                  <TruncatedText text={question.text} maxLength={60} />
-                </Typography>
-                <StatusBadge active={question.active} />
-              </Box>
+                <div className="mb-2 flex items-start justify-between gap-2">
+                  <p className="min-w-0 flex-1 break-words text-label font-bold">
+                    <TruncatedText text={question.text} maxLength={60} />
+                  </p>
+                  <StatusBadge active={question.active} />
+                </div>
 
-              {question.helpText && (
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ mb: 1 }}
-                >
-                  <TruncatedText text={question.helpText} maxLength={80} />
-                </Typography>
-              )}
+                {question.helpText && (
+                  <p className="mb-2 text-body text-muted-foreground">
+                    <TruncatedText text={question.helpText} maxLength={80} />
+                  </p>
+                )}
 
-              <Box sx={{ display: "flex", gap: 1, mb: 1, flexWrap: "wrap" }}>
-                <AnswerTypeBadge answerType={question.answerType} />
-                <CollectionBadge collection={question.collection} />
-              </Box>
+                <div className="mb-2 flex flex-wrap gap-2">
+                  <AnswerTypeBadge answerType={question.answerType} />
+                  <CollectionBadge collection={question.collection} />
+                </div>
 
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  flexWrap: "wrap",
-                  gap: 1,
-                }}
-              >
-                <Typography variant="caption" color="text.secondary">
-                  Criado:{" "}
-                  {formatDate(question.createdAt.toString(), "dd/MM/yyyy")}
-                </Typography>
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  {!readOnly && (
-                    <>
-                      <Tooltip title="Mover para cima" arrow>
-                        <span>
-                          <IconButton
-                            aria-label="Mover para cima"
-                            disabled={indice === 0}
-                            onClick={() => mover(indice, indice - 1)}
-                          >
-                            <ArrowUp className="h-4 w-4" />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                      <Tooltip title="Mover para baixo" arrow>
-                        <span>
-                          <IconButton
-                            aria-label="Mover para baixo"
-                            disabled={indice === questions.length - 1}
-                            onClick={() => mover(indice, indice + 1)}
-                          >
-                            <ArrowDown className="h-4 w-4" />
-                          </IconButton>
-                        </span>
-                      </Tooltip>
-                    </>
-                  )}
-                  <ActionMenu
-                    tamanho="medium"
-                    onView={() => handleViewQuestion(question)}
-                    onDelete={
-                      readOnly ? undefined : () => handleDeleteQuestion(question)
-                    }
-                    mensagemExclusao="Excluir esta questão?"
-                  />
-                </Box>
-              </Box>
-            </Paper>
-          ))}
-        </Box>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-caption text-muted-foreground">
+                    Criado:{" "}
+                    {formatDate(question.createdAt.toString(), "dd/MM/yyyy")}
+                  </span>
+                  <div className="flex items-center">
+                    {!readOnly && (
+                      <>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Mover para cima"
+                              disabled={indice === 0}
+                              onClick={() => mover(indice, indice - 1)}
+                            >
+                              <ArrowUp />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Mover para cima</TooltipContent>
+                        </Tooltip>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              aria-label="Mover para baixo"
+                              disabled={indice === questions.length - 1}
+                              onClick={() => mover(indice, indice + 1)}
+                            >
+                              <ArrowDown />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Mover para baixo</TooltipContent>
+                        </Tooltip>
+                      </>
+                    )}
+                    <ActionMenu
+                      tamanho="medium"
+                      onView={() => handleViewQuestion(question)}
+                      onDelete={
+                        readOnly
+                          ? undefined
+                          : () => handleDeleteQuestion(question)
+                      }
+                      mensagemExclusao="Excluir esta questão?"
+                    />
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        </TooltipProvider>
         {ShowQuestion()}
       </>
     );
@@ -274,37 +258,23 @@ export function RenderQuestionsTable({
         collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
-        <TableContainer component={Paper} elevation={1} sx={{ borderRadius: 2 }}>
-          <Table aria-label="questões" size="small">
-            <TableHead>
-              <TableRow sx={{ backgroundColor: "grey.50" }}>
-                <TableCell sx={{ fontWeight: "bold", width: 40 }}>
-                  {/* Coluna para drag handle */}
-                </TableCell>
-                <TableCell sx={{ fontWeight: "bold" }}>Pergunta</TableCell>
-                <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                  Help Text
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Tipo
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Coleção
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Status
-                </TableCell>
-                <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                  Criado em
-                </TableCell>
-                <TableCell align="right" sx={{ fontWeight: "bold" }}>
-                  Atualizado em
-                </TableCell>
-                <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                  Ações
-                </TableCell>
+        <Card>
+          <Table aria-label="questões">
+            <TableHeader>
+              <TableRow className="bg-muted">
+                <TableHead className="w-10">
+                  <span className="sr-only">Arrastar para ordenar</span>
+                </TableHead>
+                <TableHead>Pergunta</TableHead>
+                <TableHead className="text-right">Help Text</TableHead>
+                <TableHead className="text-center">Tipo</TableHead>
+                <TableHead className="text-center">Coleção</TableHead>
+                <TableHead className="text-center">Status</TableHead>
+                <TableHead className="text-right">Criado em</TableHead>
+                <TableHead className="text-right">Atualizado em</TableHead>
+                <TableHead className="text-center">Ações</TableHead>
               </TableRow>
-            </TableHead>
+            </TableHeader>
             <TableBody>
               <SortableContext
                 items={questions.map((q) => q._id)}
@@ -321,7 +291,7 @@ export function RenderQuestionsTable({
               </SortableContext>
             </TableBody>
           </Table>
-        </TableContainer>
+        </Card>
       </DndContext>
       {ShowQuestion()}
     </>
