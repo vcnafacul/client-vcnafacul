@@ -1,18 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ReactNode, useState } from "react";
+import { ReactNode, useId, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
-import Box from "@mui/material/Box";
-import Collapse from "@mui/material/Collapse";
-import IconButton from "@mui/material/IconButton";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Typography from "@mui/material/Typography";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+const ALINHAMENTO = {
+  left: "text-left",
+  center: "text-center",
+  right: "text-right",
+} as const;
 
 export interface TableColumn<T> {
   key: keyof T | string;
@@ -44,61 +49,66 @@ function ExpandableTableRow<T, K>({
   expandableTitle?: string;
 }) {
   const [open, setOpen] = useState(false);
+  const idDetalhes = useId();
   const aggregated = aggregate(row.items);
+  const rotulo = open ? "Recolher" : "Expandir";
 
   return (
     <>
       {/* Linha principal */}
-      <TableRow sx={{ "& > *": { borderBottom: "unset" } }}>
-        <TableCell className="w-5" size="small">
-          <IconButton
-            aria-label="expand row"
-            size="small"
+      <TableRow className="border-b-0">
+        <TableCell className="w-5">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            aria-label={`${rotulo} ${expandableTitle.toLowerCase()} de ${row.key}`}
+            aria-expanded={open}
+            aria-controls={open ? idDetalhes : undefined}
             onClick={() => setOpen(!open)}
+            className="sm:h-8 sm:w-8"
           >
-            {open ? (
-              <ChevronUp className="w-5 h-5" />
-            ) : (
-              <ChevronDown className="w-5 h-5" />
-            )}
-          </IconButton>
+            {open ? <ChevronUp /> : <ChevronDown />}
+          </Button>
         </TableCell>
         {columns.map((column) => {
           const value =
             column.key === "groupKey"
               ? row.key
               : (aggregated as any)[column.key];
-          return (
-            <TableCell
+          const classe = ALINHAMENTO[column.align || "left"];
+          const conteudo = column.render
+            ? column.render(value, aggregated as unknown as K)
+            : value;
+          return column.key === "groupKey" ? (
+            <th
               key={column.key as string}
-              align={column.align || "left"}
-              component={column.key === "groupKey" ? "th" : "td"}
-              scope={column.key === "groupKey" ? "row" : undefined}
+              scope="row"
+              className={`px-3 py-2 align-middle font-normal ${classe}`}
             >
-              {column.render
-                ? column.render(value, aggregated as unknown as K)
-                : value}
+              {conteudo}
+            </th>
+          ) : (
+            <TableCell key={column.key as string} className={classe}>
+              {conteudo}
             </TableCell>
           );
         })}
       </TableRow>
 
       {/* Linha expandida */}
-      <TableRow>
-        <TableCell
-          style={{ paddingBottom: 0, paddingTop: 0 }}
-          colSpan={columns.length + 1}
-        >
-          <Collapse in={open} timeout="auto" unmountOnExit>
-            <Box sx={{ margin: 1 }}>
-              <Typography variant="h6" gutterBottom component="div">
+      {open && (
+        <TableRow>
+          <TableCell colSpan={columns.length + 1} className="py-0">
+            <div id={idDetalhes} className="m-2">
+              <h4 className="mb-2 text-h4 text-foreground">
                 {expandableTitle}
-              </Typography>
+              </h4>
               {expandableContent(row.items)}
-            </Box>
-          </Collapse>
-        </TableCell>
-      </TableRow>
+            </div>
+          </TableCell>
+        </TableRow>
+      )}
     </>
   );
 }
@@ -127,22 +137,23 @@ export function ExpandableTable<T, K>({
   }));
 
   return (
-    <TableContainer component={Paper} className="px-4">
+    <Card className="px-4">
       <Table aria-label="collapsible table">
-        <TableHead>
+        <TableHeader>
           <TableRow>
-            <TableCell size="small" />
+            <TableHead className="w-5">
+              <span className="sr-only">Expandir</span>
+            </TableHead>
             {columns.map((column) => (
-              <TableCell
-                size="small"
+              <TableHead
                 key={column.key as string}
-                align={column.align || "left"}
+                className={ALINHAMENTO[column.align || "left"]}
               >
                 {column.label}
-              </TableCell>
+              </TableHead>
             ))}
           </TableRow>
-        </TableHead>
+        </TableHeader>
         <TableBody>
           {groupedRows.map((row) => (
             <ExpandableTableRow
@@ -156,7 +167,7 @@ export function ExpandableTable<T, K>({
           ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </Card>
   );
 }
 

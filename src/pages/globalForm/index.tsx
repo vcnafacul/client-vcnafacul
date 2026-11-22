@@ -15,23 +15,17 @@ import { updateGlobalSection } from "@/services/adminForm/updateGlobalSection";
 import { useAuthStore } from "@/store/auth";
 import { QuestionForm } from "@/types/partnerPrepForm/questionForm";
 import { SectionForm } from "@/types/partnerPrepForm/sectionForm";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Alert,
-  AppBar,
-  Box,
-  Button,
-  Paper,
-  Skeleton,
   Table,
   TableBody,
-  TableCell,
-  TableContainer,
   TableHead,
+  TableHeader,
   TableRow,
-  Toolbar,
-  Typography,
-} from "@mui/material";
-import Grid from "@mui/material/Grid2";
+} from "@/components/ui/table";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
@@ -109,38 +103,20 @@ export default function GlobalFormPage() {
   }, [token]);
 
   const LoadingSkeleton = () => (
-    <Box sx={{ p: 2 }}>
+    <div className="flex flex-col gap-4 p-4" aria-busy="true">
       {[...Array(3)].map((_, index) => (
-        <Box key={index} sx={{ mb: 2 }}>
-          <Skeleton
-            variant="rectangular"
-            height={60}
-            sx={{ borderRadius: 2 }}
-          />
-        </Box>
+        <Skeleton key={index} className="h-[60px] w-full rounded-lg" />
       ))}
-    </Box>
+    </div>
   );
 
   const EmptyState = () => (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        py: 8,
-        px: 4,
-        textAlign: "center",
-      }}
-    >
-      <Typography variant="h6" color="text.secondary" gutterBottom>
-        Nenhuma seção encontrada
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
+    <div className="flex flex-col items-center justify-center px-4 py-16 text-center">
+      <p className="text-h4 text-muted-foreground">Nenhuma seção encontrada</p>
+      <p className="text-body text-muted-foreground">
         Comece criando a primeira seção do formulário global
-      </Typography>
-    </Box>
+      </p>
+    </div>
   );
 
   const CreateQuestion = () => {
@@ -312,51 +288,37 @@ export default function GlobalFormPage() {
   };
 
   const PageHeader = () => (
-    <AppBar position="static" color="transparent" elevation={0}>
-      <Toolbar
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-          gap: 1,
-          py: { xs: 1, sm: 0 },
-        }}
-      >
-        <Typography variant="h4" fontWeight="bold" className="text-foreground">
-          Formulário Global
-        </Typography>
-        {!loading && entities.length > 0 && (
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleCreateSection}
-            fullWidth={!acimaDeSm}
-          >
-            Nova Seção
-          </Button>
-        )}
-      </Toolbar>
-    </AppBar>
+    <header className="flex flex-wrap items-center justify-between gap-2 py-2">
+      <h1 className="text-h1 text-foreground">Formulário Global</h1>
+      {!loading && entities.length > 0 && (
+        <Button
+          variant="cta"
+          onClick={handleCreateSection}
+          className={!acimaDeSm ? "w-full" : undefined}
+        >
+          Nova Seção
+        </Button>
+      )}
+    </header>
+  );
+
+  const aviso = (
+    <Alert
+          variant="info"
+          title="Este formulário é incluído em todos os processos seletivos."
+          className="mx-2 mb-4"
+        />
   );
 
   if (loading) {
     return (
       <>
         {PageHeader()}
-        <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
-          Este formulário é incluído em todos os processos seletivos.
-        </Alert>
-        <Box p={0}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            component="div"
-            className="pl-5"
-          >
-            Seções
-          </Typography>
+        {aviso}
+        <section>
+          <h2 className="pl-5 text-h4 text-foreground">Seções</h2>
           {LoadingSkeleton()}
-        </Box>
+        </section>
       </>
     );
   }
@@ -365,33 +327,20 @@ export default function GlobalFormPage() {
     return (
       <>
         {PageHeader()}
-        <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
-          Este formulário é incluído em todos os processos seletivos.
-        </Alert>
-        <div className="flex justify-end items-center w-full px-4">
-          <Box p={0} sx={{ width: { xs: "100%", sm: "auto" } }}>
-            <Button
-              variant="contained"
-              color="primary"
-              fullWidth={!acimaDeSm}
-              onClick={() => modals.modalCreateSection.open()}
-            >
-              Criar Seção
-            </Button>
-          </Box>
-        </div>
-        <br />
-        <Box p={0}>
-          <Typography
-            variant="h6"
-            gutterBottom
-            component="div"
-            className="pl-5"
+        {aviso}
+        <div className="flex w-full justify-end px-4">
+          <Button
+            variant="cta"
+            className={!acimaDeSm ? "w-full" : undefined}
+            onClick={() => modals.modalCreateSection.open()}
           >
-            Seções
-          </Typography>
+            Criar Seção
+          </Button>
+        </div>
+        <section className="mt-4">
+          <h2 className="pl-5 text-h4 text-foreground">Seções</h2>
           {EmptyState()}
-        </Box>
+        </section>
         {CreateSection()}
       </>
     );
@@ -400,35 +349,22 @@ export default function GlobalFormPage() {
   return (
     <>
       {PageHeader()}
+      {aviso}
 
-      <Alert severity="info" sx={{ mx: 2, mb: 2 }}>
-        Este formulário é incluído em todos os processos seletivos.
-      </Alert>
-
-      <Box p={0}>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            columnGap: 2,
-            mb: 2,
-            px: 2,
-          }}
-        >
-          <Typography variant="h6" gutterBottom component="div">
+      <section>
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4 px-2">
+          <h2 className="text-h4 text-foreground">
             Seções ({entities.length})
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-            <Typography variant="body2" color="text.secondary">
+          </h2>
+          <div className="flex flex-wrap gap-2">
+            <p className="text-body text-muted-foreground">
               Total de questões:{" "}
               {entities.reduce(
                 (acc, section) => acc + section.questions.length,
                 0
               )}
-            </Typography>
-            <Typography variant="body2" color="success.main">
+            </p>
+            <p className="text-body text-success">
               • Ativas:{" "}
               {entities.reduce((acc, section) => {
                 if (section.active) {
@@ -436,9 +372,9 @@ export default function GlobalFormPage() {
                 }
                 return acc;
               }, 0)}
-            </Typography>
-          </Box>
-        </Box>
+            </p>
+          </div>
+        </div>
 
         {/* Abaixo de 768px, cards (mesmos do Formulário do cursinho, #811). */}
         {!acimaDeSm ? (
@@ -462,57 +398,55 @@ export default function GlobalFormPage() {
             updateQuestionFn={updateGlobalQuestion}
           />
         ) : (
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12 }}>
-              <TableContainer
-                component={Paper}
-                elevation={2}
-                sx={{ borderRadius: 2 }}
-              >
-                <Table>
-                  <TableHead>
-                    <TableRow sx={{ backgroundColor: "primary.50" }}>
-                      <TableCell size="small" className="w-5" />
-                      {columns.map((column) => (
-                        <TableCell
-                          size="small"
-                          key={column.key as string}
-                          align={column.align || "left"}
-                          sx={{ fontWeight: "bold", color: "primary.main" }}
-                        >
-                          {column.label}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+          <Card>
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted">
+                  <TableHead className="w-5">
+                    <span className="sr-only">Expandir</span>
                   </TableHead>
-                  <TableBody>
-                    {entities.map((entity) => (
-                      <ExpandableSection
-                        key={entity._id}
-                        section={entity}
-                        allQuestions={allQuestions}
-                        setSection={handleSetSection}
-                        handleAddQuestion={handleAddQuestion}
-                        handleEditSection={() => {
-                          setSectionSelected(entity);
-                          modals.modalUpdateSection.open();
-                        }}
-                        handleDeleteSection={handleDeleteSection}
-                        handleToggleSection={handleToggleSection}
-                        handleReorderQuestions={handleReorderQuestions}
-                        handleDuplicateSection={handleOpenDuplicateModal}
-                        deleteFn={deleteGlobalQuestion}
-                        toggleActiveFn={setGlobalQuestionActive}
-                        updateQuestionFn={updateGlobalQuestion}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Grid>
-          </Grid>
+                  {columns.map((column) => (
+                    <TableHead
+                      key={column.key as string}
+                      className={`font-bold text-primary ${
+                        column.align === "right"
+                          ? "text-right"
+                          : column.align === "center"
+                            ? "text-center"
+                            : ""
+                      }`.trim()}
+                    >
+                      {column.label}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {entities.map((entity) => (
+                  <ExpandableSection
+                    key={entity._id}
+                    section={entity}
+                    allQuestions={allQuestions}
+                    setSection={handleSetSection}
+                    handleAddQuestion={handleAddQuestion}
+                    handleEditSection={() => {
+                      setSectionSelected(entity);
+                      modals.modalUpdateSection.open();
+                    }}
+                    handleDeleteSection={handleDeleteSection}
+                    handleToggleSection={handleToggleSection}
+                    handleReorderQuestions={handleReorderQuestions}
+                    handleDuplicateSection={handleOpenDuplicateModal}
+                    deleteFn={deleteGlobalQuestion}
+                    toggleActiveFn={setGlobalQuestionActive}
+                    updateQuestionFn={updateGlobalQuestion}
+                  />
+                ))}
+              </TableBody>
+            </Table>
+          </Card>
         )}
-      </Box>
+      </section>
       {CreateQuestion()}
       {CreateSection()}
       {UpdateSection()}
