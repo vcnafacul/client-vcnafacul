@@ -15,7 +15,12 @@ import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  DataTable,
+  type DataTableColumn,
+  type DataTableSort,
+} from "@/components/ui/data-table";
+import { ordenarLinhas } from "@/lib/ordenarLinhas";
 import { format } from "date-fns";
 import { turmaEncerrada } from "./turmaEncerrada";
 import heic2any from "heic2any";
@@ -25,7 +30,7 @@ import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
 import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
 import { getCancelledStudentsByClassId } from "@/services/prepCourse/class/getCancelledStudentsByClassId";
 import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Download, Eye, ListChecks, TriangleAlert } from "lucide-react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { AttendanceHistoryModal } from "./modals/attendanceHistoryModal";
@@ -195,7 +200,7 @@ export function PartnerClassWithStudents() {
   }, [classEntity.partnerId, token]);
 
   /*
-    Ações de um aluno ativo: mesma função na coluna do DataGrid (desktop) e no
+    Ações de um aluno ativo: mesma função na coluna da DataTable (desktop) e no
     card do celular (AlunosMobile).
   */
   const renderAcoes = (aluno: ClassStudent) => (
@@ -229,77 +234,63 @@ export function PartnerClassWithStudents() {
     </div>
   );
 
-  const columns: GridColDef[] = [
+  const pct = (v?: number | null) => (v == null ? "—" : `${v}%`);
+  const dia = (d: Date | string | null | undefined) =>
+    d ? new Date(d).toLocaleDateString("pt-BR") : "";
+
+  const columns: DataTableColumn<ClassStudent>[] = [
     {
-      field: "actions",
-      headerName: "Ações",
-      disableColumnMenu: true,
-      sortable: false,
+      id: "actions",
+      header: "Ações",
       align: "center",
-      headerAlign: "center",
-      renderCell: (params) => renderAcoes(params.row),
+      width: "110px",
+      cell: (aluno) => renderAcoes(aluno),
     },
     {
-      field: "cod_enrolled",
-      headerName: "Nº de matrícula",
-      width: 150,
+      id: "cod_enrolled",
+      header: "Nº de matrícula",
       align: "right",
-      headerAlign: "right",
+      sortable: true,
+      width: "150px",
+      cell: (aluno) => aluno.cod_enrolled,
     },
     {
-      field: "email",
-      headerName: "Email",
-      minWidth: 150,
-      flex: 1,
-      renderCell: (params) => mascarar.email(params.value),
+      id: "email",
+      header: "Email",
+      sortable: true,
+      cell: (aluno) => mascarar.email(aluno.email),
+    },
+    { id: "name", header: "Nome", sortable: true, cell: (aluno) => aluno.name },
+    {
+      id: "birthday",
+      header: "Nascimento",
+      sortable: true,
+      width: "110px",
+      cell: (aluno) => dia(aluno.birthday),
     },
     {
-      field: "name",
-      headerName: "Nome",
-      minWidth: 150,
-      flex: 1,
-    },
-    {
-      field: "birthday",
-      headerName: "Nascimento",
-      width: 110,
-      type: "date",
-    },
-    {
-      field: "presencePercentage",
-      headerName: "% Presença",
-      width: 110,
+      id: "presencePercentage",
+      header: "% Presença",
       align: "center",
-      headerAlign: "center",
-      renderCell: (params) => {
-        const value = params.row.presencePercentage;
-        if (value == null) return "—";
-        return `${value}%`;
-      },
+      sortable: true,
+      width: "110px",
+      cell: (aluno) => pct(aluno.presencePercentage),
     },
     {
-      field: "absencePercentage",
-      headerName: "% Faltas",
-      width: 100,
+      id: "absencePercentage",
+      header: "% Faltas",
       align: "center",
-      headerAlign: "center",
-      renderCell: (params) => {
-        const value = params.row.absencePercentage;
-        if (value == null) return "—";
-        return `${value}%`;
-      },
+      sortable: true,
+      width: "100px",
+      cell: (aluno) => pct(aluno.absencePercentage),
     },
     {
-      field: "justifiedAbsencePercentage",
-      headerName: "% Faltas Just.",
-      width: 120,
+      id: "justifiedAbsencePercentage",
+      header: "% Faltas Just.",
       align: "center",
-      headerAlign: "center",
-      renderCell: (params) => {
-        const value = params.row.justifiedAbsencePercentage;
-        if (value == null) return "—";
-        return `${value}%`;
-      },
+      sortable: true,
+      width: "120px",
+      cell: (aluno) => pct(aluno.justifiedAbsencePercentage),
     },
   ];
 
@@ -307,43 +298,78 @@ export function PartnerClassWithStudents() {
   // carteirinha, que exibe a turma e a data de termino como se o aluno ainda
   // estivesse matriculado. Emitir isso para quem teve a matricula cancelada
   // seria pior do que nao oferecer.
-  const cancelledColumns: GridColDef[] = [
+  const cancelledColumns: DataTableColumn<CancelledStudent>[] = [
     {
-      field: "cod_enrolled",
-      headerName: "Nº de matrícula",
-      width: 150,
+      id: "cod_enrolled",
+      header: "Nº de matrícula",
       align: "right",
-      headerAlign: "right",
+      sortable: true,
+      width: "150px",
+      cell: (aluno) => aluno.cod_enrolled,
+    },
+    { id: "name", header: "Nome", sortable: true, cell: (aluno) => aluno.name },
+    {
+      id: "email",
+      header: "Email",
+      sortable: true,
+      cell: (aluno) => mascarar.email(aluno.email),
     },
     {
-      field: "name",
-      headerName: "Nome",
-      minWidth: 150,
-      flex: 1,
+      id: "cancelledAt",
+      header: "Cancelado em",
+      sortable: true,
+      width: "130px",
+      cell: (aluno) => dia(aluno.cancelledAt),
     },
     {
-      field: "email",
-      headerName: "Email",
-      minWidth: 150,
-      flex: 1,
-      renderCell: (params) => mascarar.email(params.value),
-    },
-    {
-      field: "cancelledAt",
-      headerName: "Cancelado em",
-      width: 130,
-      type: "date",
-    },
-    {
-      field: "justification",
-      headerName: "Justificativa",
-      minWidth: 200,
-      flex: 1.5,
-      renderCell: (params) => params.row.justification ?? "—",
+      id: "justification",
+      header: "Justificativa",
+      sortable: true,
+      width: "30%",
+      cell: (aluno) => aluno.justification ?? "—",
     },
   ];
 
-  const paginationModel = { page: 0, pageSize: 40 };
+  const [sort, setSort] = useState<DataTableSort | undefined>();
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(40);
+  const ativosOrdenados = useMemo(
+    () =>
+      ordenarLinhas(students, sort, {
+        cod_enrolled: (a) => a.cod_enrolled,
+        email: (a) => a.email,
+        name: (a) => a.name,
+        birthday: (a) => (a.birthday ? new Date(a.birthday).getTime() : null),
+        presencePercentage: (a) => a.presencePercentage,
+        absencePercentage: (a) => a.absencePercentage,
+        justifiedAbsencePercentage: (a) => a.justifiedAbsencePercentage,
+      }),
+    [students, sort],
+  );
+  const canceladosOrdenados = useMemo(
+    () =>
+      ordenarLinhas(cancelledStudents, sort, {
+        cod_enrolled: (a) => a.cod_enrolled,
+        email: (a) => a.email,
+        name: (a) => a.name,
+        cancelledAt: (a) =>
+          a.cancelledAt ? new Date(a.cancelledAt).getTime() : null,
+        justification: (a) => a.justification,
+      }),
+    [cancelledStudents, sort],
+  );
+  const paginacao = (total: number) => ({
+    page,
+    pageSize,
+    total,
+    onPageChange: setPage,
+    // O 40 é o tamanho inicial da tela: precisa estar na lista para o Select mostrá-lo.
+    pageSizeOptions: [5, 10, 15, 30, 40, 50, 100],
+    onPageSizeChange: (n: number) => {
+      setPageSize(n);
+      setPage(1);
+    },
+  });
 
   const ModalAttendanceHistory = () => {
     return !modals.modalAttendanceHistory.isOpen ? null : (
@@ -567,7 +593,12 @@ export function PartnerClassWithStudents() {
             <div className={mostrarToggle ? "" : "ml-auto"}>
               <Switch
                 checked={showCancelled}
-                onCheckedChange={setShowCancelled}
+                onCheckedChange={(v) => {
+                  setShowCancelled(v);
+                  // As duas visões têm colunas e tamanhos diferentes.
+                  setSort(undefined);
+                  setPage(1);
+                }}
                 label="Matrículas canceladas"
               />
             </div>
@@ -589,20 +620,32 @@ export function PartnerClassWithStudents() {
             )
           ) : (
             <Card className="h-full w-full">
-              <DataGrid
-                rows={showCancelled ? cancelledStudents : students}
-                columns={showCancelled ? cancelledColumns : columns}
-                initialState={{ pagination: { paginationModel } }}
-                rowHeight={40}
-                disableRowSelectionOnClick
-                pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-                localeText={
-                  showCancelled
-                    ? { noRowsLabel: "Nenhuma matrícula cancelada nesta turma" }
-                    : undefined
-                }
-                sx={{ border: 0 }}
-              />
+              {showCancelled ? (
+                <DataTable
+                  aria-label="Matrículas canceladas"
+                  columns={cancelledColumns}
+                  rows={canceladosOrdenados}
+                  getRowId={(a) => a.id}
+                  sort={sort}
+                  onSortChange={setSort}
+                  density="compact"
+                  className="rounded-none border-0"
+                  pagination={paginacao(canceladosOrdenados.length)}
+                  empty={{ title: "Nenhuma matrícula cancelada nesta turma" }}
+                />
+              ) : (
+                <DataTable
+                  aria-label="Alunos da turma"
+                  columns={columns}
+                  rows={ativosOrdenados}
+                  getRowId={(a) => a.id}
+                  sort={sort}
+                  onSortChange={setSort}
+                  density="compact"
+                  className="rounded-none border-0"
+                  pagination={paginacao(ativosOrdenados.length)}
+                />
+              )}
             </Card>
           )}
         </TabsContent>

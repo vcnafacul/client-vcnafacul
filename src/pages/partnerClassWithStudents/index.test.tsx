@@ -25,7 +25,7 @@ const getClassById = vi.hoisted(() =>
   vi.fn(async () => ({
     id: "t-1",
     name: "Turma A",
-    students: [],
+    students: [] as Record<string, unknown>[],
     totalAttendanceRecords: 0,
   })),
 );
@@ -73,10 +73,6 @@ vi.mock("@/components/organisms/classEssayAnalytics", () => ({
 }));
 vi.mock("@/components/organisms/classSimuladoAnalytics/MonthPicker", () => ({
   MonthPicker: () => null,
-}));
-
-vi.mock("@mui/x-data-grid", () => ({
-  DataGrid: () => <div data-testid="data-grid" />,
 }));
 
 vi.mock("heic2any", () => ({ default: vi.fn() }));
@@ -256,5 +252,53 @@ describe("PartnerClassWithStudents — turma encerrada", () => {
     montar({ permissao: COM_A_ABA });
     await screen.findByText("Turma A");
     expect(screen.queryByText("Turma encerrada.")).toBeNull();
+  });
+});
+
+describe("PartnerClassWithStudents — tabela de alunos", () => {
+  const aluno = (id: string, name: string, extra = {}) => ({
+    id,
+    name,
+    email: `${id}@exemplo.org`,
+    cod_enrolled: id,
+    birthday: "2000-01-02T12:00:00",
+    presencePercentage: 90,
+    logs: [],
+    ...extra,
+  });
+
+  it("lista os ativos, ordena pelo cabeçalho e mostra '—' sem percentual", async () => {
+    getClassById.mockImplementationOnce(async () => ({
+      id: "t-1",
+      name: "Turma A",
+      totalAttendanceRecords: 0,
+      students: [
+        aluno("2", "Bruno", { presencePercentage: null }),
+        aluno("1", "Ana"),
+      ],
+    }));
+    montar({ permissao: COM_A_ABA });
+    await screen.findByText("Bruno");
+    const nomes = () =>
+      screen
+        .getAllByRole("row")
+        .slice(1)
+        .map((r) => r.querySelector('[data-column-id="name"]')?.textContent);
+    expect(screen.getAllByText("—").length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole("button", { name: /^Nome/ }));
+    expect(nomes()).toEqual(["Ana", "Bruno"]);
+    fireEvent.click(screen.getByRole("button", { name: /^Nome/ }));
+    expect(nomes()).toEqual(["Bruno", "Ana"]);
+    expect(screen.getAllByRole("button", { name: "Ver carteirinha" })).toHaveLength(2);
+  });
+
+  it("sem cancelados, a visão de cancelados mostra o texto próprio", async () => {
+    montar({ permissao: COM_A_ABA });
+    await screen.findByText("Turma A");
+    fireEvent.click(screen.getByRole("switch", { name: "Matrículas canceladas" }));
+    expect(
+      await screen.findByText("Nenhuma matrícula cancelada nesta turma"),
+    ).toBeInTheDocument();
   });
 });
