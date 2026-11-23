@@ -33,4 +33,40 @@ describe("Combobox", () => {
     fireEvent.change(screen.getByPlaceholderText("Buscar…"), { target: { value: "zzz" } });
     expect(screen.getByText('Nada com "zzz"')).toBeInTheDocument();
   });
+
+  it("a busca olha só o rótulo: o id não entra (digitar \"2\" não traz opção sem \"2\" no rótulo)", () => {
+    render(
+      <Combobox
+        aria-label="Ano"
+        onValueChange={vi.fn()}
+        options={[
+          { value: "2024", label: "Ensino médio" },
+          { value: "x2y", label: "Cursinho 2 Alfa" },
+          { value: "abc", label: "Outro" },
+        ]}
+      />,
+    );
+    fireEvent.click(screen.getByRole("combobox", { name: "Ano" }));
+    fireEvent.change(screen.getByPlaceholderText("Buscar…"), { target: { value: "2" } });
+    expect(screen.getByRole("option", { name: "Cursinho 2 Alfa" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "Ensino médio" })).toBeNull();
+    expect(screen.queryByRole("option", { name: "Outro" })).toBeNull();
+  });
+
+  it("a busca segue sem acento e sem caixa", () => {
+    render(
+      <Combobox
+        aria-label="Cidade"
+        onValueChange={vi.fn()}
+        options={[
+          { value: "1", label: "São José" },
+          { value: "2", label: "Recife" },
+        ]}
+      />,
+    );
+    fireEvent.click(screen.getByRole("combobox", { name: "Cidade" }));
+    fireEvent.change(screen.getByPlaceholderText("Buscar…"), { target: { value: "SAO jo" } });
+    expect(screen.getByRole("option", { name: "São José" })).toBeInTheDocument();
+    expect(screen.queryByRole("option", { name: "Recife" })).toBeNull();
+  });
 });

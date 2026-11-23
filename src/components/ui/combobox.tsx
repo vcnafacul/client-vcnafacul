@@ -32,6 +32,14 @@ export interface ComboboxProps
 const semAcento = (s: string) =>
   s.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 
+// O `value` do item é o id (único, mas sem sentido para quem busca: "2" não pode
+// trazer a opção de id "2024-x"). Só o rótulo (keywords) entra na busca.
+const filtrarPorRotulo = (_id: string, busca: string, keywords?: string[]) => {
+  const termo = semAcento(busca).trim().toLowerCase()
+  if (!termo) return 1
+  return semAcento((keywords ?? []).join(" ")).toLowerCase().includes(termo) ? 1 : 0
+}
+
 // Substitui o `Autocomplete` do MUI: busca no meio de uma lista longa (tickets/059 §3).
 const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
   (
@@ -87,7 +95,7 @@ const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
           align="start"
           className="z-popover w-[var(--radix-popover-trigger-width)] min-w-[12rem] rounded-lg p-0 shadow-md"
         >
-          <Command>
+          <Command filter={filtrarPorRotulo}>
             <div className="flex items-center gap-2 border-b px-3">
               <Search aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
               <Command.Input
