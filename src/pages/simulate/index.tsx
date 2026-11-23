@@ -292,7 +292,7 @@ function Simulate() {
           expandedPhoto={() => modals.modalImage.open()}
           alternative={
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <p className="text-body text-foreground font-semibold w-60 text-start m-0">
+              <p className="text-prose text-foreground font-semibold w-60 text-start m-0">
                 {simulateData.alternativeText}
               </p>
               <div className="flex gap-4">
