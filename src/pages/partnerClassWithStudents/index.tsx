@@ -27,7 +27,6 @@ import heic2any from "heic2any";
 import { TDocumentDefinitions } from "pdfmake/interfaces";
 import { Switch } from "@/components/ui/switch";
 import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
-import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
 import { getCancelledStudentsByClassId } from "@/services/prepCourse/class/getCancelledStudentsByClassId";
 import { CancelledStudent } from "@/types/partnerPrepCourse/cancelledStudent";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -584,11 +583,13 @@ export function PartnerClassWithStudents() {
               </Button>
             )}
             {mostrarToggle && (
-              <ToggleDadosSensiveis
-                className="ml-auto"
-                ocultar={ocultar}
-                onChange={setOcultar}
-              />
+              <div className="ml-auto">
+                <Switch
+                  checked={ocultar}
+                  onCheckedChange={setOcultar}
+                  label="Ocultar dados sensíveis"
+                />
+              </div>
             )}
             <div className={mostrarToggle ? "" : "ml-auto"}>
               <Switch

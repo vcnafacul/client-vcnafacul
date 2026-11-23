@@ -27,7 +27,7 @@ import { updateSelectEnrolledInfo } from "@/services/prepCourse/student/updateEn
 import { updateIsFreeInfo } from "@/services/prepCourse/student/updateIsFreeInfo";
 import { useAuthStore } from "@/store/auth";
 import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
-import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
+import { Switch } from "@/components/ui/switch";
 import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFull";
 import { RankingItem } from "@/types/partnerPrepForm/ruleForm";
 import { capitalizeWords } from "@/utils/capitalizeWords";
@@ -858,7 +858,11 @@ export function PartnerPrepInscritionStudentManager() {
         </div>
       </div>
       <div className="w-full px-4 flex justify-end">
-        <ToggleDadosSensiveis ocultar={ocultar} onChange={setOcultar} />
+        <Switch
+          checked={ocultar}
+          onCheckedChange={setOcultar}
+          label="Ocultar dados sensíveis"
+        />
       </div>
       {!acimaDeSm ? (
         <ListaDeInscritosMobile

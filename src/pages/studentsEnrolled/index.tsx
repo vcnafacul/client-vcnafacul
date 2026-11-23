@@ -32,7 +32,7 @@ import { updateClass } from "@/services/prepCourse/student/updateClass";
 import { getEnrollmentCertificate } from "@/services/prepCourse/student/enrollmentCertificate";
 import { useAuthStore } from "@/store/auth";
 import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
-import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
+import { Switch } from "@/components/ui/switch";
 import {
   FiltroDeEstudantes,
   OrdenacaoDeEstudantes,
@@ -870,7 +870,11 @@ export function StudentsEnrolled() {
       </div>
       {mostrarToggle && (
         <div className="w-full px-4 flex justify-end">
-          <ToggleDadosSensiveis ocultar={ocultar} onChange={setOcultar} />
+          <Switch
+          checked={ocultar}
+          onCheckedChange={setOcultar}
+          label="Ocultar dados sensíveis"
+        />
         </div>
       )}
       {!acimaDeSm ? (
