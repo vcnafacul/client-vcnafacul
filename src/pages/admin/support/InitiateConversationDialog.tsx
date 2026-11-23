@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import {
@@ -37,6 +37,14 @@ export function InitiateConversationDialog({
   const [selected, setSelected] = useState<SearchUser | null>(null);
   const [content, setContent] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  // Foco só ao abrir e ao trocar de etapa (um ref inline refocaria a cada render).
+  const buscaRef = useRef<HTMLInputElement>(null);
+  const mensagemRef = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    (stage === "searching" ? buscaRef : mensagemRef).current?.focus();
+  }, [open, stage]);
 
   // Reset internal state every time dialog reopens
   useEffect(() => {
@@ -119,7 +127,7 @@ export function InitiateConversationDialog({
         {stage === "searching" ? (
           <div className="flex flex-col gap-3">
             <Input
-              ref={(campo) => campo?.focus()}
+              ref={buscaRef}
               placeholder="Digite ao menos 2 caracteres"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -159,7 +167,7 @@ export function InitiateConversationDialog({
         ) : (
           <div className="flex flex-col gap-3">
             <Textarea
-              ref={(campo) => campo?.focus()}
+              ref={mensagemRef}
               rows={4}
               maxLength={MAX_LEN}
               value={content}
