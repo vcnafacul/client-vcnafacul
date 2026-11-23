@@ -1,9 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { enrolled } from "@/services/urls";
-import { GetEnrolledDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
+import {
+  FiltroDeEstudantes,
+  GetEnrolledDtoOutput,
+  OrdenacaoDeEstudantes,
+} from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { calculeAge } from "@/utils/calculateAge";
 import fetchWrapper from "@/utils/fetchWrapper";
-import { GridFilterItem, GridSortModel } from "@mui/x-data-grid";
 
 const nothasActiveInscription = "No active inscription course";
 const alreadyInscribed = "User already inscribed";
@@ -13,8 +16,8 @@ export async function getStudentsEnrolled(
   page: number,
   limit: number,
   inscriptionId?: string,
-  filters?: GridFilterItem,
-  sortModel?: GridSortModel,
+  filters?: FiltroDeEstudantes,
+  sortModel?: OrdenacaoDeEstudantes,
   year?: number,
   applicationStatus?: string,
   /** Matrícula, nome exibido ou (para quem vê sem máscara) email. */
@@ -32,9 +35,9 @@ export async function getStudentsEnrolled(
     params["filter[operator]"] = filters.operator;
   }
 
-  if (sortModel && sortModel.length > 0) {
-    params["sort[field]"] = sortModel[0].field;
-    params["sort[order]"] = sortModel[0].sort as string;
+  if (sortModel) {
+    params["sort[field]"] = sortModel.field;
+    params["sort[order]"] = sortModel.sort;
   }
 
   if (inscriptionId) {

@@ -83,4 +83,5 @@ pagination={{ page, pageSize, total, onPageChange: setPage, pageSizeOptions: [10
 
 Com `selection` e `onSelectionChange`, a tabela ganha a coluna de caixas e, quando há linhas selecionadas,
 a barra com a contagem ("2 itens selecionados"), as `bulkActions` e "Limpar seleção". A caixa do cabeçalho
-seleciona as linhas da página.
+seleciona as linhas da página. Com `isRowSelectable`, só as linhas que passam podem ser marcadas (a caixa
+das outras fica desabilitada e a do cabeçalho as pula).

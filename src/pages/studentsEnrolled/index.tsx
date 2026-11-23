@@ -33,17 +33,19 @@ import { getEnrollmentCertificate } from "@/services/prepCourse/student/enrollme
 import { useAuthStore } from "@/store/auth";
 import { useDadosSensiveis } from "@/hooks/useDadosSensiveis";
 import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
-import { StudentsDtoOutput } from "@/types/partnerPrepCourse/StudentsEnrolled";
+import {
+  FiltroDeEstudantes,
+  OrdenacaoDeEstudantes,
+  StudentsDtoOutput,
+} from "@/types/partnerPrepCourse/StudentsEnrolled";
 import { capitalizeWords } from "@/utils/capitalizeWords";
 import { formatDate } from "@/utils/date";
 import {
-  DataGrid,
-  getGridDateOperators,
-  getGridStringOperators,
-  GridColDef,
-  GridFilterItem,
-  GridSortModel,
-} from "@mui/x-data-grid";
+  DataTable,
+  type DataTableColumn,
+  type DataTableSort,
+} from "@/components/ui/data-table";
+import { ordenarLinhas } from "@/lib/ordenarLinhas";
 import heic2any from "heic2any";
 import debounce from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -56,6 +58,7 @@ import { InfoStudentEnrolledModal } from "./modals/infoStudentEnrolledModal";
 import { PrinterStudentCards } from "./modals/printerStudentCards";
 import { UpdateStudentClassModal } from "./modals/updateStudentClassModal";
 import { EstudantesMobile } from "./EstudantesMobile";
+import { FiltroPorColuna } from "./FiltroPorColuna";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 /** O `Combobox` não aceita valor vazio: a opção "todos" usa este valor por dentro. */
 const NENHUM = "__nenhum__";
@@ -64,15 +67,20 @@ export function StudentsEnrolled() {
   const [name, setName] = useState<string>("");
   const [students, setStudents] = useState<StudentsDtoOutput[]>([]);
   const [limit, setLimit] = useState<number>(15);
-  // DataGrid usa page 0-indexed; a api usa 1-indexed
+  // Aqui a página é 0-indexada (a lista do celular também); a DataTable e a api usam 1-indexada
   const [page, setPage] = useState<number>(0);
   const [totalItems, setTotalItems] = useState<number>(100);
   const [studentSelected, setStudentSelected] = useState<StudentsDtoOutput>(
     {} as StudentsDtoOutput,
   );
   const [selectedRows, setSelectedRows] = useState<string[]>([]);
-  const [filter, setFilter] = useState<GridFilterItem | undefined>(undefined);
-  const [sort, setSort] = useState<GridSortModel | undefined>(undefined);
+  const [filter, setFilter] = useState<FiltroDeEstudantes | undefined>(undefined);
+  // `sort` é o que vai para a api; `sortDaTabela` é o que o cabeçalho mostra (a
+  // api não ordena por nome nem por idade, então esses só reordenam a página).
+  const [sort, setSort] = useState<OrdenacaoDeEstudantes | undefined>(undefined);
+  const [sortDaTabela, setSortDaTabela] = useState<DataTableSort | undefined>(undefined);
+  const [carregando, setCarregando] = useState(true);
+  const pendentes = useRef(0);
   const [inscriptions, setInscriptions] = useState<InscriptionWithName[]>([]);
   const [selectedInscription, setSelectedInscription] =
     useState<InscriptionWithName | null>(null);
@@ -183,38 +191,46 @@ export function StudentsEnrolled() {
     page: number,
     limit: number,
     inscriptionId?: string,
-    filters?: GridFilterItem,
-    sortModel?: GridSortModel,
+    filters?: FiltroDeEstudantes,
+    sortModel?: OrdenacaoDeEstudantes,
     year?: number | null,
     applicationStatus?: StatusApplication | null,
   ) => {
-    await executeAsync({
-      action: () =>
-        getStudentsEnrolled(
-          token,
-          page,
-          limit,
-          inscriptionId,
-          filters,
-          sortModel,
-          year ?? undefined,
-          applicationStatus ?? undefined,
-          buscaRef.current,
-        ),
-      loadingMessage: "Buscando alunos matriculados...",
-      successMessage: "Alunos matriculados encontrados com sucesso!",
-      errorMessage: "Erro ao buscar alunos matriculados",
-      onSuccess: (res) => {
-        setName(res.name);
-        setPartnerId(res.partnerId);
-        setTotalItems(res.students.totalItems);
-        setStudents(res.students.data);
-      },
-    });
+    // Chamadas em voo ao mesmo tempo: só a última a terminar apaga o "carregando".
+    pendentes.current += 1;
+    setCarregando(true);
+    try {
+      await executeAsync({
+        action: () =>
+          getStudentsEnrolled(
+            token,
+            page,
+            limit,
+            inscriptionId,
+            filters,
+            sortModel,
+            year ?? undefined,
+            applicationStatus ?? undefined,
+            buscaRef.current,
+          ),
+        loadingMessage: "Buscando alunos matriculados...",
+        successMessage: "Alunos matriculados encontrados com sucesso!",
+        errorMessage: "Erro ao buscar alunos matriculados",
+        onSuccess: (res) => {
+          setName(res.name);
+          setPartnerId(res.partnerId);
+          setTotalItems(res.students.totalItems);
+          setStudents(res.students.data);
+        },
+      });
+    } finally {
+      pendentes.current -= 1;
+      if (pendentes.current === 0) setCarregando(false);
+    }
   };
 
   const debouncedFilter = useCallback(
-    debounce.debounce((value: GridFilterItem) => {
+    debounce.debounce((value: FiltroDeEstudantes | undefined) => {
       setPage(0);
       return getEnrolle(
         1,
@@ -263,12 +279,43 @@ export function StudentsEnrolled() {
     }
   };
 
-  const handleFilterChange = (filterModel: GridFilterItem) => {
-    if (filterModel && filterModel.value !== undefined) {
-      setFilter(filterModel);
-      debouncedFilter(filterModel);
-    }
+  const handleFilterChange = (filtro: FiltroDeEstudantes | undefined) => {
+    setFilter(filtro);
+    debouncedFilter(filtro);
   };
+
+  // A api não ordena por nome nem por idade: esses só reordenam a página.
+  const ordenarNoServidor = (novo: DataTableSort) => {
+    setSortDaTabela(novo);
+    if (["age", "name"].includes(novo.columnId)) return;
+    const ordenacao: OrdenacaoDeEstudantes = {
+      field: novo.columnId,
+      sort: novo.direction,
+    };
+    setSort(ordenacao);
+    setPage(0);
+    getEnrolle(
+      1,
+      limit,
+      selectedInscription?.id,
+      filter,
+      ordenacao,
+      selectedYear,
+      selectedStatus,
+    );
+  };
+
+  const linhas = ordenarLinhas(students, sortDaTabela, {
+    cod_enrolled: (s) => s.cod_enrolled,
+    class: (s) => s.class?.name || "Sem Turma",
+    email: (s) => s.email,
+    whatsapp: (s) => s.whatsapp,
+    cpf: (s) => s.cpf,
+    name: (s) => s.name,
+    applicationStatus: (s) => s.applicationStatus,
+    birthday: (s) => (s.birthday ? new Date(s.birthday).getTime() : null),
+    age: (s) => s.age,
+  });
 
   const handleCancelEnrollment = async (reason: string) => {
     await executeAsync({
@@ -449,7 +496,7 @@ export function StudentsEnrolled() {
   };
 
   /*
-    Ações de um estudante: mesma função na coluna do DataGrid (desktop) e no
+    Ações de um estudante: mesma função na coluna da DataTable (desktop) e no
     card do celular (EstudantesMobile).
   */
   const renderAcoes = (estudante: StudentsDtoOutput) => (
@@ -552,7 +599,7 @@ export function StudentsEnrolled() {
     </div>
   );
 
-  // Seleção para carteirinhas: só matriculados com turma (igual ao DataGrid).
+  // Seleção para carteirinhas: só matriculados com turma (igual à grade de antes).
   const selecionavel = (estudante: StudentsDtoOutput) =>
     estudante.applicationStatus === StatusApplication.Enrolled &&
     estudante.class?.id !== undefined;
@@ -570,116 +617,97 @@ export function StudentsEnrolled() {
     );
   };
 
-  const columns: GridColDef[] = [
+  const columns: DataTableColumn<StudentsDtoOutput>[] = [
     {
-      field: "actions",
-      headerName: "Ações",
-      width: 230,
-      disableColumnMenu: true,
-      sortable: false,
-      // disableColumnMenu esconde o menu da coluna, mas nao a tira do painel
-      // de filtros do grid
-      filterable: false,
+      id: "actions",
+      header: "Ações",
       align: "center",
-      headerAlign: "center",
-      renderCell: (params) => renderAcoes(params.row),
+      width: "230px",
+      cell: (estudante) => renderAcoes(estudante),
     },
     {
-      field: "cod_enrolled",
-      headerName: "Nº de matrícula",
-      width: 150,
+      id: "cod_enrolled",
+      header: "Nº de matrícula",
       align: "center",
-      headerAlign: "center",
-      filterOperators: getGridStringOperators().filter(({ value }) =>
-        ["contains"].includes(value),
-      ),
+      sortable: true,
+      width: "150px",
+      cell: (estudante) => estudante.cod_enrolled,
     },
     {
-      field: "class",
-      headerName: "Turma",
-      minWidth: 100,
-      width: 100,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      valueGetter: (params) => (params as any).name || "Sem Turma",
+      id: "class",
+      header: "Turma",
+      sortable: true,
+      width: "120px",
+      cell: (estudante) => estudante.class?.name || "Sem Turma",
     },
     {
-      field: "schoolYear",
-      headerName: "Ano Letivo",
-      minWidth: 110,
-      width: 110,
-      filterable: false,
-      sortable: false,
-      valueGetter: (_, row) =>
-        row.class?.year && row.class.year !== 0 ? row.class.year : "—",
+      id: "schoolYear",
+      header: "Ano Letivo",
+      width: "110px",
+      cell: (estudante) =>
+        estudante.class?.year && estudante.class.year !== 0
+          ? estudante.class.year
+          : "—",
     },
     {
-      field: "inscriptionCourse",
-      headerName: "Processo Seletivo",
-      minWidth: 200,
-      filterable: false,
-      sortable: false,
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      valueGetter: (params) => (params as any)?.name || "—",
+      id: "inscriptionCourse",
+      header: "Processo Seletivo",
+      width: "200px",
+      cell: (estudante) => estudante.inscriptionCourse?.name || "—",
     },
     {
-      field: "email",
-      headerName: "Email",
-      minWidth: 270,
-      renderCell: (params) => mascarar.email(params.value),
-      filterOperators: getGridStringOperators().filter(({ value }) =>
-        ["contains"].includes(value),
-      ),
+      id: "email",
+      header: "Email",
+      sortable: true,
+      width: "270px",
+      cell: (estudante) => mascarar.email(estudante.email),
     },
     {
-      field: "whatsapp",
-      headerName: "Telefone",
-      minWidth: 150,
-      renderCell: (params) => mascarar.telefone(params.value),
-      filterOperators: getGridStringOperators().filter(({ value }) =>
-        ["contains"].includes(value),
-      ),
+      id: "whatsapp",
+      header: "Telefone",
+      sortable: true,
+      width: "150px",
+      cell: (estudante) => mascarar.telefone(estudante.whatsapp),
     },
     {
-      field: "cpf",
-      headerName: "CPF",
-      minWidth: 150,
-      renderCell: (params) => mascarar.cpf(params.value),
-      filterOperators: getGridStringOperators().filter(({ value }) =>
-        ["contains"].includes(value),
-      ),
+      id: "cpf",
+      header: "CPF",
+      sortable: true,
+      width: "150px",
+      cell: (estudante) => mascarar.cpf(estudante.cpf),
     },
     {
-      field: "name",
-      headerName: "Nome",
-      // a api nao suporta filtro por este campo (responderia 400)
-      filterable: false,
-      minWidth: 200,
-      flex: 1,
+      id: "name",
+      header: "Nome",
+      sortable: true,
+      // Dá o nome acessível da caixa de seleção da linha.
+      mobile: "title",
+      width: "240px",
+      cell: (estudante) => estudante.name,
     },
     {
-      field: "applicationStatus",
-      headerName: "Status",
-      minWidth: 100,
-      width: 200,
-      maxWidth: 200,
+      id: "applicationStatus",
+      header: "Status",
+      sortable: true,
+      width: "200px",
+      cell: (estudante) => estudante.applicationStatus,
     },
     {
-      field: "birthday",
-      headerName: "Nascimento",
-      minWidth: 100,
-      maxWidth: 120,
-      type: "date",
-      filterOperators: getGridDateOperators().filter(({ value }) =>
-        ["is", "after", "before"].includes(value),
-      ),
+      id: "birthday",
+      header: "Nascimento",
+      sortable: true,
+      width: "130px",
+      cell: (estudante) =>
+        estudante.birthday
+          ? new Date(estudante.birthday).toLocaleDateString("pt-BR")
+          : "",
     },
     {
-      field: "age",
-      headerName: "Idade",
-      // a api nao suporta filtro por este campo (responderia 400)
-      filterable: false,
-      minWidth: 70,
-      maxWidth: 100,
+      id: "age",
+      header: "Idade",
+      sortable: true,
+      width: "90px",
+      cell: (estudante) => estudante.age,
     },
   ];
 
@@ -706,10 +734,9 @@ export function StudentsEnrolled() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedInscription, selectedYear, selectedStatus, limit, buscaAplicada]);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSelectionChange = useCallback((selectionModel: any) => {
-    if (selectionModel.length <= 20) {
-      setSelectedRows(selectionModel as string[]);
+  const handleSelectionChange = useCallback((ids: string[]) => {
+    if (ids.length <= 20) {
+      setSelectedRows(ids);
     } else {
       toast.warn("Selecione no máximo 20 estudantes", {
         theme: "dark",
@@ -861,61 +888,37 @@ export function StudentsEnrolled() {
           }
         />
       ) : (
-        <Card className="h-full w-full">
-          <DataGrid
-            rows={students}
+        // Muitas colunas: a largura mínima faz o cartão rolar na horizontal, como a grade rolava.
+        <Card className="h-full w-full overflow-x-auto">
+          <DataTable
+            aria-label="Estudantes matriculados"
             columns={columns}
-            rowCount={totalItems}
-            paginationMode="server"
-            paginationModel={{ page, pageSize: limit }}
-            rowHeight={40}
-            disableRowSelectionOnClick
-            checkboxSelection={permissao[Roles.gerenciarEstudantes]}
-            rowSelectionModel={selectedRows}
-            onRowSelectionModelChange={handleSelectionChange}
-            pageSizeOptions={[5, 10, 15, 30, 50, 100]}
-            onPaginationModelChange={(newPageSize) => {
+            rows={linhas}
+            getRowId={(estudante) => estudante.id}
+            state={carregando ? "loading" : "ready"}
+            density="compact"
+            className="min-w-[2100px] rounded-none border-0"
+            toolbar={<FiltroPorColuna onChange={handleFilterChange} />}
+            empty={{
+              title: "Nenhum estudante encontrado para os filtros selecionados",
+            }}
+            sort={sortDaTabela}
+            onSortChange={ordenarNoServidor}
+            selection={permissao[Roles.gerenciarEstudantes] ? selectedRows : undefined}
+            onSelectionChange={
+              permissao[Roles.gerenciarEstudantes] ? handleSelectionChange : undefined
+            }
+            isRowSelectable={selecionavel}
+            pagination={{
+              page: page + 1,
+              pageSize: limit,
+              total: totalItems,
               // Mudança de pageSize é tratada pelo useEffect (limit está nas deps),
               // que já reseta para a página 1. Disparar aqui também deixaria duas
               // requisições em voo sem ordem garantida entre elas.
-              if (newPageSize.pageSize !== limit) {
-                setLimit(newPageSize.pageSize);
-                return;
-              }
-              irParaPagina(newPageSize.page);
-            }}
-            sx={{ border: 0 }}
-            localeText={{
-              noRowsLabel:
-                "Nenhum estudante encontrado para os filtros selecionados",
-            }}
-            isRowSelectable={(params) => selecionavel(params.row)}
-            onFilterModelChange={(filterModel) => {
-              if (
-                filterModel &&
-                filterModel.items.length > 0 &&
-                !["age", "name"].includes(filterModel.items[0].field)
-              ) {
-                handleFilterChange(filterModel.items[0]);
-              }
-            }}
-            onSortModelChange={(sortModel) => {
-              if (
-                sortModel &&
-                sortModel.length > 0 &&
-                !["age", "name"].includes(sortModel[0].field)
-              ) {
-                setSort(sortModel);
-                getEnrolle(
-                  1,
-                  limit,
-                  selectedInscription?.id,
-                  filter,
-                  sortModel,
-                  selectedYear,
-                  selectedStatus,
-                );
-              }
+              onPageChange: (p) => irParaPagina(p - 1),
+              pageSizeOptions: [5, 10, 15, 30, 50, 100],
+              onPageSizeChange: setLimit,
             }}
           />
         </Card>

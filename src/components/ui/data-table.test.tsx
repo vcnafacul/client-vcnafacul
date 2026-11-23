@@ -245,6 +245,25 @@ describe("DataTable — ordenação, seleção e estados", () => {
     expect(onSelectionChange).toHaveBeenLastCalledWith(["2", "1", "3"]);
   });
 
+  it("isRowSelectable desabilita a caixa das outras linhas e o cabeçalho só marca as que podem", () => {
+    const onSelectionChange = vi.fn();
+    render(
+      <DataTable
+        columns={COLUNAS}
+        rows={provas(3)}
+        getRowId={(r) => r.id}
+        selection={[]}
+        onSelectionChange={onSelectionChange}
+        isRowSelectable={(r) => r.id !== "2"}
+      />,
+    );
+    expect(screen.getByRole("checkbox", { name: "Selecionar Prova 2" })).toBeDisabled();
+    expect(screen.getByRole("checkbox", { name: "Selecionar Prova 1" })).toBeEnabled();
+
+    fireEvent.click(screen.getByRole("checkbox", { name: "Selecionar todas as linhas" }));
+    expect(onSelectionChange).toHaveBeenLastCalledWith(["1", "3"]);
+  });
+
   it("a caixa da linha e o ⋯ não disparam o clique da linha", () => {
     // Sem abrir o menu: abrir um menu do Radix leva uns 15s no jsdom e estoura na suíte cheia.
     const onRowClick = vi.fn();

@@ -91,6 +91,11 @@ export interface DataTableProps<T> {
   /** Ids (de `getRowId`) das linhas selecionadas. Com `onSelectionChange`, liga a seleção. */
   selection?: string[]
   onSelectionChange?: (ids: string[]) => void
+  /**
+   * Quais linhas podem ser selecionadas (padrão: todas). A caixa das outras fica
+   * desabilitada e a do cabeçalho só marca as que podem.
+   */
+  isRowSelectable?: (row: T) => boolean
   pagination?: DataTablePagination
   state?: DataTableState
   toolbar?: React.ReactNode
@@ -201,6 +206,7 @@ function DataTable<T>({
   onSortChange,
   selection,
   onSelectionChange,
+  isRowSelectable,
   pagination,
   state = "ready",
   toolbar,
@@ -250,8 +256,11 @@ function DataTable<T>({
   const selecionavel = !!onSelectionChange
   const selecionados = new Set(selection ?? [])
   const idsVisiveis = visiveis.map((row, i) => getRowId(row, i))
-  const quantosVisiveisSelecionados = idsVisiveis.filter((id) => selecionados.has(id)).length
-  const todosSelecionados = idsVisiveis.length > 0 && quantosVisiveisSelecionados === idsVisiveis.length
+  const linhaSelecionavel = (row: T) => isRowSelectable?.(row) ?? true
+  const idsSelecionaveis = idsVisiveis.filter((_, i) => linhaSelecionavel(visiveis[i]))
+  const quantosVisiveisSelecionados = idsSelecionaveis.filter((id) => selecionados.has(id)).length
+  const todosSelecionados =
+    idsSelecionaveis.length > 0 && quantosVisiveisSelecionados === idsSelecionaveis.length
 
   const alternarLinha = (id: string, marcar: boolean) => {
     const atual = selection ?? []
@@ -261,8 +270,8 @@ function DataTable<T>({
     const atual = selection ?? []
     onSelectionChange?.(
       todosSelecionados
-        ? atual.filter((id) => !idsVisiveis.includes(id))
-        : [...atual, ...idsVisiveis.filter((id) => !selecionados.has(id))]
+        ? atual.filter((id) => !idsSelecionaveis.includes(id))
+        : [...atual, ...idsSelecionaveis.filter((id) => !selecionados.has(id))]
     )
   }
 
@@ -426,6 +435,7 @@ function DataTable<T>({
                         <Checkbox
                           onClick={pararClique}
                           checked={selecionada}
+                          disabled={!linhaSelecionavel(row)}
                           onCheckedChange={(v) => alternarLinha(id, v === true)}
                           {...(renderMobileCard
                             ? { "aria-label": `Selecionar linha ${i + 1}` }
@@ -488,7 +498,7 @@ function DataTable<T>({
             <TableHead className={cn("w-10", cabecalhoFixo)}>
               <Checkbox
                 aria-label="Selecionar todas as linhas"
-                disabled={modo !== "rows"}
+                disabled={modo !== "rows" || idsSelecionaveis.length === 0}
                 checked={
                   todosSelecionados ? true : quantosVisiveisSelecionados > 0 ? "indeterminate" : false
                 }
@@ -589,6 +599,7 @@ function DataTable<T>({
                       <Checkbox
                         aria-labelledby={`${idSelecionar} ${idTitulo}`}
                         checked={selecionada}
+                        disabled={!linhaSelecionavel(row)}
                         onCheckedChange={(v) => alternarLinha(id, v === true)}
                       />
                     </TableCell>

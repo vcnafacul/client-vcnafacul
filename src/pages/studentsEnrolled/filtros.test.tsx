@@ -59,14 +59,6 @@ vi.mock("@/services/prepCourse/prepCourse/getPartnerLogo", () => ({
   getPartnerLogo: async () => new Blob(),
 }));
 vi.mock("heic2any", () => ({ default: vi.fn() }));
-vi.mock("@mui/x-data-grid", () => ({
-  DataGrid: () => null,
-  getGridStringOperators: () => [],
-  getGridNumericOperators: () => [],
-  getGridSingleSelectOperators: () => [],
-  getGridDateOperators: () => [],
-}));
-
 import { StudentsEnrolled } from ".";
 
 describe("StudentsEnrolled — filtros", () => {

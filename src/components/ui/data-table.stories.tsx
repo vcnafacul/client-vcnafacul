@@ -150,3 +150,12 @@ export const MobileCards: Story = {
   args: { rowActions: ACOES, selection: ["1"], onSelectionChange: () => {} },
   globals: { viewport: { value: "mobile", isRotated: false } },
 }
+
+// `isRowSelectable`: a caixa da prova 2 fica desabilitada, e a do cabeçalho só marca as outras.
+export const SelecaoRestrita: Story = {
+  args: {
+    selection: [],
+    onSelectionChange: () => {},
+    isRowSelectable: (r) => r.id !== "2",
+  },
+}

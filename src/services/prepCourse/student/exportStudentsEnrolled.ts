@@ -1,6 +1,9 @@
 import { enrolled } from "@/services/urls";
 import fetchWrapper from "@/utils/fetchWrapper";
-import { GridFilterItem, GridSortModel } from "@mui/x-data-grid";
+import {
+  FiltroDeEstudantes,
+  OrdenacaoDeEstudantes,
+} from "@/types/partnerPrepCourse/StudentsEnrolled";
 
 /**
  * Baixa a listagem de matriculados em XLSX.
@@ -12,8 +15,8 @@ import { GridFilterItem, GridSortModel } from "@mui/x-data-grid";
 export async function exportStudentsEnrolled(
   token: string,
   inscriptionId?: string,
-  filters?: GridFilterItem,
-  sortModel?: GridSortModel,
+  filters?: FiltroDeEstudantes,
+  sortModel?: OrdenacaoDeEstudantes,
   year?: number,
   applicationStatus?: string,
   columns?: string[],
@@ -39,9 +42,9 @@ export async function exportStudentsEnrolled(
     params["search"] = search.trim();
   }
 
-  if (sortModel && sortModel.length > 0) {
-    params["sort[field]"] = sortModel[0].field;
-    params["sort[order]"] = sortModel[0].sort as string;
+  if (sortModel) {
+    params["sort[field]"] = sortModel.field;
+    params["sort[order]"] = sortModel.sort;
   }
 
   if (inscriptionId) {
