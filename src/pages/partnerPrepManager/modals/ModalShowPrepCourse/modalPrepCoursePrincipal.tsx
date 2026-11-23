@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
@@ -510,7 +511,7 @@ export const ModalPrepCoursePrincipal = ({
             {/* Loading indicator */}
             {isSearching && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="w-4 h-4 border-2 border-border border-t-cta rounded-full animate-spin"></div>
+                <Spinner size="inline" className="text-muted-foreground" />
               </div>
             )}
           </div>

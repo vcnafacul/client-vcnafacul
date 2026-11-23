@@ -1,9 +1,10 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { RichTextRenderer } from "@/components/atoms/richTextRenderer/RichTextRenderer";
 import { RICH_TEXT_IMAGE_MAX_WIDTH } from "@/utils/richTextImage";
-import { AlertCircle, Edit, Loader2, Save, X } from "lucide-react";
+import { AlertCircle, Edit, Save, X } from "lucide-react";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import { lazy, Suspense } from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
@@ -259,7 +260,7 @@ export function TabConteudo({
                 >
                   {isSaving ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Spinner size="button" decorative className="mr-2" />
                       Salvando...
                     </>
                   ) : (

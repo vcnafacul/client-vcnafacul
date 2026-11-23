@@ -1,7 +1,8 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, RefreshCw } from "lucide-react";
+import { RefreshCw } from "lucide-react";
 import { ClassMonthAnalytics, ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
 import { formatPercent } from "@/utils/formatPercent";
 
@@ -55,7 +56,7 @@ export function KpiHeader({
                 disabled={requesting}
               >
                 {requesting ? (
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Spinner size="button" decorative className="mr-2" />
                 ) : (
                   <RefreshCw className="mr-2 h-4 w-4" />
                 )}

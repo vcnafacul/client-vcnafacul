@@ -1,16 +1,21 @@
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { palette } from "@/lib/palette";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function SupportersSkeleton() {
-    return ( 
-        <SkeletonTheme baseColor={`${palette.neutral[600]}26`} highlightColor={palette.neutral[900]}>
-            <div className="container mx-auto flex justify-center items-center flex-col gap-4 my-20">
-                <Skeleton className="w-96 h-8" />
-                <Skeleton className="w-[500px] h-4" />
-                <Skeleton className="w-60 h-32 mx-32" count={3} inline/>
-            </div>
-        </SkeletonTheme>
-     );
+  return (
+    <div
+      role="status"
+      aria-label="Carregando"
+      className="container mx-auto my-20 flex flex-col items-center justify-center gap-4 px-4"
+    >
+      <Skeleton className="h-8 w-full max-w-96" />
+      <Skeleton className="h-4 w-full max-w-[500px]" />
+      <div className="flex flex-wrap justify-center gap-4">
+        {Array.from({ length: 3 }, (_, i) => (
+          <Skeleton key={i} className="h-32 w-60" />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export default SupportersSkeleton;

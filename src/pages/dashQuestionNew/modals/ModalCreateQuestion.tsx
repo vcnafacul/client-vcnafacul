@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { CreateQuestion } from "@/dtos/question/updateQuestion";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -5,7 +6,7 @@ import { createQuestion } from "@/services/question/createQuestion";
 import { uploadAsset } from "@/services/question/uploadAsset";
 import { useAuthStore } from "@/store/auth";
 import { PendingImageStore } from "@/utils/pendingImageStore";
-import { Loader2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import { useCallback, useRef, useState } from "react";
 import ModalTabTemplateQuestion from "../components/ModalTabTemplateQuestion";
 import { TabClassificacaoCreate } from "./tabs/TabClassificacaoCreate";
@@ -217,7 +218,7 @@ export function ModalCreateQuestion({
           <Button onClick={handleSave} disabled={isSaving}>
             {isSaving ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Spinner size="button" decorative className="mr-2" />
                 Criando...
               </>
             ) : (

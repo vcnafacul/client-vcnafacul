@@ -1,27 +1,35 @@
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { palette } from "@/lib/palette";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Sobre o fundo primary, o bloco pulsa em primary-foreground (R28).
+const bloco = "bg-primary-foreground/15";
 
 function FooterSkeleton() {
-    return ( 
-        <SkeletonTheme baseColor={`${palette.neutral[600]}26`} highlightColor={palette.neutral[900]}>
-            <footer className="bg-primary py-12 px-0 text-center text-body md:text-left md:pt-14 md:pb-9">
-                <div className="container mx-auto flex flex-wrap my-4">
-                    <div className="flex w-full justify-between">
-                        <div className="flex flex-col items-start gap-4">
-                            <div className="flex justify-center items-center gap-4">
-                                <Skeleton className="w-10 h-10" borderRadius={50}/>
-                                <Skeleton className="w-40"/>
-                            </div>
-                            <Skeleton className="w-96"/>
-                        </div>
-                        <Skeleton className="w-60 my-4" count={3}/>
-                        <Skeleton className="w-60 my-4" count={3}/>
-                        <Skeleton className="w-60 my-4" count={2}/>
-                    </div>
-                </div>
-            </footer>
-        </SkeletonTheme>
-     );
+  return (
+    <footer className="bg-primary px-0 py-12 text-center text-body md:pb-9 md:pt-14 md:text-left">
+      <div
+        role="status"
+        aria-label="Carregando"
+        className="container mx-auto my-4 flex flex-wrap px-4"
+      >
+        <div className="flex w-full flex-col justify-between gap-6 md:flex-row">
+          <div className="flex flex-col items-start gap-4">
+            <div className="flex items-center justify-center gap-4">
+              <Skeleton className={`size-10 rounded-full ${bloco}`} />
+              <Skeleton className={`h-4 w-40 ${bloco}`} />
+            </div>
+            <Skeleton className={`h-4 w-full max-w-96 ${bloco}`} />
+          </div>
+          {[3, 3, 2].map((linhas, coluna) => (
+            <div key={coluna} className="flex flex-col gap-4 md:my-4">
+              {Array.from({ length: linhas }, (_, i) => (
+                <Skeleton key={i} className={`h-4 w-60 max-w-full ${bloco}`} />
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+    </footer>
+  );
 }
 
 export default FooterSkeleton;

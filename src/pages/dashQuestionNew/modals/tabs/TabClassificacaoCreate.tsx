@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,7 +11,7 @@ import {
 import { CreateQuestion } from "@/dtos/question/updateQuestion";
 import { getMissingNumber } from "@/services/prova/getMissingNumber";
 import { useAuthStore } from "@/store/auth";
-import { AlertCircle, AlertTriangle, Loader2, Plus, X } from "lucide-react";
+import { AlertCircle, AlertTriangle, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { areasPermitidas, mantemArea } from "./areasPermitidas";
 
@@ -249,7 +250,7 @@ export function TabClassificacaoCreate({
               </div>
               {loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-border rounded-md bg-page">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
+                  <Spinner size="inline" decorative className="mr-2 text-primary" />
                   <span className="text-body text-muted-foreground">
                     Carregando números disponíveis...
                   </span>

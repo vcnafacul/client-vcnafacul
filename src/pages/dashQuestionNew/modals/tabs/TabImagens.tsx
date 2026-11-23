@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,7 +16,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { getQuestionImage } from "@/services/question/getQuestionImage";
 import { uploadImage } from "@/services/question/uploadImage";
 import { useAuthStore } from "@/store/auth";
-import { Download, Loader2, Upload, ZoomIn } from "lucide-react";
+import { Download, Upload, ZoomIn } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 interface TabImagensProps {
@@ -155,7 +156,7 @@ export function TabImagens({
                   {isLoadingImage ? (
                     <div className="flex items-center justify-center min-h-[300px]">
                       <div className="text-center">
-                        <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+                        <Spinner size="page" decorative className="mx-auto mb-4 text-primary" />
                         <p className="text-body text-muted-foreground">
                           Carregando imagem...
                         </p>
@@ -245,7 +246,7 @@ export function TabImagens({
                   >
                     {isUploading ? (
                       <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        <Spinner size="button" decorative className="mr-2" />
                         Enviando...
                       </>
                     ) : (
@@ -270,7 +271,7 @@ export function TabImagens({
             >
               {isUploading ? (
                 <div className="flex flex-col items-center">
-                  <Loader2 className="h-12 w-12 mx-auto text-primary mb-4 animate-spin" />
+                  <Spinner size="page" decorative className="mx-auto mb-4 text-primary" />
                   <p className="text-h3 font-semibold text-foreground mb-2">
                     Enviando imagem...
                   </p>

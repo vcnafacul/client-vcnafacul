@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -21,7 +22,6 @@ import {
   AlertTriangle,
   CheckCircle,
   Edit,
-  Loader2,
   Save,
   X,
   XCircle,
@@ -447,7 +447,7 @@ export function TabClassificacao({
                   variant="default"
                 >
                   {isUpdatingStatus ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Spinner size="button" decorative className="mr-2" />
                   ) : (
                     <CheckCircle className="h-4 w-4 mr-2" />
                   )}
@@ -463,7 +463,7 @@ export function TabClassificacao({
                   variant="default"
                 >
                   {isUpdatingStatus ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Spinner size="button" decorative className="mr-2" />
                   ) : (
                     <XCircle className="h-4 w-4 mr-2" />
                   )}
@@ -659,7 +659,7 @@ export function TabClassificacao({
                 </div>
               ) : loadingNumeros ? (
                 <div className="flex items-center justify-center p-3 border border-border rounded-md bg-page">
-                  <Loader2 className="h-4 w-4 animate-spin text-primary mr-2" />
+                  <Spinner size="inline" decorative className="mr-2 text-primary" />
                   <span className="text-body text-muted-foreground">
                     Carregando números disponíveis...
                   </span>
@@ -1155,7 +1155,7 @@ export function TabClassificacao({
                 >
                   {isSaving ? (
                     <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      <Spinner size="button" decorative className="mr-2" />
                       Salvando...
                     </>
                   ) : (

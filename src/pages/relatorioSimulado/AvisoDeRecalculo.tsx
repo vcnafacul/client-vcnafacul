@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import type {
   AnuladaDoRelatorio,
@@ -7,7 +8,7 @@ import {
   consultarRecalculo,
   pedirRecalculo,
 } from "@/services/relatorioSimulado/recalculoAnulacao";
-import { AlertTriangle, CheckCircle2, Loader2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { FonteDoRelatorio } from "./fonteDoRelatorio";
 import {
@@ -125,7 +126,7 @@ export function AvisoDeRecalculo({
     return (
       <div role="status" data-testid="recalculo-rodando" className="flex flex-col gap-2 rounded-md border border-warning bg-warning-muted px-3 py-2 text-body text-foreground">
         <p className="flex items-center gap-2">
-          <Loader2 className="h-4 w-4 animate-spin shrink-0" aria-hidden />
+          <Spinner size="inline" decorative className="shrink-0" />
           {textoDoProgresso(processados, total)}
         </p>
         <div className="h-1.5 w-full rounded-sm bg-warning-muted" aria-hidden>
@@ -147,7 +148,7 @@ export function AvisoDeRecalculo({
         </span>
       </p>
       <Button size="sm" className="shrink-0 print:hidden" disabled={pedindo} onClick={recalcular}>
-        {pedindo && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
+        {pedindo && <Spinner size="button" decorative className="mr-2" />}
         Recalcular resultados
       </Button>
     </div>

@@ -1,6 +1,6 @@
+import { Spinner } from "@/components/ui/spinner";
 import { JSX, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { MoonLoader } from "react-spinners";
 
 import BaseTemplate from "@/components/templates/baseTemplate";
 import ConfirmEnrolledExpiredMessage from "./confirmEnrolledMessage";
@@ -9,7 +9,6 @@ import DeclareInterest from "./declareInterest";
 import { VerifyDeclaredInscriptionDto } from "@/dtos/inscription/verifyDeclaredInscriptionDto";
 import { verifyDeclaredInterest } from "@/services/prepCourse/student/verifyDeclaredInterest";
 import { useAuthStore } from "@/store/auth";
-import { palette } from "@/lib/palette";
 
 export function ConfirmEnrolledPage() {
   const [declaredInterest, setDeclaredInterest] =
@@ -36,7 +35,7 @@ export function ConfirmEnrolledPage() {
   } else if (!declaredInterest) {
     componentToRender = (
       <div className="w-full h-full flex justify-center pt-40">
-        <MoonLoader color={palette.orange[600]} size={50} speedMultiplier={0.2} />
+        <Spinner size="page" className="text-primary" />
       </div>
     );
   } else {

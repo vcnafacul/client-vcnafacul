@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -9,7 +10,6 @@ import {
   BookOpen,
   CheckCircle2,
   Clock,
-  Loader2,
   Target,
   TrendingUp,
   XCircle,
@@ -78,10 +78,7 @@ export function SimulationHistoryHeader({
               aria-hidden="true"
             />
           ) : (
-            <Loader2
-              className="h-16 w-16 text-primary animate-spin"
-              aria-hidden="true"
-            />
+            <Spinner size="page" decorative className="text-primary" />
           )}
           <h3
             className={`text-h2 font-bold ${isFailed ? "text-destructive" : "text-primary"}`}

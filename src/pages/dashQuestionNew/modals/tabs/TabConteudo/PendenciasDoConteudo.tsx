@@ -1,5 +1,6 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Loader2, Save } from "lucide-react";
+import { AlertCircle, Save } from "lucide-react";
 import { Pendencia, ROTULO_DA_ABA } from "./pendencias";
 
 /** Lista do que impede salvar o conteúdo, cada item com "Ir" até o campo. */
@@ -96,7 +97,7 @@ export function FaixaDoConteudo({
         }
       >
         {isSaving ? (
-          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+          <Spinner size="button" decorative className="mr-2" />
         ) : (
           <Save className="h-4 w-4 mr-2" />
         )}

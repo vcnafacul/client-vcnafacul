@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import "react-loading-skeleton/dist/skeleton.css";
 import { Navigation, Pagination } from "swiper/modules";
 import { useHeroContext } from "../../../context/heroContext";
 import BLink from "../../molecules/bLink";

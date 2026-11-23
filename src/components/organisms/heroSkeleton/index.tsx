@@ -1,24 +1,26 @@
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
-import { palette } from "@/lib/palette";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Sobre o fundo primary, o bloco pulsa em primary-foreground (R28).
+const bloco = "bg-primary-foreground/15";
 
 export function HeroSkeleton() {
-    return ( 
-        <SkeletonTheme baseColor={`${palette.neutral[600]}26`} highlightColor={palette.neutral[900]}>
-            <div className='min-h-[750px] sm:min-h-[480px] md:min-h-[600px] w-screen flex justify-center bg-primary'>
-                <div className='container flex flex-col justify-start pt-24 min-h-screen box-border
-                        sm:pt-20 sm:min-h-[430px] sm:flex-row sm:items-start sm:justify-between
-                        md:min-h-[600px] md:self-center'>
-                            <div className='sm:self-start md:w-full md:mb-28 md:self-center justify-start flex gap-4 flex-col'>
-                                <Skeleton width={500} height={50}/>
-                                <Skeleton width={700} count={2} />
-                                <div className="flex gap-4">
-                                    <Skeleton width={100} />
-                                    <Skeleton width={100} />
-                                </div>
-                        </div>
-                </div>
-            </div>
-        </SkeletonTheme>
-     );
+  return (
+    <div className="flex min-h-[750px] w-screen justify-center bg-primary sm:min-h-[480px] md:min-h-[600px]">
+      <div
+        role="status"
+        aria-label="Carregando"
+        className="container box-border flex min-h-screen flex-col justify-start px-4 pt-24 sm:min-h-[430px] sm:flex-row sm:items-start sm:justify-between sm:pt-20 md:min-h-[600px] md:self-center"
+      >
+        <div className="flex flex-col justify-start gap-4 sm:self-start md:mb-28 md:w-full md:self-center">
+          <Skeleton className={`h-[50px] w-full max-w-[500px] ${bloco}`} />
+          <Skeleton className={`h-4 w-full max-w-[700px] ${bloco}`} />
+          <Skeleton className={`h-4 w-full max-w-[700px] ${bloco}`} />
+          <div className="flex gap-4">
+            <Skeleton className={`h-4 w-[100px] ${bloco}`} />
+            <Skeleton className={`h-4 w-[100px] ${bloco}`} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
-

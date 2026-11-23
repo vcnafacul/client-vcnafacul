@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -291,7 +292,7 @@ export function UpdateStudentClassModal({
           {/* Estado de Loading */}
           {isLoading && (
             <div className="flex flex-col items-center justify-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+              <Spinner size="page" decorative className="mb-4 text-primary" />
               <p className="text-muted-foreground text-center">
                 Carregando turmas...
               </p>
