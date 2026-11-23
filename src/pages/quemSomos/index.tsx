@@ -1,7 +1,6 @@
 import { palette } from "@/lib/palette";
 import { useEffect, useState } from "react";
 import BaseTemplate from "../../components/templates/baseTemplate";
-import Text from "../../components/atoms/text";
 import RichTextRenderer from "../../components/atoms/richTextRenderer/RichTextRenderer";
 import { AboutVideoCard } from "../homeV2/sections/AboutSection/AboutVideoCard";
 import { Section } from "../../components/templates/homeSection/Section";
@@ -73,7 +72,7 @@ export default function QuemSomosPage() {
 
   return (
     <BaseTemplate solid position="relative">
-      <div className="relative bg-white overflow-hidden">
+      <div className="relative bg-background overflow-hidden">
         {/* Triângulo decorativo canto superior esquerdo */}
         <div
           className="absolute top-0 left-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-none"
@@ -82,7 +81,7 @@ export default function QuemSomosPage() {
 
         {/* Seção: Quem Somos */}
         <div className="max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-6 pt-16">
-          <Text size="secondary">Quem Somos?</Text>
+          <h1 className="text-h1 text-foreground text-center mb-6">Quem Somos?</h1>
           <div className="prose prose-xl max-w-none text-justify">
             <RichTextRenderer content={data.description} contentFormat="markdown" className="text-foreground text-prose text-justify" />
           </div>
@@ -95,9 +94,9 @@ export default function QuemSomosPage() {
               <AboutVideoCard thumbnail={data.thumbnail} videoId={data.videoId} />
             </div>
             <div>
-              <Text size="secondary" className="text-left mb-4">
+              <h2 className="text-h1 text-foreground text-left mb-4">
                 História do Projeto
-              </Text>
+              </h2>
               <p className="text-foreground text-prose whitespace-pre-line">
                 {HISTORIA_TEXT}
               </p>

@@ -15,9 +15,10 @@ export function Section({
     <section
       id={id}
       data-theme={theme}
+      style={fullBleed ? { marginLeft: "calc(50% - 50vw)" } : undefined}
       className={[
-        "home-section",
-        fullBleed ? "home-section--full-bleed" : "py-20 md:py-24",
+        "bg-background text-foreground",
+        fullBleed ? "w-screen" : "py-20 md:py-24",
         className ?? "",
       ]
         .filter(Boolean)
@@ -25,14 +26,14 @@ export function Section({
     >
       {(eyebrow || title || subtitle) && (
         <header className="container mx-auto px-4 mb-10 md:mb-14 text-center">
-          {eyebrow && <p className="home-section__eyebrow mb-3">{eyebrow}</p>}
+          {eyebrow && <p className="text-overline text-highlight mb-3">{eyebrow}</p>}
           {title && (
-            <h2 className="text-h1 font-extrabold leading-tight text-balance">
+            <h2 className="text-h1 text-balance">
               {title}
             </h2>
           )}
           {subtitle && (
-            <p className="mt-3 md:mt-4 text-prose opacity-80 max-w-2xl mx-auto">
+            <p className="mt-3 md:mt-4 text-prose text-muted-foreground max-w-2xl mx-auto">
               {subtitle}
             </p>
           )}

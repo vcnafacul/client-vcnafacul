@@ -15,7 +15,7 @@ export const HeroSection: SectionComponent<HeroData> = ({ data }) => {
     >
       <HeroBlobs sectionRef={sectionRef} />
       <div className="container mx-auto px-4 relative z-raised py-24">
-        <p className="home-section__eyebrow mb-4">{data.eyebrow}</p>
+        <p className="text-overline text-highlight mb-4">{data.eyebrow}</p>
         <motion.h1
           initial="hidden"
           animate="visible"

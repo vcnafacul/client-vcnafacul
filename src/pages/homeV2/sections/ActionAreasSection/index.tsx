@@ -13,13 +13,13 @@ export const ActionAreasSection: SectionComponent<AreaGroup[]> = ({ data }) => {
   return (
     <div className="relative">
       <div className="container mx-auto px-4 mb-10 md:mb-16 text-center">
-        <p className="home-section__eyebrow mb-3">
+        <p className="text-overline text-highlight mb-3">
           ÁREAS DE AÇÃO
         </p>
         <h2 className="text-display [text-wrap:balance]">
           Disciplinas do ENEM
         </h2>
-        <p className="mt-3 opacity-80 max-w-2xl mx-auto">
+        <p className="mt-3 text-prose text-muted-foreground max-w-2xl mx-auto">
           Divididas pra facilitar tua jornada.
         </p>
       </div>

@@ -102,7 +102,7 @@ export function FeatureRow({
         >
           {String(index + 1).padStart(2, "0")}
         </span>
-        <p data-feature-text className="home-section__eyebrow mb-2">
+        <p data-feature-text className="text-overline text-highlight mb-2">
           {item.category}
         </p>
         <h3 data-feature-text className="text-h1">

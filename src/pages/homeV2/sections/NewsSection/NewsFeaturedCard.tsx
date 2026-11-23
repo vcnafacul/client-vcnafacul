@@ -31,7 +31,7 @@ export function NewsFeaturedCard({ item }: { item: NewsItem }) {
           </p>
         )}
         {item.publishedAt && (
-          <p className="mt-3 text-body opacity-80">{item.publishedAt}</p>
+          <p className="mt-3 text-body">{item.publishedAt}</p>
         )}
       </div>
     </motion.a>

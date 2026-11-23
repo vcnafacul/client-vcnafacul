@@ -19,7 +19,7 @@ export function NewsSideCard({ item, index }: { item: NewsItem; index: number })
         {item.title}
       </h4>
       {item.publishedAt && (
-        <p className="text-caption opacity-60 mt-1">{item.publishedAt}</p>
+        <p className="text-caption text-muted-foreground mt-1">{item.publishedAt}</p>
       )}
     </motion.a>
   );

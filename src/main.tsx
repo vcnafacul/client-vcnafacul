@@ -6,7 +6,6 @@ import { registrarPwa } from "./pwa/registerSW";
 import { iniciarCapturaDaInstalacao } from "./pwa/instalacao";
 import { iniciarRecargaAoFalharChunk } from "./pwa/recarregarAoFalharChunk";
 import "./index.css";
-import "./styles/sectionThemes.css";
 import "primereact/resources/themes/md-light-indigo/theme.css";
 
 const PRESERVE_KEYS = ["lgpd_status", "lgpd_updated_at"];

@@ -81,7 +81,7 @@ export const SponsorsSection: SectionComponent<Sponsor[]> = ({ data }) => {
   return (
     <>
       <div className="container mx-auto px-4 mb-10 text-center">
-        <p className="home-section__eyebrow mb-3">QUEM ACREDITA</p>
+        <p className="text-overline text-highlight mb-3">QUEM ACREDITA</p>
         <h2 className="text-display [text-wrap:balance]">
           Empresas que apoiam a causa
         </h2>

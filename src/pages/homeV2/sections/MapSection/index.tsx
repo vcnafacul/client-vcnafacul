@@ -91,9 +91,9 @@ export const MapSection: SectionComponent<null> = () => {
         className="
           group absolute z-header bottom-3 left-3 md:bottom-6 md:left-6
           flex items-center gap-2
-          bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
+          bg-background/90 backdrop-blur-xl backdrop-saturate-150 border border-border
           rounded-2xl shadow-lg px-4 py-3
-          transition-colors hover:bg-white
+          transition-colors hover:bg-background
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
         "
       >

@@ -12,7 +12,7 @@ export const NewsSection: SectionComponent<NewsItem[]> = ({ data }) => {
     <>
       <div className="container mx-auto px-4 mb-10 flex items-end justify-between">
         <div>
-          <p className="home-section__eyebrow mb-2">ATUALIZAÇÕES</p>
+          <p className="text-overline text-highlight mb-2">ATUALIZAÇÕES</p>
           <h2 className="text-display">
             Novidades vcnafacul
           </h2>
@@ -23,7 +23,7 @@ export const NewsSection: SectionComponent<NewsItem[]> = ({ data }) => {
       </div>
       {data.length === 0 ? (
         <div className="container mx-auto px-4">
-          <div className="rounded-2xl border border-dashed border-black/10 p-10 text-center opacity-70">
+          <div className="rounded-2xl border border-dashed border-border p-10 text-center text-muted-foreground">
             Sem novidades por enquanto.
           </div>
         </div>

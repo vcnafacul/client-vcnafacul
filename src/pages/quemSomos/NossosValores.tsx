@@ -36,7 +36,7 @@ function ValorCard({
   children: ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden w-full md:aspect-[572/328] flex flex-col">
+    <div className="bg-card rounded-2xl shadow-lg overflow-hidden w-full md:aspect-[572/328] flex flex-col">
       <div className="h-2 shrink-0" style={{ background: accent }} />
       <div className="flex-1 px-6 py-6 md:px-10 flex flex-col justify-center">
         <div
@@ -88,7 +88,7 @@ function ValorRow({
 
 export function NossosValores() {
   return (
-    <div className="relative bg-white py-20 md:py-28 flex flex-col gap-16 overflow-hidden">
+    <div className="relative bg-background py-20 md:py-28 flex flex-col gap-16 overflow-hidden">
       {/* Triângulo decorativo canto superior esquerdo */}
       <div
         className="absolute top-0 left-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-none"

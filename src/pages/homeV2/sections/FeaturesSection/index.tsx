@@ -10,7 +10,7 @@ export const FeaturesSection: SectionComponent<FeaturesSectionData> = ({ data })
         {[0, 1].map((i) => (
           <div
             key={i}
-            className="aspect-video rounded-3xl bg-black/5 animate-pulse"
+            className="aspect-video rounded-3xl bg-muted animate-pulse"
           />
         ))}
       </div>
@@ -19,12 +19,12 @@ export const FeaturesSection: SectionComponent<FeaturesSectionData> = ({ data })
   return (
     <>
       <div className="container mx-auto px-4 mb-12 md:mb-16 text-center">
-        <p className="home-section__eyebrow mb-3">O QUE A PLATAFORMA OFERECE</p>
+        <p className="text-overline text-highlight mb-3">O QUE A PLATAFORMA OFERECE</p>
         <h2 className="text-display [text-wrap:balance]">
           {data.sectionTitle}
         </h2>
         {data.sectionDescription && (
-          <p className="mt-3 opacity-80 max-w-2xl mx-auto">{data.sectionDescription}</p>
+          <p className="mt-3 text-prose text-muted-foreground max-w-2xl mx-auto">{data.sectionDescription}</p>
         )}
       </div>
       <div className="container mx-auto px-4 max-w-6xl flex flex-col gap-24 md:gap-32">

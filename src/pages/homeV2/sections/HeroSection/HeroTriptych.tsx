@@ -43,7 +43,7 @@ export function HeroTriptych({ personas }: { personas: HeroPersona[] }) {
               {p.title}
             </h3>
             {p.microcopy && (
-              <p className="mt-2 text-caption opacity-85 max-w-[28ch]">
+              <p className="mt-2 text-caption max-w-[28ch]">
                 {p.microcopy}
               </p>
             )}

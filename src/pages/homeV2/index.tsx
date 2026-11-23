@@ -85,13 +85,20 @@ export default function HomeV2() {
       id: "map",
       component: MapSection as SectionComponent<unknown>,
       data: null,
-      theme: "marine",
+      // O mapa cobre a seção inteira e carrega cartões claros (filtros, informações): tema neutro,
+      // senão os tokens do marine vazam para eles (tickets/059/01).
+      theme: "neutral",
       fullBleed: true,
     },
   ];
 
   return (
-    <div className="overflow-x-clip scroll-smooth">
+    <div className="relative overflow-x-clip scroll-smooth">
+      {/* Faixa da marca sob o header (e acima do rodapé): o arco-íris fino da variante A (tickets/059/01 §7.2). */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 top-[76px] z-raised h-1 bg-brand-stripe"
+      />
       <BaseTemplate solid={solid} position="fixed" headerShadow={false}>
         {sections.map((s) => {
           const Comp = s.component;
@@ -106,6 +113,7 @@ export default function HomeV2() {
             </Section>
           );
         })}
+        <div aria-hidden className="h-1 bg-brand-stripe" />
       </BaseTemplate>
     </div>
   );

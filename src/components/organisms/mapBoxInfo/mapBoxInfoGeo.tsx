@@ -113,7 +113,7 @@ function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
             Conhece um cursinho popular?
           </p>
           <div>
-            <Button asChild variant="cta" className="min-w-[300px]">
+            <Button asChild variant="primary" className="min-w-[300px]">
               <Link to={ctaLink}>Cadastrar um Cursinho</Link>
             </Button>
           </div>

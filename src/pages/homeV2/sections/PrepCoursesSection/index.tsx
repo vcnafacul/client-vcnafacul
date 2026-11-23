@@ -20,7 +20,7 @@ export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({
   return (
     <>
       <div className="container mx-auto px-4 mb-10 text-center">
-        <p className="home-section__eyebrow mb-3">REDE DE PARCEIROS</p>
+        <p className="text-overline text-highlight mb-3">REDE DE PARCEIROS</p>
         <h2 className="text-display [text-wrap:balance]">
           Cursinhos populares que estão na frente
         </h2>

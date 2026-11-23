@@ -74,20 +74,20 @@ export function VolunteerTile({
           <p className="text-body font-semibold">
             {volunteer.name}
           </p>
-          <p className="text-caption opacity-80 mt-1">{volunteer.role}</p>
+          <p className="text-caption text-muted-foreground mt-1">{volunteer.role}</p>
         </div>
       )}
       {hasImage && (
         <div
           className={[
-            "absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent text-white",
+            "absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-foreground/80 to-transparent text-background",
             forceUniformOnMobile
               ? ""
               : "translate-y-full group-hover:translate-y-0 transition-transform duration-300",
           ].join(" ")}
         >
           <p className="text-body font-semibold">{volunteer.name}</p>
-          <p className="text-caption opacity-85">{volunteer.role}</p>
+          <p className="text-caption">{volunteer.role}</p>
         </div>
       )}
     </motion.div>

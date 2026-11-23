@@ -14,7 +14,7 @@ export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
         <div className="px-4 pt-12 md:pt-16 pb-4 max-w-2xl md:ml-auto flex flex-col justify-center">
-          <p className="home-section__eyebrow mb-3">{data.eyebrow}</p>
+          <p className="text-overline text-highlight mb-3">{data.eyebrow}</p>
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}

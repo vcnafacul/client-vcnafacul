@@ -1,10 +1,5 @@
 // client-vcnafacul/src/components/templates/homeSection/Section.types.ts
-export type SectionTheme =
-  | "marine"
-  | "pink"
-  | "green"
-  | "yellow"
-  | "neutral";
+export type SectionTheme = "marine" | "yellow" | "neutral";
 
 export interface SectionProps {
   id: string;
