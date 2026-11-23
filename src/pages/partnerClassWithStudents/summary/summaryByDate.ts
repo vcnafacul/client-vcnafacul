@@ -4,7 +4,7 @@ import { attendancePeriodLabel } from "@/types/partnerPrepCourse/attendancePerio
 import { downloadPDF } from "@/utils/get-pdf";
 import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { format, parseISO } from "date-fns";
-import { TDocumentDefinitions } from "pdfmake/interfaces";
+import { TDocumentDefinitions, TableCell } from "pdfmake/interfaces";
 import { palette } from "@/lib/palette";
 
 export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
@@ -138,7 +138,7 @@ export const summaryByDate = async (summary: AttendanceRecordSummaryByDate) => {
           style: "tableStyle",
           table: {
             widths: [140, "*", "*", "*", "*", "*", "*"],
-            body: tableBody as any,
+            body: tableBody as TableCell[][],
           },
           layout: "lightHorizontalLines",
         },

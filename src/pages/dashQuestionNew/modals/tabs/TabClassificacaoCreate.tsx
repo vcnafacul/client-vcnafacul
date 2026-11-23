@@ -1,4 +1,5 @@
 import { Spinner } from "@/components/ui/spinner";
+import type { FrenteOption, InfosDaQuestao, MateriaOption } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -18,8 +19,8 @@ import { areasPermitidas, mantemArea } from "./areasPermitidas";
 interface TabClassificacaoCreateProps {
   formData: Partial<CreateQuestion>;
   errors: Record<string, string>;
-  infos: any;
-  onChange: (field: keyof CreateQuestion, value: any) => void;
+  infos?: InfosDaQuestao | null;
+  onChange: (field: keyof CreateQuestion, value: CreateQuestion[keyof CreateQuestion]) => void;
 }
 
 export function TabClassificacaoCreate({
@@ -32,8 +33,8 @@ export function TabClassificacaoCreate({
     data: { token },
   } = useAuthStore();
 
-  const [materiasDisponiveis, setMateriasDisponiveis] = useState<any[]>([]);
-  const [frentesDisponiveis, setFrentesDisponiveis] = useState<any[]>([]);
+  const [materiasDisponiveis, setMateriasDisponiveis] = useState<MateriaOption[]>([]);
+  const [frentesDisponiveis, setFrentesDisponiveis] = useState<FrenteOption[]>([]);
   const [showFrente2, setShowFrente2] = useState(false);
   const [showFrente3, setShowFrente3] = useState(false);
   const [numerosDisponiveis, setNumerosDisponiveis] = useState<number[]>([]);
@@ -73,7 +74,7 @@ export function TabClassificacaoCreate({
     salvava.
   */
   const provaDe = (id?: string) =>
-    infos?.provas?.find((p: any) => p._id === id);
+    infos?.provas?.find((p) => p._id === id);
   const provaSelecionada = provaDe(formData.prova);
   const { areas: enemAreasDisponiveis } = areasPermitidas(
     provaSelecionada ? [provaSelecionada] : []
@@ -84,7 +85,7 @@ export function TabClassificacaoCreate({
     if (formData.enemArea) {
       const materias =
         infos?.materias?.filter(
-          (mat: any) => mat.enemArea === formData.enemArea
+          (mat) => mat.enemArea === formData.enemArea
         ) || [];
       setMateriasDisponiveis(materias);
     } else {
@@ -96,7 +97,7 @@ export function TabClassificacaoCreate({
   useEffect(() => {
     if (formData.materia) {
       const materia = infos?.materias?.find(
-        (m: any) => m._id === formData.materia
+        (m) => m._id === formData.materia
       );
       setFrentesDisponiveis(materia?.frentes || []);
     } else {
@@ -194,7 +195,7 @@ export function TabClassificacaoCreate({
                   Classificação. O select do Radix não tem item vazio — por
                   isso o botão para desfazer a escolha.
                 */}
-                <label className="text-body font-semibold text-muted-foreground">
+                <label htmlFor="tabclassificacaocreate-prova-opcional" className="text-body font-semibold text-muted-foreground">
                   Prova <span className="font-normal text-muted-foreground">(opcional)</span>
                 </label>
                 {formData.prova && (
@@ -211,11 +212,11 @@ export function TabClassificacaoCreate({
                 )}
               </div>
               <Select value={formData.prova} onValueChange={handleProvaChange}>
-                <SelectTrigger className={errors.prova ? "border-destructive" : ""}>
+                <SelectTrigger id="tabclassificacaocreate-prova-opcional" className={errors.prova ? "border-destructive" : ""}>
                   <SelectValue placeholder="Selecione a prova" />
                 </SelectTrigger>
                 <SelectContent>
-                  {infos?.provas?.map((prova: any) => (
+                  {infos?.provas?.map((prova) => (
                     <SelectItem key={prova._id} value={prova._id}>
                       {prova.nome}
                     </SelectItem>
@@ -233,7 +234,7 @@ export function TabClassificacaoCreate({
             {/* Número */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-body font-semibold text-muted-foreground">
+                <label htmlFor="tabclassificacaocreate-numero-da-questao" className="text-body font-semibold text-muted-foreground">
                   Número da Questão
                 </label>
                 {formData.numero != null && (
@@ -276,7 +277,7 @@ export function TabClassificacaoCreate({
                   onValueChange={(value) => onChange("numero", parseInt(value))}
                   disabled={!formData.prova || numerosDisponiveis.length === 0}
                 >
-                  <SelectTrigger
+                  <SelectTrigger id="tabclassificacaocreate-numero-da-questao"
                     className={errors.numero ? "border-destructive" : ""}
                   >
                     <SelectValue
@@ -306,14 +307,14 @@ export function TabClassificacaoCreate({
 
             {/* Área ENEM */}
             <div className="space-y-2">
-              <label className="text-body font-semibold text-muted-foreground">
+              <label htmlFor="tabclassificacaocreate-area-do-conhecimento-enem" className="text-body font-semibold text-muted-foreground">
                 Área do Conhecimento ENEM *
               </label>
               <Select
                 value={formData.enemArea}
                 onValueChange={handleEnemAreaChange}
               >
-                <SelectTrigger
+                <SelectTrigger id="tabclassificacaocreate-area-do-conhecimento-enem"
                   className={errors.enemArea ? "border-destructive" : ""}
                 >
                   <SelectValue placeholder="Selecione a área" />
@@ -336,7 +337,7 @@ export function TabClassificacaoCreate({
 
             {/* Disciplina */}
             <div className="space-y-2">
-              <label className="text-body font-semibold text-muted-foreground">
+              <label htmlFor="tabclassificacaocreate-disciplina" className="text-body font-semibold text-muted-foreground">
                 Disciplina *
               </label>
               <Select
@@ -346,7 +347,7 @@ export function TabClassificacaoCreate({
                   !formData.enemArea || materiasDisponiveis.length === 0
                 }
               >
-                <SelectTrigger
+                <SelectTrigger id="tabclassificacaocreate-disciplina"
                   className={errors.materia ? "border-destructive" : ""}
                 >
                   <SelectValue
@@ -375,7 +376,7 @@ export function TabClassificacaoCreate({
 
             {/* Frente Principal */}
             <div className="space-y-2">
-              <label className="text-body font-semibold text-muted-foreground">
+              <label htmlFor="tabclassificacaocreate-frente-principal" className="text-body font-semibold text-muted-foreground">
                 Frente Principal *
               </label>
               <Select
@@ -383,7 +384,7 @@ export function TabClassificacaoCreate({
                 onValueChange={(value) => onChange("frente1", value)}
                 disabled={!formData.materia || frentesDisponiveis.length === 0}
               >
-                <SelectTrigger
+                <SelectTrigger id="tabclassificacaocreate-frente-principal"
                   className={errors.frente1 ? "border-destructive" : ""}
                 >
                   <SelectValue
@@ -414,7 +415,7 @@ export function TabClassificacaoCreate({
             {showFrente2 ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-body font-semibold text-muted-foreground">
+                  <label htmlFor="tabclassificacaocreate-frente-secundaria" className="text-body font-semibold text-muted-foreground">
                     Frente Secundária
                   </label>
                   <Button
@@ -434,7 +435,7 @@ export function TabClassificacaoCreate({
                     !formData.materia || frentesDisponiveis.length === 0
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="tabclassificacaocreate-frente-secundaria">
                     <SelectValue placeholder="Selecione a frente" />
                   </SelectTrigger>
                   <SelectContent>
@@ -448,9 +449,9 @@ export function TabClassificacaoCreate({
               </div>
             ) : (
               <div className="space-y-2">
-                <label className="text-body font-semibold text-muted-foreground">
+                <span className="text-body font-semibold text-muted-foreground">
                   Frente Secundária
-                </label>
+                </span>
                 <Button
                   type="button"
                   variant="outline"
@@ -470,7 +471,7 @@ export function TabClassificacaoCreate({
             {showFrente3 ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-body font-semibold text-muted-foreground">
+                  <label htmlFor="tabclassificacaocreate-frente-terciaria" className="text-body font-semibold text-muted-foreground">
                     Frente Terciária
                   </label>
                   <Button
@@ -490,7 +491,7 @@ export function TabClassificacaoCreate({
                     !formData.materia || frentesDisponiveis.length === 0
                   }
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="tabclassificacaocreate-frente-terciaria">
                     <SelectValue placeholder="Selecione a frente" />
                   </SelectTrigger>
                   <SelectContent>
@@ -504,9 +505,9 @@ export function TabClassificacaoCreate({
               </div>
             ) : showFrente2 ? (
               <div className="space-y-2">
-                <label className="text-body font-semibold text-muted-foreground">
+                <span className="text-body font-semibold text-muted-foreground">
                   Frente Terciária
-                </label>
+                </span>
                 <Button
                   type="button"
                   variant="outline"

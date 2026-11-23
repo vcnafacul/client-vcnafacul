@@ -1,4 +1,3 @@
-/* eslint-disable no-mixed-spaces-and-tabs */
 /** @type {import('tailwindcss').Config} */
 
 import TailwindScrollbarHide from "tailwind-scrollbar-hide";
@@ -172,7 +171,6 @@ export default {
     // prose: 16px no mobile, 17px a partir de 768px (o plugin de typography não aceita @media aqui)
     ({ addComponents }) =>
       addComponents({ "@media (min-width: 768px)": { ".prose": { fontSize: "17px" } } }),
-    // eslint-disable-next-line no-undef
     require("tailwindcss-animate"),
   ],
 };

@@ -69,7 +69,6 @@ function AnalyticsSimulado({
       })
       .catch(avisar)
       .finally(() => setLoading(false));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period, token, cursinhoId]);
 
   useEffect(() => {
@@ -91,7 +90,6 @@ function AnalyticsSimulado({
         }
       })
       .catch(avisar);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [period, token, cursinhoId]);
 
   const handleExportPeriod = () => {

@@ -8,7 +8,7 @@ export interface CreateRuleDtoInput {
   type: string;
   strategy?: string;
   questionId?: string;
-  config: any;
+  config: Record<string, unknown>;
   weight?: number;
 }
 

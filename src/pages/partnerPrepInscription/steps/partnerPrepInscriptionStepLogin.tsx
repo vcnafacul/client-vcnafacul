@@ -1,4 +1,5 @@
 import EntrarComGoogle from "@/components/molecules/entrarComGoogle";
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import LoginForm from "@/components/organisms/loginForm";
 import { useCaminhoAtual } from "@/hooks/useCaminhoAtual";
 import { loginForm } from "@/pages/login/data";
@@ -28,7 +29,7 @@ export function PartnerPrepInscriptionStepLogin({ setStepCurrently }: Props) {
           Esqueci minha senha
         </Link>
         <div
-          onClick={setStepCurrently}
+          {...propsDeBotao(setStepCurrently)}
           className="text-primary w-fit underline font-bold cursor-pointer"
         >
           Não possuo cadastro

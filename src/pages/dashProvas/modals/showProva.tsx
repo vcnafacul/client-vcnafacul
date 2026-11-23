@@ -1,4 +1,3 @@
-/* eslint-disable use-isnan */
 import {
   Dialog,
   DialogBody,
@@ -43,10 +42,8 @@ import UploadButton from "../../../components/molecules/uploadButton";
 import { BuscarAtualizacoes } from "../components/BuscarAtualizacoes";
 import { alterarReceberNovasVersoes } from "../../../services/prova/alterarReceberNovasVersoes";
 import { AnuladasDaProva } from "./AnuladasDaProva";
-import {
-  indicadorDeVersoes,
-  OpcaoNovasVersoes,
-} from "../components/OpcaoNovasVersoes";
+import { OpcaoNovasVersoes } from "../components/OpcaoNovasVersoes";
+import { indicadorDeVersoes } from "../components/indicadorDeVersoes";
 
 const TEXTO_SEM_PDF = "Sem PDF da prova";
 
@@ -270,7 +267,7 @@ function ShowProva({
         autoClose: 3000,
         closeOnClick: true,
       });
-    } catch (error) {
+    } catch {
       toast.update(id, {
         render: `Erro ao baixar ${fileType == "prova" ? "a" : "o"} ${fileType}`,
         type: "error",
@@ -301,11 +298,11 @@ function ShowProva({
     }
   };
 
-  const handleFileRemove = (_: any) => {
+  const handleFileRemove = () => {
     setNewFile(null);
   };
 
-  const handleGabaritoRemove = (_: any) => {
+  const handleGabaritoRemove = () => {
     setNewGabarito(null);
   };
 

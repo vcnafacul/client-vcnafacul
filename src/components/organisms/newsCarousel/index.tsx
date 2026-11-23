@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import { News } from "../../../dtos/news/news"
 import Carousel from "../../molecules/carousel"
 import { Navigation, Pagination } from 'swiper/modules';
@@ -13,7 +14,7 @@ function NewsCarousel({ news, breakpoints, onClickCard }: NewsCarouselProps){
 
     const cardsNews = news.map((card, index) => {
         return (
-            <div key={card.id} className="w-40 h-40 bg-muted-foreground m-4 bg-opacity-50 flex justify-center items-end text-white text-body p-4 mb-10 cursor-pointer" onClick={() => { onClickCard(index) }}>
+            <div key={card.id} className="w-40 h-40 bg-muted-foreground m-4 bg-opacity-50 flex justify-center items-end text-white text-body p-4 mb-10 cursor-pointer" {...propsDeBotao(() => { onClickCard(index) })}>
                 {card.title}
             </div>
         )})

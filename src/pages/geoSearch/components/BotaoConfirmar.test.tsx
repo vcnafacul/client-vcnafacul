@@ -43,6 +43,7 @@ describe("BotaoConfirmar", () => {
     const doCard = vi.fn();
     const onClick = vi.fn();
     render(
+      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- dublê do cartão pai, que escuta o clique
       <div onClick={doCard}>
         <BotaoConfirmar
           confirmado={false}

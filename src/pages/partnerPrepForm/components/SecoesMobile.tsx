@@ -6,10 +6,8 @@ import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { StatusBadge } from "..";
 import { ActionMenu } from "./actionMenu";
-import {
-  ExpandableSectionProps,
-  useQuestoesDaSecao,
-} from "./expandableSection";
+import { ExpandableSectionProps } from "./expandableSection";
+import { useQuestoesDaSecao } from "./useQuestoesDaSecao";
 import { RenderQuestionsTable } from "./renderQuestionsTable";
 
 type Props = Omit<ExpandableSectionProps, "section"> & {

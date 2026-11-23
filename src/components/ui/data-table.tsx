@@ -424,6 +424,9 @@ function DataTable<T>({
               const selecionada = selecionados.has(id)
               const acoes = rowActions?.(row) ?? []
               return (
+                // O clique na linha é atalho de mouse: ela tem controles aninhados (seleção e ações),
+                // que seguem acessíveis pelo teclado; um role="button" aqui aninharia controles.
+                // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
                 <li
                   key={id}
                   data-row-key={id}

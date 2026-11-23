@@ -702,7 +702,7 @@ describe("DashListTemplate — drop-in sobre o contexto do V1", () => {
 
   it("os filtros próprios da tela entram na faixa, ao lado dos selects", () => {
     montar(criarContexto({ entities: provas(3) }), {
-      filters: <label data-testid="so-com-gabarito">Só com gabarito</label>,
+      filters: <span data-testid="so-com-gabarito">Só com gabarito</span>,
     });
     expect(
       within(screen.getByTestId("dash-filter-bar")).getByTestId("so-com-gabarito"),

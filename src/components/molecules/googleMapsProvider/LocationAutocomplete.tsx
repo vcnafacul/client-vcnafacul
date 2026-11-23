@@ -93,12 +93,22 @@ export function LocationAutocomplete({ onPlaceLoaded }: Props) {
           }}
         >
           {predictions.map((suggestion) => (
-            <li
-              key={suggestion.placePrediction?.placeId}
-              style={{ padding: "8px", cursor: "pointer" }}
-              onClick={() => handleSelect(suggestion)}
-            >
-              {suggestion.placePrediction?.text.text}
+            <li key={suggestion.placePrediction?.placeId}>
+              <button
+                type="button"
+                style={{
+                  padding: "8px",
+                  cursor: "pointer",
+                  width: "100%",
+                  textAlign: "left",
+                  background: "none",
+                  border: 0,
+                  font: "inherit",
+                }}
+                onClick={() => handleSelect(suggestion)}
+              >
+                {suggestion.placePrediction?.text.text}
+              </button>
             </li>
           ))}
         </ul>

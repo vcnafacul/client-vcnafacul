@@ -1,4 +1,5 @@
 import { CloudUpload, FileIcon, X } from "lucide-react";
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import { ComponentProps, useRef, useState } from "react";
 import "./style.css";
 
@@ -127,7 +128,7 @@ function UploadButton({
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
-        onClick={handleClick}
+        {...propsDeBotao(handleClick)}
       >
         <input
           ref={fileInputRef}

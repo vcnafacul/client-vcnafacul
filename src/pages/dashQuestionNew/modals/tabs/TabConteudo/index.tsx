@@ -86,9 +86,9 @@ export function TabConteudo({
         <CardContent className="space-y-4">
           {/* Texto da Questão — editor grande */}
           <div id={ancoraDoCampo("textoQuestao")} className="space-y-2 scroll-mt-28">
-            <label className="text-body font-semibold text-muted-foreground">
+            <span className="text-body font-semibold text-muted-foreground">
               Texto da Questão *
-            </label>
+            </span>
             {!isEditing ? (
               <div className="p-4 bg-page rounded-md border border-border min-h-[200px]">
                 <RichTextRenderer
@@ -131,9 +131,9 @@ export function TabConteudo({
 
           {/* Pergunta (opcional) */}
           <div id={ancoraDoCampo("pergunta")} className="space-y-2 scroll-mt-28">
-            <label className="text-body font-semibold text-muted-foreground">
+            <span className="text-body font-semibold text-muted-foreground">
               Pergunta (opcional)
-            </label>
+            </span>
             {!isEditing ? (
               pergunta ? (
                 <div className="p-3 bg-page rounded-md border border-border">

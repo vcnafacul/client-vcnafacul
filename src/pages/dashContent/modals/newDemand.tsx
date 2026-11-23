@@ -75,7 +75,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
     register("subjectId");
     register("title");
     register("description");
-  }, []);
+  }, [register]);
 
   useEffect(() => {
     getMaterias(token)
@@ -88,7 +88,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
       .catch((error: Error) => {
         toast.error(error.message);
       });
-  }, [token]);
+  }, [token, setValue]);
 
   const materia = watch("materia");
   const frente = watch("frente");
@@ -132,7 +132,7 @@ function NewDemand({ handleClose, addDemand, isOpen }: NewDemandProps) {
       .catch((error: Error) => {
         toast.error(error.message);
       });
-  }, [frente, token]);
+  }, [frente, token, setValue]);
 
   const materiasOptions = materiasList.map((m) => ({
     value: m._id,

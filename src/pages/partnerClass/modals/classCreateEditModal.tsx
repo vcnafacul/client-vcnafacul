@@ -105,7 +105,7 @@ export function ClassCreateEditModal({
   useEffect(() => {
     register("name");
     register("description");
-  }, []);
+  }, [register]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>

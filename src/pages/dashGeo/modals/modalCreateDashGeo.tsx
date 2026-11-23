@@ -256,7 +256,7 @@ function ModalEditDashGeo({
     register("twitter");
     register("campus");
     register("alias");
-  }, []);
+  }, [register]);
 
   const handleCreate = async (body: any) => {
     if (!selectedPosition[0] || !selectedPosition[1])
@@ -333,7 +333,7 @@ function ModalEditDashGeo({
         autoClose: 3000,
         closeOnClick: true,
       });
-    } catch (err) {
+    } catch {
       toast.update(toastId, {
         render:
           "Não foi possível preencher os dados automaticamente. Tente novamente.",

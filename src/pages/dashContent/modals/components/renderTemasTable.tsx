@@ -32,7 +32,8 @@ import { useState } from "react";
 import { FrentesActionMenu } from "./frentesActionMenu";
 import ManagerSubject from "../managerSubject";
 import OrderEditContent from "../orderEditContent";
-import { countByStatus, SortableTemaRow } from "./sortableTemaRow";
+import { countByStatus } from "./countByStatus"
+import { SortableTemaRow } from "./sortableTemaRow";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { StatusContent } from "@/enums/content/statusContent";
 

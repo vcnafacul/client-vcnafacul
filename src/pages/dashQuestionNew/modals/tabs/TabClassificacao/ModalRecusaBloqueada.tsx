@@ -32,7 +32,7 @@ type ProvaNoModal = ProvaQueImpede & DonoDaProva;
  * Como cada prova aparece: sua, oficial (só categoria fora de uso), da
  * plataforma, ou de qual cursinho — a mesma regra do `seloDaProva`.
  */
-export function deQuemE(p: ProvaNoModal): string {
+function deQuemE(p: ProvaNoModal): string {
   if (p.podeComporProva) return "sua";
   if (p.selecionavel === false) return "oficial";
   if (!p.cursinhoId) return "da plataforma";

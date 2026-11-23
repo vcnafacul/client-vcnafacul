@@ -312,7 +312,7 @@ export function ModalConditions({
       onSave(complexCondition);
       toast.success("Condições salvas com sucesso!");
       handleClose?.();
-    } catch (error) {
+    } catch {
       toast.error("Erro ao salvar condições");
     } finally {
       setLoading(false);

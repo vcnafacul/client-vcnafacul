@@ -1,3 +1,5 @@
+import type { Editor } from "@tiptap/core";
+import type { Node as ProseMirrorNode } from "@tiptap/pm/model";
 import { useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { Table } from "@tiptap/extension-table";
@@ -30,15 +32,18 @@ interface UseRichTextEditorProps {
  * tiptap-markdown doesn't know about our custom `latex` node, so it renders
  * them as empty or as HTML. We walk the JSON doc and splice the formulas back.
  */
-function getMarkdownFromEditor(editor: any): string {
-  const raw: string =
-    editor.storage.markdown?.getMarkdown?.() ?? editor.getHTML();
+function getMarkdownFromEditor(editor: Editor): string {
+  // `tiptap-markdown` não tipa o `storage`; só o que usamos aqui.
+  const storage = editor.storage as unknown as {
+    markdown?: { getMarkdown?: () => string };
+  };
+  const raw: string = storage.markdown?.getMarkdown?.() ?? editor.getHTML();
 
   // Walk the ProseMirror doc and collect latex nodes with positions
   const doc = editor.state.doc;
   const latexNodes: { formula: string; displayMode: boolean }[] = [];
 
-  doc.descendants((node: any) => {
+  doc.descendants((node: ProseMirrorNode) => {
     if (node.type.name === "latex") {
       latexNodes.push({
         formula: node.attrs.formula,
@@ -72,10 +77,10 @@ function getMarkdownFromEditor(editor: any): string {
 /**
  * Manual serialization that properly handles latex nodes and text-align.
  */
-function serializeDocToMarkdown(doc: any): string {
+function serializeDocToMarkdown(doc: ProseMirrorNode): string {
   const parts: string[] = [];
 
-  doc.content.forEach((block: any) => {
+  doc.content.forEach((block: ProseMirrorNode) => {
     const align = block.attrs?.textAlign;
     const wrapAlign = (text: string) => {
       if (align && align !== "left") {
@@ -91,8 +96,8 @@ function serializeDocToMarkdown(doc: any): string {
       parts.push(wrapAlign(`${prefix} ${serializeInlineContent(block)}`));
     } else if (block.type.name === "bulletList") {
       const items: string[] = [];
-      block.content.forEach((li: any) => {
-        li.content.forEach((p: any) => {
+      block.content.forEach((li: ProseMirrorNode) => {
+        li.content.forEach((p: ProseMirrorNode) => {
           items.push(`- ${serializeInlineContent(p)}`);
         });
       });
@@ -100,15 +105,15 @@ function serializeDocToMarkdown(doc: any): string {
     } else if (block.type.name === "orderedList") {
       const items: string[] = [];
       let i = 1;
-      block.content.forEach((li: any) => {
-        li.content.forEach((p: any) => {
+      block.content.forEach((li: ProseMirrorNode) => {
+        li.content.forEach((p: ProseMirrorNode) => {
           items.push(`${i}. ${serializeInlineContent(p)}`);
           i++;
         });
       });
       parts.push(items.join("\n"));
     } else if (block.type.name === "blockquote") {
-      block.content.forEach((p: any) => {
+      block.content.forEach((p: ProseMirrorNode) => {
         parts.push(`> ${serializeInlineContent(p)}`);
       });
     } else if (block.type.name === "codeBlock") {
@@ -121,11 +126,11 @@ function serializeDocToMarkdown(doc: any): string {
   return parts.join("\n\n");
 }
 
-function serializeInlineContent(node: any): string {
+function serializeInlineContent(node: ProseMirrorNode): string {
   if (!node.content) return "";
   const parts: string[] = [];
 
-  node.content.forEach((child: any) => {
+  node.content.forEach((child: ProseMirrorNode) => {
     if (child.type.name === "text") {
       let text = child.text || "";
       const marks = child.marks || [];

@@ -1,4 +1,5 @@
 import { Spinner } from "@/components/ui/spinner";
+import type { InfosDaQuestao } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/types";
 import { Button } from "@/components/ui/button";
 import { CreateQuestion } from "@/dtos/question/updateQuestion";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -18,7 +19,7 @@ import { toast } from "@/lib/toast";
 interface ModalCreateQuestionProps {
   isOpen: boolean;
   onClose: () => void;
-  infos: any;
+  infos: InfosDaQuestao | null;
   onSuccess?: () => void;
 }
 
@@ -67,7 +68,7 @@ export function ModalCreateQuestion({
     []
   );
 
-  const updateFormData = (field: keyof CreateQuestion, value: any) => {
+  const updateFormData = (field: keyof CreateQuestion, value: CreateQuestion[keyof CreateQuestion]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => {
@@ -98,7 +99,15 @@ export function ModalCreateQuestion({
     const pendingStore = pendingStoreRef.current;
     const saveData = { ...formData };
     if (pendingStore.hasPending()) {
-      const textFields: (keyof CreateQuestion)[] = [
+      const textFields: (
+        | 'textoQuestao'
+        | 'pergunta'
+        | 'textoAlternativaA'
+        | 'textoAlternativaB'
+        | 'textoAlternativaC'
+        | 'textoAlternativaD'
+        | 'textoAlternativaE'
+      )[] = [
         'textoQuestao', 'pergunta', 'textoAlternativaA', 'textoAlternativaB',
         'textoAlternativaC', 'textoAlternativaD', 'textoAlternativaE',
       ];
@@ -111,7 +120,7 @@ export function ModalCreateQuestion({
         for (const field of textFields) {
           const val = saveData[field];
           if (typeof val === "string" && val) {
-            (saveData as any)[field] = PendingImageStore.replaceInMarkdown(val, replacements);
+            saveData[field] = PendingImageStore.replaceInMarkdown(val, replacements);
           }
         }
       }

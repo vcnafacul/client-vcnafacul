@@ -53,6 +53,7 @@ export async function verifyDeclaredInterest(
     ) {
       throw new Error(
         "Não foi possível conectar ao servidor para carregar sua inscrição. Verifique sua conexão com a internet e tente novamente.",
+        { cause: e },
       );
     }
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { CreateQuestion } from "@/dtos/question/updateQuestion";
 import { validarQuestaoNova } from "./validarQuestaoNova";
 
 const completa = {
@@ -14,7 +15,7 @@ const completa = {
   textoAlternativaD: "d",
   textoAlternativaE: "e",
   alternativa: "A",
-} as any;
+} satisfies Partial<CreateQuestion>;
 
 describe("validarQuestaoNova", () => {
   it("completa: sem erro e sem resumo", () => {

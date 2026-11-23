@@ -119,7 +119,7 @@ export function InitiateConversationDialog({
         {stage === "searching" ? (
           <div className="flex flex-col gap-3">
             <Input
-              autoFocus
+              ref={(campo) => campo?.focus()}
               placeholder="Digite ao menos 2 caracteres"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -159,7 +159,7 @@ export function InitiateConversationDialog({
         ) : (
           <div className="flex flex-col gap-3">
             <Textarea
-              autoFocus
+              ref={(campo) => campo?.focus()}
               rows={4}
               maxLength={MAX_LEN}
               value={content}

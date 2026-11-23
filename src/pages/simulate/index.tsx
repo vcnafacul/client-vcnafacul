@@ -208,7 +208,6 @@ function Simulate() {
       />
     );
   }, [
-    modals.modalReportProblem.isOpen,
     questionProblem,
     questionSelected._id,
     questionSelected.numero,
@@ -223,7 +222,7 @@ function Simulate() {
         image={questionImageUrl}
       />
     );
-  }, [modals.modalImage.isOpen, questionImageUrl, modals.modalImage]);
+  }, [questionImageUrl, modals.modalImage]);
 
   useEffect(() => {
     if (data.questions.length === 0) {

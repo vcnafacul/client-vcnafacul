@@ -9,7 +9,7 @@ vi.mock("@/services/auth/validNewEmail", () => ({
 describe("Step1 — email travado (convite 05)", () => {
   it("⚠️ com convite, o email aparece como texto — não há campo para trocar", () => {
     const { container } = render(
-      <Step1 updateData={vi.fn()} dataUser={{} as any} emailTravado="ana@x.com" />,
+      <Step1 updateData={vi.fn()} dataUser={{} as never} emailTravado="ana@x.com" />,
     );
 
     expect(container.querySelector("[data-email-travado]")?.textContent).toContain(
@@ -20,7 +20,7 @@ describe("Step1 — email travado (convite 05)", () => {
 
   it("sem convite, o campo de email de sempre", () => {
     const { container } = render(
-      <Step1 updateData={vi.fn()} dataUser={{} as any} />,
+      <Step1 updateData={vi.fn()} dataUser={{} as never} />,
     );
 
     expect(container.querySelector("[data-email-travado]")).toBeNull();

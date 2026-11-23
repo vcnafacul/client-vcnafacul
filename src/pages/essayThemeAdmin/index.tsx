@@ -122,7 +122,7 @@ export default function EssayThemeAdmin() {
         await updateTheme(token, editing.id, data);
         toast.success("Tema atualizado");
       } else {
-        await createTheme(token, data as any);
+        await createTheme(token, data);
         toast.success("Tema criado");
       }
       setEditing(undefined);

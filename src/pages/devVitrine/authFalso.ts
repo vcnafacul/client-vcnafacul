@@ -32,7 +32,7 @@ const USUARIO_FALSO: AuthProps["user"] = {
  */
 export function ligarAuthFalso() {
   const { data, doAuth } = useAuthStore.getState();
-  let valido = false;
+  let valido: boolean;
   try {
     valido = !!data.token && !tokenIsExpired(data.token);
   } catch {

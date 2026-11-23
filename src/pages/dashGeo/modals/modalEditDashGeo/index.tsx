@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { useEffect, useState } from "react";
 
@@ -273,7 +272,8 @@ function ModalEditDashGeo({
       children: "Voltar",
       type: "button",
       onClick: () => {
-        modified ? setComeback(true) : setEditing(false);
+        if (modified) setComeback(true);
+        else setEditing(false);
       },
       editing: true,
     },
@@ -486,7 +486,7 @@ function ModalEditDashGeo({
     register("linkedin");
     register("twitter");
     register("campus");
-  }, []);
+  }, [register]);
 
   useEffect(() => {
     if (geo) {
@@ -517,7 +517,7 @@ function ModalEditDashGeo({
       setValue("reportOther", geo.reportOther);
       setValue("campus", geo.campus);
     }
-  }, [geo]);
+  }, [geo, setValue]);
 
   useEffect(() => {
     if (!clicked && cep && cep.length === 8) {

@@ -149,7 +149,7 @@ export function PartnerPrepInscriptionStep3({
       setValue("uf", currentData?.legalGuardian?.uf);
       setValue("cpf", currentData?.legalGuardian?.cpf);
     }
-  }, [currentData]);
+  }, [currentData, setValue]);
 
   function handleForm(data: LegalGuardianDTO) {
     if (fRelationOther) {

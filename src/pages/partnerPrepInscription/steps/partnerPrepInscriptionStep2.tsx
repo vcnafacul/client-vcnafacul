@@ -119,7 +119,7 @@ export function PartnerPrepInscriptionStep2({
     register("neighborhood");
     register("city");
     register("state");
-  }, []);
+  }, [register]);
 
   useEffect(() => {
     if(currentData) {

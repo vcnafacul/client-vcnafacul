@@ -1,6 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { StatusBadge, VARIANTE_POR_TONE } from "./StatusBadge";
+import { StatusBadge } from "./StatusBadge";
+import { VARIANTE_POR_TONE } from "./statusVariants";
 
 /**
  * tickets/059: o badge agora é o `StatusBadge` do design system em `look="dot"`

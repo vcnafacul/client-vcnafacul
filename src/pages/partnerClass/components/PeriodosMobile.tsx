@@ -3,7 +3,7 @@ import { formatDate } from "@/utils/date";
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { ActionMenu } from "./actionMenu";
-import { useAcoesDaTurma } from "./renderClassesTable";
+import { useAcoesDaTurma } from "./useAcoesDaTurma";
 import { StatusBadge } from "./statusBadge";
 
 interface Props {

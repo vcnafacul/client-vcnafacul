@@ -1,4 +1,5 @@
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import { lazy, ReactNode, Suspense, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import { getIconByTitle } from "../../../pages/mainSimulate/data";
@@ -172,7 +173,7 @@ function SimulateTemplate({
 
         {modo === "image" ? (
           <div
-            onClick={expandedPhoto}
+            {...propsDeBotao(expandedPhoto)}
             className="flex justify-center p-2 sm:p-8 my-4 bg-white rounded-lg cursor-pointer w-full"
           >
             <img

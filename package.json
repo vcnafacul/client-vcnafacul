@@ -9,7 +9,7 @@
     "build:development": "tsc && tsc -p tsconfig.sw.json && vite build --mode development",
     "build:homologation": "tsc && tsc -p tsconfig.sw.json && vite build --mode homologation",
     "build:qa": "tsc && tsc -p tsconfig.sw.json && vite build --mode qa",
-    "lint": "eslint .",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 44",
     "test": "vitest run",
     "test:ci": "vitest run --exclude '**/DashToolbar.test.tsx'",
     "test:watch": "vitest",

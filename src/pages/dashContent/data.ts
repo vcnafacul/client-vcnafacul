@@ -11,7 +11,7 @@ export const dashContent = {
 export const cardTransformationContent = (
   content: ContentDtoInput
 ): CardDash => ({
-  id: content.id ?? (content as any)._id,
+  id: content.id ?? (content as { _id?: string })._id,
   title: content.title,
   status: content.status,
   infos: [

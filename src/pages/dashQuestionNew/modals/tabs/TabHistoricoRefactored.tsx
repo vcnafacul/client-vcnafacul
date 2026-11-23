@@ -95,7 +95,7 @@ export function TabHistoricoRefactored({
     }
   };
 
-  const renderChangeValue = (key: string, value: any): string => {
+  const renderChangeValue = (key: string, value: unknown): string => {
     if (value === null || value === undefined) {
       return "Não definido";
     }

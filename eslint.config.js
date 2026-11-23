@@ -5,15 +5,6 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
-// jsx-a11y recomendado, tudo em warn dentro da branch; vira error na limpeza (tickets/059 §5.4).
-// Mantém as opções e os "off" da config recomendada; só rebaixa o que é error para warn.
-const a11yWarn = Object.fromEntries(
-  Object.entries(jsxA11y.flatConfigs.recommended.rules).map(([nome, v]) => {
-    const [nivel, ...opcoes] = Array.isArray(v) ? v : [v];
-    return [nome, nivel === "off" || nivel === 0 ? v : ["warn", ...opcoes]];
-  }),
-);
-
 export default tseslint.config(
   { ignores: ["dist", "storybook-static", "coverage", ".superpowers"] },
   {
@@ -27,24 +18,24 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      ...a11yWarn,
-      // tickets/059: rebaixada até a limpeza (Task 13)
-      "@typescript-eslint/no-explicit-any": "warn",
-      // tickets/059: rebaixada até a limpeza (Task 13)
-      "@typescript-eslint/no-this-alias": "warn",
-      // tickets/059: rebaixada até a limpeza (Task 13)
-      "@typescript-eslint/no-unused-vars": "warn",
-      // tickets/059: rebaixada até a limpeza (Task 13)
-      "@typescript-eslint/no-empty-object-type": "warn",
-      // tickets/059: rebaixada até a limpeza (Task 13)
-      "@typescript-eslint/no-unused-expressions": "warn",
-      // tickets/059: rebaixada até a limpeza (Task 13)
-      "react-hooks/rules-of-hooks": "warn",
-      // tickets/059: rebaixada até a limpeza (Task 13)
-      "no-useless-assignment": "warn",
-      // tickets/059: rebaixada até a limpeza (Task 13)
-      "preserve-caught-error": "warn",
+      ...jsxA11y.flatConfigs.recommended.rules,
+      // Convenção do repo: prefixo `_` marca parâmetro/variável intencionalmente não usado (tickets/059).
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_" },
+      ],
+      // `role="list"` em ul/ol é intencional: com `list-style: none` (preflight do Tailwind) o Safari/VoiceOver
+      // deixa de anunciar a lista sem ele.
+      "jsx-a11y/no-redundant-roles": ["error", { ul: ["list"], ol: ["list"] }],
+      // `<label>` envolvendo `input` + texto em `div > span` passa de 2 níveis de profundidade (padrão da regra).
+      "jsx-a11y/label-has-associated-control": ["error", { depth: 3 }],
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     },
+  },
+  {
+    // Padrão shadcn: o componente e o `cva` das suas variantes (e hooks do contexto) vivem no mesmo
+    // arquivo. Só afeta o fast refresh em dev, não o build.
+    files: ["src/components/ui/**/*.{ts,tsx}"],
+    rules: { "react-refresh/only-export-components": "off" },
   },
 );

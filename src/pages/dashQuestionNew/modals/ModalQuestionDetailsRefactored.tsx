@@ -1,4 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
+import type { InfosDaQuestao } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/types";
 import { podeEditarQuestao } from "../permissoesDoBanco";
 import { Question } from "@/dtos/question/questionDTO";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -37,7 +38,7 @@ interface ModalQuestionDetailsRefactoredProps {
   isOpen: boolean;
   onClose: () => void;
   questionId: string | null;
-  infos: any;
+  infos: InfosDaQuestao | null;
   /**
    * Abre outra questão no mesmo modal (card 25).
    *
@@ -244,7 +245,7 @@ function ModalContent({
   onClose: () => void;
   question: Question;
   canEdit: boolean;
-  infos: any;
+  infos: InfosDaQuestao | null;
   token: string;
   refreshQuestion: () => void;
   /** Abre outra questão no mesmo modal — "ver original" e "ver cópias". */

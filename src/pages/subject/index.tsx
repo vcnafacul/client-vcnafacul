@@ -1,4 +1,5 @@
 import DocxPreview from "@/components/atoms/docxPreview";
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import { YoutubePlayer } from "@/components/atoms/youtubePlayer";
 import { getFile } from "@/services/content/getFile";
 import { ArrowLeft, Play } from "lucide-react";
@@ -77,7 +78,7 @@ function Subject() {
               {contents.map((content, index) => (
                 <div
                   key={index}
-                  onClick={() => setContentSelected(content)}
+                  {...propsDeBotao(() => setContentSelected(content))}
                   className={`cursor-pointer px-4 py-2 rounded-sm transition-all ${
                     (content.id ?? (content as { _id?: string })._id) ===
                     (contentSelected?.id ?? (contentSelected as { _id?: string } | undefined)?._id)

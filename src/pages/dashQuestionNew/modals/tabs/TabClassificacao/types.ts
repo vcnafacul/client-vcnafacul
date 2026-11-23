@@ -11,7 +11,7 @@ import { Question } from "@/dtos/question/questionDTO";
 export interface TabClassificacaoProps {
   question: Question;
   canEdit?: boolean;
-  infos?: ClassificacaoInfos;
+  infos?: InfosDaQuestao | null;
   onSaveSuccess?: () => void;
   /**
    * Avisa o modal quando há edição não salva — para ele perguntar antes de
@@ -34,6 +34,9 @@ export interface ClassificacaoInfos {
   materias: MateriaOption[];
   frentes: FrenteOption[];
 }
+
+/** O que `getInfosQuestion` devolve; as telas leem com `?.`, então tudo é opcional. */
+export type InfosDaQuestao = Partial<ClassificacaoInfos>;
 
 /** Com dono e `podeComporProva` do ms (tickets/023, card 07). */
 export interface ProvaOption extends DonoDaProva {

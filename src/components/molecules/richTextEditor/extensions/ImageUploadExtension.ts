@@ -1,5 +1,5 @@
 import Image from "@tiptap/extension-image";
-import { ResizableNodeView } from "@tiptap/core";
+import { type CommandProps, ResizableNodeView } from "@tiptap/core";
 import { RICH_TEXT_IMAGE_MAX_WIDTH } from "@/utils/richTextImage";
 import { palette } from "@/lib/palette";
 
@@ -90,7 +90,7 @@ export const ImageUploadExtension = Image.extend<ImageUploadOptions>({
       ...this.parent?.(),
       uploadImage:
         (file: File) =>
-        ({ commands }: { commands: any }) => {
+        ({ commands }: Pick<CommandProps, "commands">) => {
           const onUpload = this.options.onUpload;
           onUpload(file).then((assetUrl) => {
             commands.insertContent({
@@ -109,7 +109,7 @@ export const ImageUploadExtension = Image.extend<ImageUploadOptions>({
   addNodeView() {
     const resolvePendingUrl = this.options.resolvePendingUrl;
     const resolveAssetUrl = this.options.resolveAssetUrl;
-    const extensionThis = this;
+    const getExtensionEditor = () => this.editor;
 
     return ({ node, getPos, HTMLAttributes, editor }) => {
       const img = document.createElement("img");
@@ -209,7 +209,7 @@ export const ImageUploadExtension = Image.extend<ImageUploadOptions>({
         onCommit: (width, height) => {
           const pos = getPos();
           if (pos === undefined) return;
-          extensionThis.editor
+          getExtensionEditor()
             .chain()
             .setNodeSelection(pos)
             .updateAttributes("image", {

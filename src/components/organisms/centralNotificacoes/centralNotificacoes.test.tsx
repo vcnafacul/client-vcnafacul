@@ -17,7 +17,8 @@ vi.mock("react-router-dom", async (original) => ({
   useNavigate: () => navegar,
 }));
 
-import { ListaDaCentral, SinoDaCentral, rotuloDoContador } from ".";
+import { ListaDaCentral, SinoDaCentral } from ".";
+import { rotuloDoContador } from "@/utils/rotuloDoContador";
 
 const n = (over: Partial<NotificacaoDaCentral> = {}): NotificacaoDaCentral => ({
   id: "n1",

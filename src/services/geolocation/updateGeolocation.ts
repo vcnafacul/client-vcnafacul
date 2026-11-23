@@ -26,8 +26,9 @@ export async function UpdateGeolocation({ body, token}: UpdateGeolocationProps){
             res.message.map((m: string) => messageErro =  messageErro.concat(m).concat("; "))
             throw new Error(messageErro)
         }
-    } catch (error: any) {
-        throw new Error(`Error - ${error.message}`)
+    } catch (error) {
+        const message = error instanceof Error ? error.message : String(error)
+        throw new Error(`Error - ${message}`, { cause: error })
     }
 }
 

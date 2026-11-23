@@ -72,7 +72,7 @@ function ModalSendEmail({ handleClose, isOpen }: ModalSendEmailProps) {
           (user) => !selectedUsers.some((selected) => selected.id === user.id),
         );
         setSearchResults(filteredResults);
-      } catch (error) {
+      } catch {
         toast.error("Erro ao buscar usuários");
         setSearchResults([]);
       } finally {

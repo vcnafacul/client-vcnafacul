@@ -53,7 +53,7 @@ function Action() {
           <div className="flex justify-center w-28 h-28">
             {
               typeof cardItem.Home_Action_Area_Item_id.image === 'string' ? 
-              <img src={cardItem.Home_Action_Area_Item_id.image as string} /> : 
+              <img src={cardItem.Home_Action_Area_Item_id.image as string} alt="" /> : 
               <cardItem.Home_Action_Area_Item_id.image />
             }
           </div>

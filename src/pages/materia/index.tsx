@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "@/lib/toast";
 import { getImagePreset } from "../../config/materiaPresets";
@@ -106,7 +107,7 @@ function Materia() {
             return (
               <div
                 key={frenteId}
-                onClick={() => setFrenteSelected(frente)}
+                {...propsDeBotao(() => setFrenteSelected(frente))}
                 className={`flex items-center gap-4 p-4 rounded-lg border cursor-pointer transition-all hover:shadow-lg shadow-sm ${
                   frenteId === (frenteSelected?._id || frenteSelected?.id)
                     ? "border-primary bg-muted"
@@ -141,15 +142,15 @@ function Materia() {
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {frenteSelected.subjects.map((subject) => {
-            const subjectId = (subject as any)._id || subject.id;
+            const subjectId = (subject as { _id?: string })._id || subject.id;
             return (
               <div
                 key={subjectId}
-                onClick={() =>
+                {...propsDeBotao(() =>
                   navigate(
                     `/dashboard/${CONTENT}/${subject.name.replace(" ", "")}/${subjectId}`
                   )
-                }
+                )}
                 className="flex items-center gap-4 bg-white hover:bg-muted p-4 rounded-lg cursor-pointer shadow-md border transition"
               >
                 <div className="bg-muted text-foreground font-bold w-10 h-10 rounded-full flex items-center justify-center">

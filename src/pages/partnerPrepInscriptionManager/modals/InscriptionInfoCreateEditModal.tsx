@@ -97,7 +97,7 @@ export function InscriptionInfoCreateEditModal({
     register("range");
     register("requestDocuments");
     register("isTest");
-  }, []);
+  }, [register]);
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>

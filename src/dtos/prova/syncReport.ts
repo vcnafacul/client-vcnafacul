@@ -1,8 +1,8 @@
 export interface FixDetail {
     field: string;
     issue: string;
-    oldValue: any;
-    newValue: any;
+    oldValue: unknown;
+    newValue: unknown;
     detail?: string;
 }
 

@@ -100,6 +100,7 @@ export function ModalAnularQuestao({
           {acima}
           <div className="flex flex-col gap-1">
             <label
+              htmlFor="motivo-anulacao-select"
               className="text-body font-semibold text-foreground"
               id="motivo-anulacao"
             >
@@ -109,7 +110,7 @@ export function ModalAnularQuestao({
               value={motivo}
               onValueChange={(v) => setMotivo(v as MotivoAnulacao)}
             >
-              <SelectTrigger aria-labelledby="motivo-anulacao">
+              <SelectTrigger id="motivo-anulacao-select" aria-labelledby="motivo-anulacao">
                 <SelectValue placeholder="Selecione o motivo" />
               </SelectTrigger>
               <SelectContent>

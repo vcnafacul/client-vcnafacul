@@ -78,6 +78,8 @@ function Botao({ acao, variante }: { acao: DashAction; variante: Variante }) {
   return (
     <Tooltip delayDuration={200}>
       <TooltipTrigger asChild>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex --
+            o botão desabilitado não recebe foco; o wrapper focável dá ao teclado o acesso ao motivo (tooltip) */}
         <span tabIndex={0} className={cn("inline-flex rounded-md", controlRing)}>
           {botao}
         </span>

@@ -44,7 +44,9 @@ export function EditorToolbar({
 
       try {
         const url = await onImageUpload(file);
-        editor.chain().focus().setImage({ src: url, 'data-asset-id': url } as any).run();
+        // `data-asset-id` não está nas opções tipadas do `setImage`, mas o nó `image` o aceita.
+        const attrs = { src: url, 'data-asset-id': url };
+        editor.chain().focus().setImage(attrs).run();
       } catch {
         console.error("Erro ao fazer upload da imagem");
       }

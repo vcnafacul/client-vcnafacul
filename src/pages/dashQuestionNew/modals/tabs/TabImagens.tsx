@@ -1,4 +1,5 @@
 import { Spinner } from "@/components/ui/spinner";
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -267,7 +268,7 @@ export function TabImagens({
                   ? "hover:border-primary cursor-pointer"
                   : "cursor-not-allowed opacity-60"
               }`}
-              onClick={canEdit ? openFileSelector : undefined}
+              {...(canEdit ? propsDeBotao(openFileSelector) : {})}
             >
               {isUploading ? (
                 <div className="flex flex-col items-center">

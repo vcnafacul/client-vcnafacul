@@ -1,4 +1,4 @@
-import { TDocumentDefinitions, Content } from "pdfmake/interfaces";
+import { TDocumentDefinitions, Content, TableCell } from "pdfmake/interfaces";
 import { SyncReport, FixDetail } from "../../../dtos/prova/syncReport";
 import { downloadPDF } from "../../../utils/get-pdf";
 
@@ -8,7 +8,7 @@ function formatFixesTable(
 ): Content[] {
     if (items.length === 0) return [];
 
-    const rows: any[][] = [
+    const rows: TableCell[][] = [
         [
             { text: "Nome", bold: true },
             { text: "Campo", bold: true },
@@ -86,7 +86,7 @@ export function downloadSyncReportPdf(report: SyncReport) {
     );
 
     if (report.errors.length > 0) {
-        const errorRows: any[][] = [
+        const errorRows: TableCell[][] = [
             [
                 { text: "Prova", bold: true },
                 { text: "Erro", bold: true },

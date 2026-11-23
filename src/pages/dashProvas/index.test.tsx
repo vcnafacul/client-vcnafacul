@@ -61,10 +61,10 @@ const propsDoShowProva = vi.hoisted(
 /** Quantas vezes o ShowProva MONTOU — remontar perde a vista e refaz a busca. */
 const montagensDoShowProva = vi.hoisted(() => ({ n: 0 }));
 vi.mock("./modals/showProva", () => ({
-  default: (props: {
+  default: function ShowProvaDuble(props: {
     prova?: Prova | null;
     onUpdated?: (p: Prova) => void;
-  }) => {
+  }) {
     propsDoShowProva.atual = props as Record<string, unknown>;
     useEffect(() => {
       montagensDoShowProva.n += 1;

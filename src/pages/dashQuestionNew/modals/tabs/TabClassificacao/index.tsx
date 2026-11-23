@@ -344,7 +344,7 @@ export function TabClassificacao({
         autoClose: 3000,
         closeOnClick: true,
       });
-    } catch (error) {
+    } catch {
       toast.update(id, {
         render: `Erro ao baixar o ${fileType}`,
         type: "error",
@@ -420,10 +420,10 @@ export function TabClassificacao({
             {/* Input de mensagem de rejeição (condicional) */}
             {showRejectionInput && (
               <div className="space-y-2">
-                <label className="text-body font-semibold text-muted-foreground">
+                <label htmlFor="tabclassificacao-motivo-da-rejeicao-opcional" className="text-body font-semibold text-muted-foreground">
                   Motivo da Rejeição (opcional)
                 </label>
-                <Textarea
+                <Textarea id="tabclassificacao-motivo-da-rejeicao-opcional"
                   value={rejectionMessage}
                   onChange={(e) => setRejectionMessage(e.target.value)}
                   placeholder="Descreva o motivo da rejeição..."
@@ -549,7 +549,7 @@ export function TabClassificacao({
                   como o "Remover número" do campo Número. No modo edição, o
                   "Remover da prova" ocupa o mesmo lugar, com o mesmo estilo. */}
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <label className="text-body font-semibold text-muted-foreground">
+                <label htmlFor="tabclassificacao-prova" className="text-body font-semibold text-muted-foreground">
                   Prova *
                 </label>
                 {isEditing && provaSel && (
@@ -585,7 +585,7 @@ export function TabClassificacao({
                   value={String(provaSelIdx)}
                   onValueChange={(value) => setProvaSelIdx(Number(value))}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger id="tabclassificacao-prova">
                     <SelectValue placeholder="Selecione a prova" />
                   </SelectTrigger>
                   <SelectContent>
@@ -621,7 +621,7 @@ export function TabClassificacao({
             {/* Número */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-body font-semibold text-muted-foreground">
+                <label htmlFor="tabclassificacao-numero-da-questao" className="text-body font-semibold text-muted-foreground">
                   Número da Questão
                 </label>
                 {isEditing && form.watch("numero") != null && podeCompor(provaSel) && (
@@ -688,7 +688,7 @@ export function TabClassificacao({
                       onValueChange={(value) => field.onChange(parseInt(value))}
                       disabled={numerosDisponiveis.length === 0}
                     >
-                      <SelectTrigger
+                      <SelectTrigger id="tabclassificacao-numero-da-questao"
                         className={errors.numero ? "border-destructive" : ""}
                       >
                         <SelectValue
@@ -729,7 +729,7 @@ export function TabClassificacao({
 
             {/* Área ENEM */}
             <div className="space-y-2">
-              <label className="text-body font-semibold text-muted-foreground">
+              <label htmlFor="tabclassificacao-area-do-conhecimento-enem" className="text-body font-semibold text-muted-foreground">
                 Área do Conhecimento ENEM *
               </label>
               {!isEditing ? (
@@ -753,7 +753,7 @@ export function TabClassificacao({
                         form.setValue("frente1", "");
                       }}
                     >
-                      <SelectTrigger
+                      <SelectTrigger id="tabclassificacao-area-do-conhecimento-enem"
                         className={errors.enemArea ? "border-destructive" : ""}
                       >
                         <SelectValue placeholder="Selecione a área" />
@@ -800,7 +800,7 @@ export function TabClassificacao({
 
             {/* Disciplina */}
             <div className="space-y-2">
-              <label className="text-body font-semibold text-muted-foreground">
+              <label htmlFor="tabclassificacao-disciplina" className="text-body font-semibold text-muted-foreground">
                 Disciplina *
               </label>
               {!isEditing ? (
@@ -825,7 +825,7 @@ export function TabClassificacao({
                         materiasDisponiveis.length === 0
                       }
                     >
-                      <SelectTrigger
+                      <SelectTrigger id="tabclassificacao-disciplina"
                         className={errors.materia ? "border-destructive" : ""}
                       >
                         <SelectValue
@@ -865,7 +865,7 @@ export function TabClassificacao({
 
             {/* Frente Principal */}
             <div className="space-y-2">
-              <label className="text-body font-semibold text-muted-foreground">
+              <label htmlFor="tabclassificacao-frente-principal" className="text-body font-semibold text-muted-foreground">
                 Frente Principal *
               </label>
               {!isEditing ? (
@@ -890,7 +890,7 @@ export function TabClassificacao({
                         frentesDisponiveis.length === 0
                       }
                     >
-                      <SelectTrigger
+                      <SelectTrigger id="tabclassificacao-frente-principal"
                         className={errors.frente1 ? "border-destructive" : ""}
                       >
                         <SelectValue
@@ -930,7 +930,7 @@ export function TabClassificacao({
 
             {/* Frente Secundária */}
             <div className="space-y-2">
-              <label className="text-body font-semibold text-muted-foreground">
+              <label htmlFor="tabclassificacao-frente-secundaria" className="text-body font-semibold text-muted-foreground">
                 Frente Secundária
               </label>
               {!isEditing ? (
@@ -954,7 +954,7 @@ export function TabClassificacao({
                       value={field.value || ""}
                       onValueChange={field.onChange}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id="tabclassificacao-frente-secundaria">
                         <SelectValue placeholder="Selecione (opcional)" />
                       </SelectTrigger>
                       <SelectContent>
@@ -972,7 +972,7 @@ export function TabClassificacao({
 
             {/* Frente Terciária */}
             <div className="space-y-2">
-              <label className="text-body font-semibold text-muted-foreground">
+              <label htmlFor="tabclassificacao-frente-terciaria" className="text-body font-semibold text-muted-foreground">
                 Frente Terciária
               </label>
               {!isEditing ? (
@@ -996,7 +996,7 @@ export function TabClassificacao({
                       value={field.value || ""}
                       onValueChange={field.onChange}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger id="tabclassificacao-frente-terciaria">
                         <SelectValue placeholder="Selecione (opcional)" />
                       </SelectTrigger>
                       <SelectContent>
@@ -1015,9 +1015,9 @@ export function TabClassificacao({
             {/* Link da Prova */}
             {provaSelecionada && (
               <div className="space-y-2">
-                <label className="text-body font-semibold text-muted-foreground">
+                <span className="text-body font-semibold text-muted-foreground">
                   Link da Prova
-                </label>
+                </span>
                 <Button
                   onClick={handleDownloadProva}
                   rel="noopener noreferrer"
@@ -1033,9 +1033,9 @@ export function TabClassificacao({
             {/* Link do Gabarito */}
             {provaSelecionada && provaSelecionada.gabarito && (
               <div className="space-y-2">
-                <label className="text-body font-semibold text-muted-foreground">
+                <span className="text-body font-semibold text-muted-foreground">
                   Link do Gabarito
-                </label>
+                </span>
                 <Button
                   onClick={handleDownloadGabarito}
                   rel="noopener noreferrer"

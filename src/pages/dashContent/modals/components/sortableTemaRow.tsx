@@ -9,19 +9,13 @@ import { GripVertical } from "lucide-react";
 import { Roles } from "@/enums/roles/roles";
 import { useAuthStore } from "@/store/auth";
 import { FrentesActionMenu } from "./frentesActionMenu";
+import { countByStatus } from "./countByStatus";
 
 interface Props {
   tema: SubjectDto;
   onEdit: () => void;
   onReorderContents: () => void;
   onDelete?: () => void;
-}
-
-export function countByStatus(
-  contents: SubjectDto["contents"],
-  status: StatusEnum | StatusContent,
-) {
-  return contents.filter((c) => c.status === status).length;
 }
 
 export function SortableTemaRow({

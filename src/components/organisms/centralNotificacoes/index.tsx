@@ -13,14 +13,9 @@ import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Bell, MessageCircle } from "lucide-react";
 import { type ConversaNoSino, useConversasNoSino } from "./conversasNoSino";
+import { rotuloDoContador } from "@/utils/rotuloDoContador";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-/** "9+" acima de 9: o sino é pequeno. */
-export function rotuloDoContador(n: number): string | null {
-  if (n <= 0) return null;
-  return n > 9 ? "9+" : String(n);
-}
 
 /** sm = 768, como no resto do projeto. */
 const TELA_PEQUENA = "(max-width: 767px)";

@@ -24,7 +24,7 @@ import {
   AnswerType,
   QuestionForm,
 } from "@/types/partnerPrepForm/questionForm";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import ConfirmSubscription from "../modals/confirmSubscription";
 
 interface PartnerPrepInscriptionStepFormProps {
@@ -267,7 +267,10 @@ export function PartnerPrepInscriptionStepForm({
   const modals = useModals(["modalConfirmSubscription"]);
 
   // Merge allAnswers (previous sections) with local answers for condition evaluation
-  const mergedAnswers = { ...allAnswers, ...answers };
+  const mergedAnswers = useMemo(
+    () => ({ ...allAnswers, ...answers }),
+    [allAnswers, answers],
+  );
 
   // Initialize answers for this section (restore from allAnswers)
   useEffect(() => {

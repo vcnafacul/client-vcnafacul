@@ -12,7 +12,7 @@ const form = {
   provaClassification: true,
   subjectClassification: true,
   reported: false,
-} as any;
+} as unknown as Parameters<typeof payloadDaClassificacao>[1];
 
 describe("payloadDaClassificacao (area-enem 02)", () => {
   it("com vínculo: manda a prova e o número editados", () => {

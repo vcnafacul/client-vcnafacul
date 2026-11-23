@@ -87,7 +87,7 @@ function Step1({ updateData, dataUser, emailTravado }: Step1Props) {
     register("email");
     register("password");
     register("password_confirmation");
-  }, []);
+  }, [register]);
 
   useEffect(() => {
     if (emailTravado) {

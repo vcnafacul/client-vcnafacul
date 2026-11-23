@@ -59,10 +59,10 @@ export {
 export { dataOrdenavel, proximoSort, sortRows } from "./sortRows";
 export {
   StatusBadge,
-  VARIANTE_POR_TONE,
   type StatusBadgeProps,
   type StatusV2,
 } from "./StatusBadge";
+export { VARIANTE_POR_TONE } from "./statusVariants";
 export type {
   DashAction,
   DashColumn,

@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import type { InfosDaQuestao } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/types";
 import { podeEditarQuestao } from "./permissoesDoBanco";
 import {
   Pagination,
@@ -60,7 +61,7 @@ function DashQuestionNew() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   // Abaixo de 768px (o `sm` do projeto) a paginação fica compacta.
   const acimaDeSm = useAcimaDeSm();
-  const [infos, setInfos] = useState<any>(null);
+  const [infos, setInfos] = useState<InfosDaQuestao | null>(null);
 
   // Filters state
   const [filters, setFilters] = useState<FilterValues>(FILTROS_VAZIOS);
@@ -81,7 +82,7 @@ function DashQuestionNew() {
           getAllQuestions(token, filters, page, limitCards),
         loadingMessage: "Carregando questões...",
         successMessage: "Questões carregadas com sucesso",
-        errorMessage: (error: any) => error.message,
+        errorMessage: (error) => error.message,
         onSuccess: (res) => {
           setQuestions(res.data);
           setTotalItems(res.totalItems);

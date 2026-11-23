@@ -65,6 +65,8 @@ export function CursinhoCard({ monitoring }: CursinhoCardProps) {
 
   return (
     <>
+      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions --
+          o cartão tem botões aninhados (role="button" não pode conter controles); o teclado usa o botão "Ver detalhes" */}
       <div
         onClick={handleOpenDetailsModal}
         className="group relative w-full bg-white border border-border rounded-xl p-5 

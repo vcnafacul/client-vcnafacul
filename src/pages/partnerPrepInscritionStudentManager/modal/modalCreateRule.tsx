@@ -101,7 +101,7 @@ export function ModalCreateRule({
     (q) => q.answerType === AnswerType.Number
   );
 
-  const handleInputChange = (field: keyof FormData, value: any) => {
+  const handleInputChange = (field: keyof FormData, value: FormData[keyof FormData]) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -237,7 +237,7 @@ export function ModalCreateRule({
 
     setLoading(true);
     try {
-      let config: any;
+      let config: Record<string, unknown>;
       if (isComputedStrategy(formData.strategy)) {
         config = {
           expression: formData.expression.trim(),

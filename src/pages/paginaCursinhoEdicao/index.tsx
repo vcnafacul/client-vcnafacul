@@ -146,9 +146,9 @@ export default function PaginaCursinhoEdicao() {
       </div>
 
       <div>
-        <label className="block text-body font-semibold mb-1">
+        <span className="block text-body font-semibold mb-1">
           Quem somos <span className="text-destructive">*</span>
-        </label>
+        </span>
         {/* Sem `onImageUpload`: o editor não mostra o botão de imagem (R4). */}
         <RichTextEditor
           content={quemSomos}

@@ -57,6 +57,8 @@ export function SimuladoStatusIcon({
         */}
         <span
           role="img"
+          // O ícone é o gatilho do tooltip: precisa de foco para o teclado ler a descrição.
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex
           tabIndex={0}
           aria-label={descricao}
           data-forma={forma}

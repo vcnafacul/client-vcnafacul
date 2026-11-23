@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { FilterProps } from "@/components/atoms/filter";
 import { useCallback, useEffect, useMemo, useState } from "react";

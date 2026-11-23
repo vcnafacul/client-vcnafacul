@@ -1,4 +1,5 @@
 import { ReactComponent as Arrow } from "../../../assets/icons/arrow.svg";
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import { News } from "../../../dtos/news/news";
 
 interface NewsSelectorProps {
@@ -50,7 +51,7 @@ function NewsSelector({ news, selectedIndex, onSelect }: NewsSelectorProps) {
             return (
               <div
                 key={item.id}
-                onClick={() => onSelect(index)}
+                {...propsDeBotao(() => onSelect(index))}
                 className={`
                   w-full px-5 py-3 rounded-lg cursor-pointer
                   transition-all duration-300 ease-in-out

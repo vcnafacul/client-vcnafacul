@@ -183,8 +183,9 @@ export default function EssayReviewDetail() {
                 Competência {i + 1}: {COMP_NAMES[i]}
               </h3>
               <div className="flex items-center gap-2">
-                <label className="text-body w-24">Nota (0-200):</label>
+                <label htmlFor={`nota-competencia-${i}`} className="text-body w-24">Nota (0-200):</label>
                 <input
+                  id={`nota-competencia-${i}`}
                   type="number"
                   min={0}
                   max={200}
@@ -213,8 +214,9 @@ export default function EssayReviewDetail() {
           ))}
 
           <div>
-            <label className="font-semibold text-body">Comentário Geral</label>
+            <label htmlFor="comentario-geral" className="font-semibold text-body">Comentário Geral</label>
             <textarea
+              id="comentario-geral"
               value={generalComment}
               onChange={(e) => setGeneralComment(e.target.value)}
               className="w-full border rounded-lg p-3 text-body mt-1"

@@ -25,7 +25,10 @@ interface TabAlternativasProps {
   token?: string;
 }
 
-const alternativas: { letra: AlternativaLetra; campo: string }[] = [
+const alternativas: {
+  letra: AlternativaLetra;
+  campo: `textoAlternativa${AlternativaLetra}`;
+}[] = [
   { letra: "A", campo: "textoAlternativaA" },
   { letra: "B", campo: "textoAlternativaB" },
   { letra: "C", campo: "textoAlternativaC" },
@@ -52,7 +55,7 @@ export function TabAlternativas({
         </CardHeader>
         <CardContent id={ancoraDoCampo("alternativa")} className="space-y-3 scroll-mt-28">
           {alternativas.map((alt) => {
-            const textoAlternativa = form.watch(alt.campo as any);
+            const textoAlternativa = form.watch(alt.campo);
             const isCorreta = respostaCorreta === alt.letra;
 
             return (
@@ -127,7 +130,7 @@ export function TabAlternativas({
                       }
                     >
                       <Controller
-                        name={alt.campo as any}
+                        name={alt.campo}
                         control={control}
                         render={({ field }) => (
                           <RichTextEditor

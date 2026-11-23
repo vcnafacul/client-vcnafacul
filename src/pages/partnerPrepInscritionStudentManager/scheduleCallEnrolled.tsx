@@ -49,7 +49,7 @@ export function ScheduleCallEnrolle(props: Props) {
 
   useEffect(() => {
     register("range");
-  }, []);
+  }, [register]);
 
   return (
     <Dialog open={props.isOpen} onOpenChange={(o) => !o && props.handleClose()}>

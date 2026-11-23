@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import type { FrenteOption, InfosDaQuestao, MateriaOption } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/types";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,7 +32,7 @@ import {
 export type { FilterValues, FiltroDeAnulada } from "./filtrosDoBanco";
 
 interface QuestionFiltersProps {
-  infos: any;
+  infos: InfosDaQuestao | null;
   onFilter: (filters: FilterValues) => void;
   isLoading?: boolean;
 }
@@ -46,12 +47,12 @@ export function QuestionFilters({
   const provasDoFiltro: ProvaDoFiltro[] = infos?.provas ?? [];
   const opcoes = opcoesDoFiltro(provasDoFiltro, filters);
 
-  const [materiasFiltradas, setMateriasFiltradas] = useState<any[]>([]);
-  const [frentesFiltradas, setFrentesFiltradas] = useState<any[]>([]);
+  const [materiasFiltradas, setMateriasFiltradas] = useState<MateriaOption[]>([]);
+  const [frentesFiltradas, setFrentesFiltradas] = useState<FrenteOption[]>([]);
 
   // Extrair áreas ENEM únicas de todas as provas
   const enemAreasDisponiveis = Array.from(
-    new Set(infos?.provas?.flatMap((prova: any) => prova.enemAreas || []) || [])
+    new Set(infos?.provas?.flatMap((prova) => prova.enemAreas || []) || [])
   ).sort() as string[];
 
   const handleFilterChange = (key: keyof FilterValues, value: string) => {
@@ -71,8 +72,8 @@ export function QuestionFilters({
     if (key === "enemArea") {
       // Filtrar matérias pela área ENEM
       const materias = (
-        infos?.materias?.filter((mat: any) => mat.enemArea === value) || []
-      ).sort((a: any, b: any) => a.nome.localeCompare(b.nome, "pt-BR"));
+        infos?.materias?.filter((mat) => mat.enemArea === value) || []
+      ).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
       setMateriasFiltradas(materias);
       newFilters.materia = "";
       newFilters.frente = "";
@@ -81,9 +82,9 @@ export function QuestionFilters({
 
     if (key === "materia") {
       // Filtrar frentes pela matéria
-      const materia = infos?.materias?.find((m: any) => m._id === value);
+      const materia = infos?.materias?.find((m) => m._id === value);
       setFrentesFiltradas(
-        (materia?.frentes || []).sort((a: any, b: any) =>
+        (materia?.frentes || []).sort((a, b) =>
           a.nome.localeCompare(b.nome, "pt-BR")
         )
       );
@@ -329,7 +330,7 @@ export function QuestionFilters({
                 />
               </SelectTrigger>
               <SelectContent>
-                {materiasFiltradas.map((materia: any) => (
+                {materiasFiltradas.map((materia) => (
                   <SelectItem key={materia._id} value={materia._id}>
                     {materia.nome}
                   </SelectItem>
@@ -358,7 +359,7 @@ export function QuestionFilters({
                 />
               </SelectTrigger>
               <SelectContent>
-                {frentesFiltradas.map((frente: any) => (
+                {frentesFiltradas.map((frente) => (
                   <SelectItem key={frente._id} value={frente._id}>
                     {frente.nome}
                   </SelectItem>
@@ -376,7 +377,7 @@ export function QuestionFilters({
             />
           </div>
           <div className="flex items-end">
-            <label className="flex h-9 cursor-pointer items-center gap-2 text-body">
+            <label htmlFor="semImagem" className="flex h-9 cursor-pointer items-center gap-2 text-body">
               <Checkbox
                 id="semImagem"
                 checked={filters.semImagem}

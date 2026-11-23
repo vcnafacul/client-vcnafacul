@@ -12,7 +12,7 @@ const RichTextEditor = lazy(
 interface TabAlternativasCreateProps {
   formData: Partial<CreateQuestion>;
   errors: Record<string, string>;
-  onChange: (field: keyof CreateQuestion, value: any) => void;
+  onChange: (field: keyof CreateQuestion, value: CreateQuestion[keyof CreateQuestion]) => void;
   onImageUpload?: (file: File) => Promise<string>;
   pendingStore?: PendingImageStore;
   token?: string;

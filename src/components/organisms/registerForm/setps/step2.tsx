@@ -144,7 +144,7 @@ function Step2({
     register("city");
     register("state");
     register("lgpd");
-  }, []);
+  }, [register]);
 
   return (
     <form

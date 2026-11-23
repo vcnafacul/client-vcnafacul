@@ -59,7 +59,7 @@ function ManagerSubject({
   useEffect(() => {
     register("name");
     register("description");
-  }, []);
+  }, [register]);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const create = (data: any) => {

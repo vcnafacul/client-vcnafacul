@@ -22,7 +22,7 @@ const Login = async (email: string, password: string) => {
   } else if (response.status === StatusCodes.NOT_FOUND) {
     throw new Error("Esse e-mail não foi cadastrado em nossa plataforma!");
   } else if (response.status === StatusCodes.UNPROCESSABLE_ENTITY) {
-    let errorField = "";
+    let errorField: string;
     switch (res["errors"][0]["field"]) {
       case "password":
         errorField = "senha";

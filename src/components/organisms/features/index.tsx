@@ -60,6 +60,7 @@ function Features() {
           className="object-cover object-center w-full max-w-[653px] aspect-video rounded-sm
           md:text-center md:my-0 mx-10 transition duration-500 ease-linear"
           src={feature?.image as string}
+          alt={feature?.title ?? ""}
         />
         {feature?.description && (
           <p className="description text-body text-muted-foreground mt-3 mx-10 md:max-w-[623px] md:text-center">

@@ -1,4 +1,5 @@
 import { Spinner } from "@/components/ui/spinner";
+import { propsDeBotao } from "@/utils/propsDeBotao";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
@@ -495,7 +496,7 @@ export const ModalPrepCoursePrincipal = ({
                   <div
                     key={user.id}
                     className="px-3 py-2 hover:bg-muted cursor-pointer border-b border-border last:border-b-0"
-                    onClick={() => selectUser(user)}
+                    {...propsDeBotao(() => selectUser(user))}
                   >
                     <div className="font-medium text-body text-foreground">
                       {user.name}
@@ -545,9 +546,9 @@ export const ModalPrepCoursePrincipal = ({
         {/* Seção de Logo */}
         <div className="space-y-3 flex justify-between">
           <div className="space-y-2">
-            <label className="block text-body font-medium text-foreground">
+            <span className="block text-body font-medium text-foreground">
               Logomarca do cursinho
-            </label>
+            </span>
             <p className="text-caption text-muted-foreground">Recomendado 300x300</p>
             <Button
               variant="outline"
@@ -569,9 +570,9 @@ export const ModalPrepCoursePrincipal = ({
 
         {/* Seção de Contrato */}
         <div className="space-y-3">
-          <label className="block text-body font-medium text-foreground">
+          <span className="block text-body font-medium text-foreground">
             Contrato
-          </label>
+          </span>
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2 px-3 py-2 bg-muted border border-border rounded-md group">
               <div className="w-4 h-4 bg-muted-foreground rounded-sm"></div>
@@ -581,11 +582,9 @@ export const ModalPrepCoursePrincipal = ({
                     ? "cursor-pointer hover:text-primary hover:underline"
                     : ""
                 }`}
-                onClick={
-                  prepCourse.agreement && !selectedAgreement
-                    ? handleDownloadAgreement
-                    : undefined
-                }
+                {...(prepCourse.agreement && !selectedAgreement
+                  ? propsDeBotao(handleDownloadAgreement)
+                  : {})}
                 title={
                   prepCourse.agreement && !selectedAgreement
                     ? "Clique para baixar o contrato"

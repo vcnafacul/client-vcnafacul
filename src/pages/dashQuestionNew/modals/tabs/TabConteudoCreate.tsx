@@ -11,7 +11,7 @@ const RichTextEditor = lazy(
 interface TabConteudoCreateProps {
   formData: Partial<CreateQuestion>;
   errors: Record<string, string>;
-  onChange: (field: keyof CreateQuestion, value: any) => void;
+  onChange: (field: keyof CreateQuestion, value: CreateQuestion[keyof CreateQuestion]) => void;
   onImageUpload?: (file: File) => Promise<string>;
   pendingStore?: PendingImageStore;
   token?: string;
@@ -34,9 +34,9 @@ export function TabConteudoCreate({
         <CardContent className="space-y-4">
           {/* Texto da Questão — editor grande */}
           <div className="space-y-2">
-            <label className="text-body font-semibold text-muted-foreground">
+            <span className="text-body font-semibold text-muted-foreground">
               Texto da Questão *
-            </label>
+            </span>
             <Suspense
               fallback={
                 <div className="h-[300px] bg-muted animate-pulse rounded-md" />
@@ -63,9 +63,9 @@ export function TabConteudoCreate({
 
           {/* Pergunta */}
           <div className="space-y-2">
-            <label className="text-body font-semibold text-muted-foreground">
+            <span className="text-body font-semibold text-muted-foreground">
               Pergunta (opcional)
-            </label>
+            </span>
             <Suspense
               fallback={
                 <div className="h-[60px] bg-muted animate-pulse rounded-md" />

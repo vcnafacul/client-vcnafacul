@@ -51,7 +51,7 @@ export function PeriodJustificationList({
     try {
       const res = await getPeriodJustifications(token, 1, 1, studentCourseId);
       setTotalItems(res.totalItems);
-    } catch (err) {
+    } catch {
       // silently ignore count errors
     }
   };

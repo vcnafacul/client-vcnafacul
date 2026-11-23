@@ -51,7 +51,7 @@ function applyBaseRoleConstraints(
   prepCourseKeys.add("alterarPermissao");
   prepCourseKeys.add("gerenciarPermissoesCursinho");
   const patched = { ...role };
-  for (const key of prepCourseKeys) (patched as any)[key] = false;
+  for (const key of prepCourseKeys) (patched as Record<string, unknown>)[key] = false;
   return patched;
 }
 

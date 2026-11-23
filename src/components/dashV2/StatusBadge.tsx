@@ -1,4 +1,5 @@
-import { StatusBadge as UiStatusBadge, type StatusVariant } from "@/components/ui/status-badge";
+import { StatusBadge as UiStatusBadge } from "@/components/ui/status-badge";
+import { VARIANTE_POR_TONE } from "./statusVariants";
 /** Os cinco tons de status das listas do dash. */
 export type StatusV2 = "done" | "running" | "info" | "missing" | "neutral";
 
@@ -12,15 +13,6 @@ export interface StatusBadgeProps {
   label: string;
   className?: string;
 }
-
-/** Os tons da Dash V2 nas variantes do design system (tickets/059 §3). */
-export const VARIANTE_POR_TONE: Record<StatusV2, StatusVariant> = {
-  done: "success",
-  running: "warning",
-  missing: "destructive",
-  info: "info",
-  neutral: "neutral",
-};
 
 /**
  * Adaptador do `components/ui/status-badge`, com a API de sempre (`tone` +

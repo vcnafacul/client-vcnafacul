@@ -157,7 +157,7 @@ export function PartnerPrepInscriptionStep1({
       setValue("cpf", currentData.cpf || "");
       setValue("uf", currentData?.uf || "");
     }
-  }, [currentData]);
+  }, [currentData, setValue]);
 
   function handleForm(data: Partial<StudentInscriptionDTO>) {
     if (!isCheckboxChecked) {

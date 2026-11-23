@@ -164,7 +164,15 @@ export function useConteudoForm({
 
     // Deferred upload: upload pending images before saving
     if (pendingStore?.hasPending()) {
-      const textFields: (keyof ConteudoFormData)[] = [
+      const textFields: (
+        | "textoQuestao"
+        | "pergunta"
+        | "textoAlternativaA"
+        | "textoAlternativaB"
+        | "textoAlternativaC"
+        | "textoAlternativaD"
+        | "textoAlternativaE"
+      )[] = [
         'textoQuestao', 'pergunta', 'textoAlternativaA', 'textoAlternativaB',
         'textoAlternativaC', 'textoAlternativaD', 'textoAlternativaE',
       ];
@@ -177,7 +185,7 @@ export function useConteudoForm({
         for (const field of textFields) {
           const val = formData[field];
           if (typeof val === "string" && val) {
-            (formData as any)[field] = PendingImageStore.replaceInMarkdown(val, replacements);
+            formData[field] = PendingImageStore.replaceInMarkdown(val, replacements);
           }
         }
       }
