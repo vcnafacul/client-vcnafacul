@@ -20,7 +20,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { MdMenu } from "react-icons/md";
+import { Menu } from "lucide-react";
 
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state"
@@ -214,6 +214,17 @@ const Sidebar = React.forwardRef<
               } as React.CSSProperties
             }
             side={side}
+            // Sem um SheetTrigger, o Radix não sabe para onde devolver o foco:
+            // devolvemos ao SidebarTrigger (o hambúrguer do header).
+            onCloseAutoFocus={(event) => {
+              const gatilho = document.querySelector<HTMLElement>(
+                '[data-sidebar="trigger"]'
+              )
+              if (gatilho) {
+                event.preventDefault()
+                gatilho.focus()
+              }
+            }}
           >
             <SheetHeader className="sr-only">
               <SheetTitle>Sidebar</SheetTitle>
@@ -292,7 +303,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <MdMenu className="h-5 w-5" />
+      <Menu className="h-5 w-5" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );

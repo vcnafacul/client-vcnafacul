@@ -1,5 +1,5 @@
-import { useSidebar } from "@/components/ui/sidebar";
-import { fireEvent, render, screen } from "@testing-library/react";
+import { Sidebar, useSidebar } from "@/components/ui/sidebar";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import DashTemplate from ".";
@@ -8,7 +8,14 @@ import DashTemplate from ".";
 vi.mock("@/components/organisms/sidebarDash", () => ({
   SidebarDash: () => {
     const { openMobile } = useSidebar();
-    return <div data-testid="menu-lateral" data-aberto={openMobile} />;
+    return (
+      <>
+        <div data-testid="menu-lateral" data-aberto={openMobile} />
+        <Sidebar>
+          <a href="/dashboard">Item do menu</a>
+        </Sidebar>
+      </>
+    );
   },
 }));
 
@@ -50,6 +57,22 @@ describe("DashTemplate — botão do menu lateral", () => {
       "data-aberto",
       "true",
     );
+  });
+
+  it("a gaveta é um Sheet à esquerda: Esc fecha e o foco volta ao hambúrguer", async () => {
+    renderizar();
+    const botao = screen.getByRole("button", { name: "Abrir menu" });
+    botao.focus();
+
+    fireEvent.click(botao);
+    const gaveta = await screen.findByRole("dialog", { name: "Sidebar" });
+    expect(gaveta).toHaveAttribute("data-mobile", "true");
+
+    fireEvent.keyDown(gaveta, { key: "Escape" });
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(botao).toHaveFocus());
   });
 
   it("no dash não sobra o hambúrguer do menu público", () => {

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite"
-import { MdHome, MdSettings } from "react-icons/md"
+import { Home, Settings } from "lucide-react"
 
 import {
   Sidebar,
@@ -34,12 +34,12 @@ export const Default: Story = {
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton isActive>
-                  <MdHome /> <span>Início</span>
+                  <Home /> <span>Início</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
               <SidebarMenuItem>
                 <SidebarMenuButton>
-                  <MdSettings /> <span>Configurações</span>
+                  <Settings /> <span>Configurações</span>
                 </SidebarMenuButton>
               </SidebarMenuItem>
             </SidebarMenu>

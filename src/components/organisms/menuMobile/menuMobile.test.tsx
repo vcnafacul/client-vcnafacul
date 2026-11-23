@@ -1,4 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { useState } from "react";
 import { MemoryRouter } from "react-router-dom";
 import { describe, expect, it, vi } from "vitest";
 import MenuMobile from ".";
@@ -21,13 +22,7 @@ const abrir = (props: Partial<Parameters<typeof MenuMobile>[0]> = {}) => {
   const onClose = vi.fn();
   render(
     <MemoryRouter initialEntries={["/novidades"]}>
-      <MenuMobile
-        open
-        onClose={onClose}
-        itens={itens}
-        redes={[]}
-        {...props}
-      />
+      <MenuMobile open onClose={onClose} itens={itens} redes={[]} {...props} />
     </MemoryRouter>,
   );
   return onClose;
@@ -61,24 +56,53 @@ describe("MenuMobile", () => {
   it("fecha pelo X, pelo Esc e ao escolher um item", () => {
     const onClose = abrir();
 
-    fireEvent.click(screen.getByRole("button", { name: "Fechar menu" }));
-    fireEvent.keyDown(window, { key: "Escape" });
+    fireEvent.click(screen.getByRole("button", { name: "Fechar" }));
+    fireEvent.keyDown(screen.getByRole("dialog"), { key: "Escape" });
     fireEvent.click(screen.getByRole("link", { name: "Quem Somos" }));
 
     expect(onClose).toHaveBeenCalledTimes(3);
   });
 
-  it("trava a rolagem da página enquanto aberto", () => {
-    document.body.style.overflow = "";
-    const { unmount } = render(
-      <MemoryRouter>
-        <MenuMobile open onClose={() => {}} itens={itens} redes={[]} />
-      </MemoryRouter>,
-    );
-    expect(document.body.style.overflow).toBe("hidden");
+  it("abre pelo hambúrguer, tem título acessível, e o foco volta ao fechar", async () => {
+    const Casca = () => {
+      const [aberto, setAberto] = useState(false);
+      return (
+        <MemoryRouter>
+          <MenuMobile
+            open={aberto}
+            onOpen={() => setAberto(true)}
+            onClose={() => setAberto(false)}
+            gatilho={
+              <button
+                type="button"
+                aria-label="Abrir menu do site"
+                aria-expanded={aberto}
+              />
+            }
+            itens={itens}
+            redes={[]}
+          />
+        </MemoryRouter>
+      );
+    };
+    render(<Casca />);
+    const hamburguer = screen.getByRole("button", {
+      name: "Abrir menu do site",
+    });
+    hamburguer.focus();
+    expect(hamburguer).toHaveAttribute("aria-expanded", "false");
 
-    unmount();
-    expect(document.body.style.overflow).toBe("");
+    fireEvent.click(hamburguer);
+    const dialogo = await screen.findByRole("dialog", { name: "Menu" });
+    await waitFor(() =>
+      expect(dialogo).toContainElement(document.activeElement as HTMLElement),
+    );
+
+    fireEvent.keyDown(dialogo, { key: "Escape" });
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(hamburguer).toHaveFocus());
   });
 
   it("sem login, oferece Entrar e Cadastrar; com login, saúda pelo nome", () => {
@@ -99,6 +123,8 @@ describe("MenuMobile", () => {
   it("com login, sem Entrar/Cadastrar e com saudação", () => {
     abrir({ nome: "Ana" });
     expect(screen.getByText("Ana")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Entrar" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Entrar" }),
+    ).not.toBeInTheDocument();
   });
 });

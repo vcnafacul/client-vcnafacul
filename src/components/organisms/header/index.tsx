@@ -68,26 +68,28 @@ function Header({ solid, className }: HeaderProps) {
     <header className={`${className ?? ""} print:hidden`} id="header">
       <div className="md:container mx-auto h-full flex items-center">
         <div className="flex w-full justify-between items-center mx-4 md:mx-auto md:max-w-6xl">
-          {/* Com `headerAction` (o botão do menu lateral do dashboard, #837)
-              o ☰ do site sai: dois botões de menu no mesmo header confundem. */}
-          {!headerAction && (
-            <button
-              type="button"
-              onClick={() => setOpenMenu(true)}
-              aria-label="Abrir menu do site"
-              aria-expanded={openMenu}
-              className="md:hidden -ml-2 p-2"
-            >
-              <MenuIcon
-                className={`${!solid ? "fill-white" : "fill-primary"}`}
-              />
-            </button>
-          )}
-          <Logo solid={solid} name />
-          <MainMenu itemsMenu={header.pageLinks} solid={solid} />
+          {/* O MenuMobile vem primeiro: o ☰ (gatilho) fica à esquerda do logo. */}
           <MenuMobile
             open={openMenu}
             onClose={fecharMenu}
+            onOpen={() => setOpenMenu(true)}
+            gatilho={
+              // Com `headerAction` (o botão do menu lateral do dashboard,
+              // #837) o ☰ do site sai: dois botões de menu no mesmo header
+              // confundem.
+              headerAction ? undefined : (
+                <button
+                  type="button"
+                  aria-label="Abrir menu do site"
+                  aria-expanded={openMenu}
+                  className="md:hidden -ml-2 p-2"
+                >
+                  <MenuIcon
+                    className={`${!solid ? "fill-white" : "fill-primary"}`}
+                  />
+                </button>
+              )
+            }
             itens={header.pageLinks}
             // O 4º item dos dados repete o link do Facebook (com ícone do
             // Twitter): só um ícone por endereço.
@@ -102,6 +104,8 @@ function Header({ solid, className }: HeaderProps) {
             cadastrar={token ? undefined : header.userNavigationSign[0]}
             nome={nome}
           />
+          <Logo solid={solid} name />
+          <MainMenu itemsMenu={header.pageLinks} solid={solid} />
           {!token ? (
             <Sign
               userNavigation={header.userNavigationSign}
