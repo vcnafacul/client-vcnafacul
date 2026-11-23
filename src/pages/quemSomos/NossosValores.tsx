@@ -70,7 +70,7 @@ function ValorRow({
         <div className="shrink-0 w-[58%] rounded-2xl overflow-hidden">
           <img src={img} alt={imgAlt} className="w-full aspect-[691/461] object-cover" />
         </div>
-        <div className={`shrink-0 w-[46%] z-10 ${reverse ? "-mr-[4%]" : "-ml-[4%]"}`}>
+        <div className={`shrink-0 w-[46%] z-raised ${reverse ? "-mr-[4%]" : "-ml-[4%]"}`}>
           {card}
         </div>
       </div>

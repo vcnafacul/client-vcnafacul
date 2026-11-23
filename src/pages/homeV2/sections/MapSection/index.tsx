@@ -80,7 +80,7 @@ export const MapSection: SectionComponent<null> = () => {
       }}
     >
       <MapBox
-        className="z-30 w-full h-full"
+        className="z-header w-full h-full"
         zoom={7}
         markers={filteredMarkers}
         handleClickMarker={handleClickMarker}
@@ -89,10 +89,10 @@ export const MapSection: SectionComponent<null> = () => {
       <Link
         to={GEOLOCATION_SEARCH}
         className="
-          group absolute z-30 bottom-3 left-3 md:bottom-6 md:left-6
+          group absolute z-header bottom-3 left-3 md:bottom-6 md:left-6
           flex items-center gap-2
           bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
-          rounded-2xl shadow-xl px-4 py-3
+          rounded-2xl shadow-lg px-4 py-3
           transition-colors hover:bg-white
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
         "
