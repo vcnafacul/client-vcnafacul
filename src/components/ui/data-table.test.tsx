@@ -93,6 +93,33 @@ describe("DataTable — paginação", () => {
     await waitFor(() => expect(onPageChange).toHaveBeenCalledWith(1));
   });
 
+  it.each(["loading", "error", "empty"] as const)(
+    "em %s a página pedida (deep link) não volta para a 1, mesmo com total 0",
+    (estado) => {
+      const onPageChange = vi.fn();
+      const { rerender } = render(
+        <DataTable
+          columns={COLUNAS}
+          rows={[]}
+          getRowId={(r) => r.id}
+          state={estado}
+          pagination={{ page: 3, pageSize: 10, total: 0, onPageChange }}
+        />,
+      );
+      // Um callback novo a cada render da tela não pode reabrir o reset.
+      rerender(
+        <DataTable
+          columns={COLUNAS}
+          rows={[]}
+          getRowId={(r) => r.id}
+          state={estado}
+          pagination={{ page: 3, pageSize: 10, total: 0, onPageChange: vi.fn() }}
+        />,
+      );
+      expect(onPageChange).not.toHaveBeenCalled();
+    },
+  );
+
   it("Próxima chama onPageChange com a página seguinte", () => {
     const onPageChange = vi.fn();
     render(

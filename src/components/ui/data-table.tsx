@@ -240,11 +240,17 @@ function DataTable<T>({
 
   // tickets/059 §3: a página atual deixou de existir (o total caiu) → volta para a 1.
   const paginaAtual = pagination?.page
-  const irParaPagina = pagination?.onPageChange
+  // Só com `ready`: em loading/erro/vazio o total ainda não vale (deep link para a
+  // página 3 não pode voltar à 1 antes de os dados chegarem). O callback vive
+  // numa ref para uma função nova a cada render da tela não reabrir o reset.
+  const irParaPaginaRef = React.useRef(pagination?.onPageChange)
   React.useEffect(() => {
-    if (state === "loading" || paginaAtual === undefined || !irParaPagina) return
-    if (paginaAtual > totalDePaginas) irParaPagina(1)
-  }, [state, paginaAtual, totalDePaginas, irParaPagina])
+    irParaPaginaRef.current = pagination?.onPageChange
+  })
+  React.useEffect(() => {
+    if (state !== "ready" || paginaAtual === undefined) return
+    if (paginaAtual > totalDePaginas) irParaPaginaRef.current?.(1)
+  }, [state, paginaAtual, totalDePaginas])
 
   const modo: Exclude<DataTableState, "ready"> | "rows" =
     state === "loading" || state === "error" || state === "empty"
