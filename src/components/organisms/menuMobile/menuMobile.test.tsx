@@ -148,4 +148,31 @@ describe("MenuMobile", () => {
       screen.queryByRole("link", { name: "Entrar" }),
     ).not.toBeInTheDocument();
   });
+
+  it("fecha o menu quando a janela passa do breakpoint md (sem deixar véu órfão)", () => {
+    let aoMudar: ((e: { matches: boolean }) => void) | undefined;
+    const original = window.matchMedia;
+    Object.defineProperty(window, "matchMedia", {
+      configurable: true,
+      writable: true,
+      value: (query: string) => ({
+        matches: false,
+        media: query,
+        addEventListener: (_: string, f: typeof aoMudar) => (aoMudar = f),
+        removeEventListener: () => {},
+      }),
+    });
+    try {
+      const onClose = abrir();
+      expect(onClose).not.toHaveBeenCalled();
+      aoMudar!({ matches: true });
+      expect(onClose).toHaveBeenCalledTimes(1);
+    } finally {
+      Object.defineProperty(window, "matchMedia", {
+        configurable: true,
+        writable: true,
+        value: original,
+      });
+    }
+  });
 });

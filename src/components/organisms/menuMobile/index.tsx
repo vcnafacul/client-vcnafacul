@@ -1,5 +1,5 @@
 import { ArrowUpRight, Bug, ChevronRight, Lightbulb } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ReactComponent as LogoIcon } from "../../../assets/images/home/logo.svg";
 import {
@@ -16,6 +16,9 @@ const RELATAR_PROBLEMA =
   "https://github.com/orgs/vcnafacul/discussions/new?category=problemas";
 const PROPOR_IDEIA =
   "https://github.com/orgs/vcnafacul/discussions/new?category=ideas";
+
+/** O `md` do tailwind.config (1200px): a partir dele o header mostra o menu inteiro. */
+const BREAKPOINT_MD = "(min-width: 1200px)";
 
 interface MenuMobileProps {
   open: boolean;
@@ -63,6 +66,22 @@ export default function MenuMobile({
   nome,
 }: MenuMobileProps) {
   const { pathname, hash } = useLocation();
+
+  // O conteúdo some a partir de `md` (1200px, `md:hidden`), mas o véu e a trava de
+  // rolagem do Radix ficariam: ao cruzar o breakpoint com o menu aberto, fecha.
+  useEffect(() => {
+    if (!open || typeof window.matchMedia !== "function") return;
+    const mq = window.matchMedia(BREAKPOINT_MD);
+    if (mq.matches) {
+      onClose();
+      return;
+    }
+    const aoMudar = (e: MediaQueryListEvent) => {
+      if (e.matches) onClose();
+    };
+    mq.addEventListener("change", aoMudar);
+    return () => mq.removeEventListener("change", aoMudar);
+  }, [open, onClose]);
 
   const classeItem = (eAtivo: boolean) =>
     `group flex items-center justify-between gap-4 py-4 text-h3 font-bold transition-colors ${
