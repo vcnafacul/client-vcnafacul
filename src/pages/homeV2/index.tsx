@@ -97,7 +97,7 @@ export default function HomeV2() {
       {/* Faixa da marca sob o header (e acima do rodapé): o arco-íris fino da variante A (tickets/059/01 §7.2). */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-[76px] z-raised h-1 bg-brand-stripe"
+        className="pointer-events-none absolute inset-x-0 top-header z-raised h-1 bg-brand-stripe"
       />
       <BaseTemplate solid={solid} position="fixed" headerShadow={false}>
         {sections.map((s) => {
