@@ -19,7 +19,7 @@ export function NewsFeaturedCard({ item }: { item: NewsItem }) {
       className="relative rounded-2xl overflow-hidden block h-[320px] md:h-full"
     >
       <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-primary-foreground">
-        <span className="self-start mb-3 text-caption tracking-widest font-bold uppercase bg-primary-foreground/20 backdrop-blur px-3 py-1 rounded-full">
+        <span className="self-start mb-3 text-overline bg-primary-foreground/20 backdrop-blur px-3 py-1 rounded-full">
           {item.category}
         </span>
         <h3 className="text-h1 line-clamp-3">

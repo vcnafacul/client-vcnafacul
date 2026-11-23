@@ -1,6 +1,7 @@
 // client-vcnafacul/src/pages/homeV2/sections/AboutSection/AboutVideoCard.tsx
 import { useState } from "react";
 import { motion } from "motion/react";
+import { palette } from "@/lib/palette";
 import { AboutVideoModal } from "./AboutVideoModal";
 
 export function AboutVideoCard({ thumbnail, videoId }: { thumbnail: string; videoId: string }) {
@@ -18,11 +19,12 @@ export function AboutVideoCard({ thumbnail, videoId }: { thumbnail: string; vide
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="
-            relative w-full h-full block bg-background rounded-tl-3xl rounded-bl-3xl
+            relative w-full h-full block rounded-tl-3xl rounded-bl-3xl
             md:rounded-tl-3xl md:rounded-bl-3xl rounded-2xl
             overflow-hidden group cursor-pointer
             focus-visible:outline outline-2 outline-offset-2 outline-ring
           "
+          style={{ backgroundColor: palette.marine[950] }}
           aria-label="Assistir vídeo: conheça vcnafacul"
         >
           <img
@@ -30,7 +32,11 @@ export function AboutVideoCard({ thumbnail, videoId }: { thumbnail: string; vide
             alt=""
             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
+          {/* Véu e fundo escuros em qualquer tema (a Quem Somos não tem data-theme): cor fixa da palette, não --background. */}
+          <div
+            className="absolute inset-0 opacity-40"
+            style={{ backgroundImage: `linear-gradient(to top, ${palette.marine[950]}, transparent)` }}
+          />
           <motion.div
             animate={{ scale: [1, 1.04, 1] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}

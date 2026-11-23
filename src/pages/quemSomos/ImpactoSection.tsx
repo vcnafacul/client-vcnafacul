@@ -49,7 +49,7 @@ export function ImpactoSection() {
   return (
     <div className="bg-page py-20">
       <div className="max-w-5xl mx-auto px-6">
-        <p className="text-caption font-semibold tracking-widest uppercase mb-3 text-center text-foreground/60">
+        <p className="text-overline text-highlight text-center mb-3">
           NOSSOS NÚMEROS
         </p>
         <h2 className="text-display text-foreground text-center mb-4">

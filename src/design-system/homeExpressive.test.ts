@@ -34,4 +34,9 @@ describe("camada expressiva da home", () => {
     );
     expect(comCta).toEqual(["src/pages/homeV2/sections/HeroSection/HeroTriptych.tsx"]);
   });
+
+  it("eyebrows em caixa alta usam text-overline, não uppercase + tracking-widest à mão", () => {
+    const achados = fontes.filter((f) => /tracking-widest|(?<![\w-])uppercase(?![\w-])/.test(readFileSync(f, "utf-8")));
+    expect(achados).toEqual([]);
+  });
 });

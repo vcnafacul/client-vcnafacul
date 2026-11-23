@@ -7,8 +7,8 @@ import valoresImg from "../../assets/images/valores.png";
 
 // Acentos dos cards: o ícone branco fica sobre eles, então ficam nos passos 600 (AA com branco).
 const PINK = palette.pink[600];
-const TEAL = palette.mint[600];
-const LIME = palette.orange[600];
+const MINT = palette.mint[600];
+const ORANGE = palette.orange[600];
 
 const VISAO_TEXT =
   "Ser a principal plataforma de apoio educacional para estudantes de baixa renda, ajudando-os a conquistar uma vaga na faculdade dos sonhos por meio de conteúdos acessíveis, suporte comunitário e estratégias eficazes de estudo.";
@@ -70,7 +70,11 @@ function ValorRow({
         <div className="shrink-0 w-[58%] rounded-2xl overflow-hidden">
           <img src={img} alt={imgAlt} className="w-full aspect-[691/461] object-cover" />
         </div>
-        <div className={`shrink-0 w-[46%] z-raised ${reverse ? "-mr-[4%]" : "-ml-[4%]"}`}>
+        {/* O cartão sobrepõe 4% da largura da imagem: deslocamento em % (a margem negativa em % do contêiner) por style, sem utilitário arbitrário. */}
+        <div
+          className="shrink-0 w-[46%] z-raised"
+          style={reverse ? { marginRight: "-4%" } : { marginLeft: "-4%" }}
+        >
           {card}
         </div>
       </div>
@@ -125,7 +129,7 @@ export function NossosValores() {
         imgAlt="Missão do projeto"
         reverse
         card={
-          <ValorCard icon={<Target size={26} color="white" strokeWidth={2} />} title="Missão" accent={TEAL}>
+          <ValorCard icon={<Target size={26} color="white" strokeWidth={2} />} title="Missão" accent={MINT}>
             <p className="text-muted-foreground text-prose">{MISSAO_TEXT}</p>
           </ValorCard>
         }
@@ -136,11 +140,11 @@ export function NossosValores() {
         img={valoresImg}
         imgAlt="Valores do projeto"
         card={
-          <ValorCard icon={<Gem size={26} color="white" strokeWidth={2} />} title="Valores" accent={LIME}>
+          <ValorCard icon={<Gem size={26} color="white" strokeWidth={2} />} title="Valores" accent={ORANGE}>
             <ul className="text-muted-foreground text-prose space-y-1">
               {VALORES_LIST.map((v) => (
                 <li key={v} className="flex items-center gap-2">
-                  <span className="text-caption" style={{ color: LIME }}>•</span>
+                  <span className="text-caption" style={{ color: ORANGE }}>•</span>
                   {v}
                 </li>
               ))}
