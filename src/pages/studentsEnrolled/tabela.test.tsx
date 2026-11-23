@@ -91,6 +91,34 @@ describe("StudentsEnrolled — tabela (desktop)", () => {
     expect(carteirinhas).toBeEnabled();
   });
 
+  it("a seleção é da página: trocar de página zera a contagem e as carteirinhas", async () => {
+    render(<StudentsEnrolled />);
+    await screen.findByText("Estudante 1");
+    fireEvent.click(screen.getByRole("checkbox", { name: /^Selecionar Estudante 1/ }));
+    expect(screen.getByText("1 item selecionado")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Carteirinhas/ })).toBeEnabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Próxima página" }));
+    await waitFor(() => expect(getStudentsEnrolled).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(screen.queryByText("1 item selecionado")).toBeNull());
+    expect(screen.getByRole("button", { name: /Carteirinhas/ })).toBeDisabled();
+  });
+
+  it("ordenar e filtrar também zeram a seleção", async () => {
+    render(<StudentsEnrolled />);
+    await screen.findByText("Estudante 1");
+    fireEvent.click(screen.getByRole("checkbox", { name: /^Selecionar Estudante 1/ }));
+    fireEvent.click(screen.getByRole("button", { name: /^Email/ }));
+    await waitFor(() => expect(screen.queryByText("1 item selecionado")).toBeNull());
+
+    fireEvent.click(await screen.findByRole("checkbox", { name: /^Selecionar Estudante 1/ }));
+    expect(screen.getByText("1 item selecionado")).toBeInTheDocument();
+    fireEvent.change(screen.getByRole("textbox", { name: "Valor do filtro" }), {
+      target: { value: "1" },
+    });
+    await waitFor(() => expect(screen.queryByText("1 item selecionado")).toBeNull());
+  });
+
   it("sem gerenciar estudantes não há caixas de seleção", async () => {
     auth.permissao = {};
     render(<StudentsEnrolled />);

@@ -280,6 +280,8 @@ export function StudentsEnrolled() {
   };
 
   const handleFilterChange = (filtro: FiltroDeEstudantes | undefined) => {
+    // A seleção é da página visível (tickets/059 R43).
+    setSelectedRows([]);
     setFilter(filtro);
     debouncedFilter(filtro);
   };
@@ -293,6 +295,7 @@ export function StudentsEnrolled() {
       sort: novo.direction,
     };
     setSort(ordenacao);
+    setSelectedRows([]);
     setPage(0);
     getEnrolle(
       1,
@@ -605,6 +608,8 @@ export function StudentsEnrolled() {
     estudante.class?.id !== undefined;
 
   const irParaPagina = (novaPagina: number) => {
+    // A seleção é da página visível: as carteirinhas imprimem só ela (tickets/059 R43).
+    setSelectedRows([]);
     setPage(novaPagina);
     getEnrolle(
       novaPagina + 1,
