@@ -9,7 +9,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { excluirEnvioDoCartao } from "@/services/cartaoResposta/excluirEnvioDoCartao";
 import { useState } from "react";
@@ -65,7 +64,7 @@ export function ExcluirEnvioDoCartao({
           disabled={excluindo}
           className={cn(
             "shrink-0 rounded-md border border-destructive px-2 py-1 text-caption font-medium text-destructive disabled:opacity-50",
-            dashV2.focus,
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           )}
         >
           {excluindo ? "Excluindo…" : TEXTO_EXCLUIR_ENVIO}

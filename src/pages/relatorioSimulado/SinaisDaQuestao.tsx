@@ -1,4 +1,4 @@
-import { StatusBadge, dashV2 } from "@/components/dashV2";
+import { StatusBadge } from "@/components/dashV2";
 import type { QuestaoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { DicaRapida } from "./DicaRapida";
@@ -40,7 +40,7 @@ export function SinaisDaQuestao({
 
   if (flags.length === 0) {
     // ⚠️ Travessão, e não célula vazia: vazio se lê como "não calculou".
-    return <span className={dashV2.text.muted}>{SEM_SINAL}</span>;
+    return <span className="text-muted-foreground">{SEM_SINAL}</span>;
   }
 
   return (

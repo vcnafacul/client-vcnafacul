@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import type {
   LinhaDoRelatorio,
   MediaPorMateria,
@@ -45,7 +44,7 @@ export function CelulaDeMateria({
 
   const nota = notaNaMateria(linha, materia.id);
   if (nota === undefined) {
-    return <span className={dashV2.text.muted}>{VAZIO_DA_MATERIA}</span>;
+    return <span className="text-muted-foreground">{VAZIO_DA_MATERIA}</span>;
   }
 
   const alerta = abaixoDaTurma(nota, materia.media, desvio);
@@ -66,7 +65,7 @@ export function CelulaDeMateria({
     >
       <span
         data-abaixo-da-turma
-        className={cn("font-semibold", dashV2.text.primary)}
+        className={cn("font-semibold", "text-foreground")}
       >
         {texto} ↓
       </span>

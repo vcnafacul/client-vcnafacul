@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { buscarSimuladosComCartao } from "@/services/relatorioSimulado/buscarSimuladosComCartao";
@@ -77,7 +76,7 @@ function QuestoesCell({ simulado }: { simulado: SimuladoResumo }) {
           aria-hidden="true"
           className={cn(
             "h-1.5 w-14 shrink-0 overflow-hidden rounded-full",
-            dashV2.progress.track,
+            "bg-muted",
           )}
         >
           <div
@@ -85,7 +84,7 @@ function QuestoesCell({ simulado }: { simulado: SimuladoResumo }) {
             style={{ width: `${pct}%` }}
             className={cn(
               "h-full",
-              completo ? dashV2.progress.done : dashV2.progress.pending,
+              completo ? "bg-success" : "bg-cta/40",
             )}
           />
         </div>
@@ -93,7 +92,7 @@ function QuestoesCell({ simulado }: { simulado: SimuladoResumo }) {
       <span
         className={cn(
           "shrink-0 whitespace-nowrap text-caption tabular-nums",
-          dashV2.text.secondary,
+          "text-muted-foreground",
         )}
       >
         {texto}
@@ -363,15 +362,15 @@ function SimuladosView({
           onClick={onVoltar}
           className={cn(
             "mb-4 flex items-center gap-1 rounded-md text-body hover:underline",
-            dashV2.text.secondary,
-            dashV2.focus,
+            "text-muted-foreground",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           )}
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar aos detalhes
         </button>
 
-        <h3 className={cn("mb-4 text-body font-medium", dashV2.text.primary)}>
+        <h3 className={cn("mb-4 text-body font-medium", "text-foreground")}>
           Simulados
         </h3>
 
@@ -382,7 +381,7 @@ function SimuladosView({
                 key={i}
                 className={cn(
                   "h-10 animate-pulse rounded-sm",
-                  dashV2.progress.track,
+                  "bg-muted",
                 )}
               />
             ))}
@@ -401,7 +400,7 @@ function SimuladosView({
         )}
 
         {!loading && !error && simulados?.length === 0 && (
-          <p className={cn("py-8 text-center text-body", dashV2.text.muted)}>
+          <p className={cn("py-8 text-center text-body", "text-muted-foreground")}>
             Esta prova ainda não tem simulados cadastrados.
           </p>
         )}
@@ -427,12 +426,12 @@ function SimuladosView({
                       <span
                         className={cn(
                           "block font-medium break-words",
-                          dashV2.text.primary,
+                          "text-foreground",
                         )}
                       >
                         {simulado.nome}
                       </span>
-                      <span className={cn("block text-caption", dashV2.text.muted)}>
+                      <span className={cn("block text-caption", "text-muted-foreground")}>
                         {simulado.categoria?.nome ?? "Sem categoria"}
                       </span>
                     </div>
@@ -456,7 +455,7 @@ function SimuladosView({
                 <thead
                   className={cn(
                     "text-caption uppercase",
-                    dashV2.text.muted,
+                    "text-muted-foreground",
                     "bg-page",
                   )}
                 >
@@ -482,7 +481,7 @@ function SimuladosView({
                 </thead>
                 <tbody className="divide-y divide-border">
                   {simulados.map((simulado) => (
-                    <tr key={simulado._id} className={dashV2.row.hover}>
+                    <tr key={simulado._id} className="hover:bg-page">
                       <td className="px-2 py-2 align-middle">
                         <SimuladoStatusIcon simulado={simulado} />
                       </td>
@@ -497,13 +496,13 @@ function SimuladosView({
                         <span
                           className={cn(
                             "block font-medium",
-                            dashV2.text.primary,
+                            "text-foreground",
                           )}
                         >
                           {simulado.nome}
                         </span>
                         <span
-                          className={cn("block text-caption", dashV2.text.muted)}
+                          className={cn("block text-caption", "text-muted-foreground")}
                         >
                           {simulado.categoria?.nome ?? "Sem categoria"}
                         </span>

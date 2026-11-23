@@ -1,5 +1,6 @@
 import { StatusBadge as UiStatusBadge, type StatusVariant } from "@/components/ui/status-badge";
-import type { StatusV2 } from "./tokens";
+/** Os cinco tons de status das listas do dash. */
+export type StatusV2 = "done" | "running" | "info" | "missing" | "neutral";
 
 export interface StatusBadgeProps {
   tone: StatusV2;

@@ -18,7 +18,6 @@ import {
   type DashListTemplateProps,
 } from "./DashListTemplate";
 import { LINHAS_SKELETON, TEXTO_TENTAR_DE_NOVO } from "./DashTableEmpty";
-import { dashV2 } from "./tokens";
 import type { DashColumn } from "./types";
 
 /**
@@ -170,6 +169,15 @@ describe("DashListTemplate — entities é LEITURA", () => {
 /* -------------------------------------------------------------------------- *
  * Clique na linha.
  * -------------------------------------------------------------------------- */
+
+describe("DashListTemplate — título da página", () => {
+  it("o título da lista é o único h1 da página (tickets/059 §6)", () => {
+    montar(criarContexto({ entities: provas(3) }));
+    const titulos = screen.getAllByRole("heading", { level: 1 });
+    expect(titulos).toHaveLength(1);
+    expect(titulos[0]).toHaveTextContent("Banco de Provas");
+  });
+});
 
 describe("DashListTemplate — clique", () => {
   it("chama onClickCard com cardTransformation(row).id, não com o id cru da entidade", () => {
@@ -619,14 +627,14 @@ describe("DashListTemplate — drop-in sobre o contexto do V1", () => {
 
     const barra = screen.getByTestId("dash-toolbar");
     const primaria = within(barra).getByRole("button", { name: "Sincronizar" });
-    expect(primaria.className).toContain(dashV2.action.primary);
+    expect(primaria.className).toContain("bg-cta text-cta-foreground");
     fireEvent.click(primaria);
     expect(sincronizar).toHaveBeenCalledTimes(1);
 
     // O fallback traduz o `variant` do botão: `destructive` vira ação destrutiva.
     expect(
       within(barra).getByRole("button", { name: "Excluir selecionadas" }).className,
-    ).toContain(dashV2.action.destructive);
+    ).toContain("bg-destructive text-destructive-foreground");
   });
 
   it("actions explícitas desligam o fallback por inteiro", () => {

@@ -2,7 +2,6 @@ import {
   DashFilterBar,
   DashListFooter,
   DashTable,
-  dashV2,
   intervaloDaPagina,
   sortRows,
   type SortState,
@@ -73,10 +72,10 @@ function VazioDeEstudantes() {
       data-testid="estudantes-vazio"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <p className={cn("text-body font-medium", dashV2.text.primary)}>
+      <p className={cn("text-body font-medium", "text-foreground")}>
         {TEXTO_SEM_ESTUDANTES}
       </p>
-      <p className={cn("text-caption", dashV2.text.secondary)}>
+      <p className={cn("text-caption", "text-muted-foreground")}>
         Nenhum estudante com cartão-resposta enviado neste simulado.
       </p>
     </div>
@@ -98,13 +97,13 @@ function VazioPorFiltro({ onLimpar }: { onLimpar: () => void }) {
       data-testid="estudantes-vazio-filtro"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <p className={cn("text-body font-medium", dashV2.text.primary)}>
+      <p className={cn("text-body font-medium", "text-foreground")}>
         {TEXTO_VAZIO_POR_FILTRO}
       </p>
       <button
         type="button"
         onClick={onLimpar}
-        className={cn("text-caption underline", dashV2.text.secondary)}
+        className={cn("text-caption underline", "text-muted-foreground")}
       >
         Limpar filtros
       </button>
@@ -709,7 +708,7 @@ export function RelatorioDoSimuladoConteudo({
                 <label
                   className={cn(
                     "flex cursor-pointer select-none items-center gap-2 text-body",
-                    dashV2.text.secondary,
+                    "text-muted-foreground",
                   )}
                 >
                   <input

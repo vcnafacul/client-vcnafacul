@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
 import type { Planilha } from "./exportar";
@@ -40,8 +39,8 @@ export function BotaoExportar({
       className={cn(
         "h-9 rounded-md px-3 text-body font-medium",
         "disabled:cursor-not-allowed disabled:opacity-60",
-        dashV2.action.secondary,
-        dashV2.focus,
+        "border border-border bg-card text-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       )}
     >
       {vazio ? TEXTO_SEM_DADOS : rotulo}

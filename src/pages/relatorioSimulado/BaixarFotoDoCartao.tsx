@@ -1,5 +1,4 @@
 import { baixarFotoDoCartao } from "@/services/cartaoResposta/baixarFotoDoCartao";
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { toast } from "@/lib/toast";
@@ -49,9 +48,9 @@ export function BaixarFotoDoCartao({
       disabled={baixando}
       className={cn(
         "shrink-0 rounded-md border px-2 py-1 text-caption font-medium disabled:opacity-50",
-        dashV2.border,
-        dashV2.text.primary,
-        dashV2.focus,
+        "border-border",
+        "text-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       )}
     >
       {baixando ? "Baixando…" : "Baixar cartão"}

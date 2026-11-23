@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import type { ResumoDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { resumoDasQuestoesDoRelatorio } from "./textosDaAnulacao";
@@ -117,20 +116,20 @@ export function IdentificacaoDoRelatorio({
 
   const classeDoLink = cn(
     "rounded-sm text-caption underline underline-offset-2 print:hidden",
-    dashV2.text.secondary,
-    dashV2.focus,
+    "text-muted-foreground",
+    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
   );
 
   return (
     <div data-testid="identificacao-do-relatorio" className="flex flex-col gap-1">
       {comTitulo && nome !== null && (
-        <h1 className={cn("text-h2 font-semibold", dashV2.text.primary)}>
+        <h1 className={cn("text-h2 font-semibold", "text-foreground")}>
           {nome}
         </h1>
       )}
       <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
         {contexto.length > 0 && (
-          <p className={cn("text-caption", dashV2.text.muted)}>
+          <p className={cn("text-caption", "text-muted-foreground")}>
             {contexto.join(" · ")}
           </p>
         )}

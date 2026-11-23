@@ -31,7 +31,9 @@ de cursinhos com foto, banco de imagens, vitrine de conteúdo.
 ## A regra inegociável
 
 > **Nada do V1 muda.** `templates/dashCardTemplate`, `molecules/cardDash`, `context/dashCardContext`,
-> `atoms/filter`, `atoms/select` e `components/ui/*` não são editados por trabalho do V2.
+> `atoms/filter` e `atoms/select` não são editados por trabalho do V2. Os componentes de `components/ui/*`
+> pertencem ao design system e seguem as regras dele: ver `docs/` do design system (tickets/059 §7.2, item 8) e
+> o Storybook.
 
 Uma tela migrada volta ao V1 trocando uma linha de import. É isso que torna a POC segura, e é a razão
 de várias decisões abaixo parecerem tortas fora de contexto.
@@ -260,13 +262,12 @@ normalizadas (`createdAt` é tipado como `DateTime` do luxon mas **chega como st
 cru vira ordem alfabética), ordenação estável e nulos no fim nas duas direções. **Importe; não
 reimplemente.**
 
-### Cor sempre pelos tokens
+### Cor sempre pelos tokens semânticos
 
-⚠️ A catraca de paleta (`tokens.test.ts`) lê o `tailwind.config.js` de verdade e derruba cor de fora
-da paleta — **mas ela guarda só o `tokens.ts`**. Se um `.tsx` escrever `text-slate-700`, nada acusa.
-
-Faltando um papel, **acrescente ao `tokens.ts`** em vez de contornar. Foi o que os componentes fizeram
-com `menuItem`, `destructiveGhost`, `row.hover` e `progress`.
+⚠️ Os componentes daqui usam só as classes semânticas do design system (`bg-card`, `text-muted-foreground`,
+`bg-cta`…) e os componentes do `components/ui`. O `dashV2/tokens.ts` foi removido (tickets/059, Task 11): quem
+precisar de um papel de cor novo o acrescenta ao design system, e não a um arquivo local. A catraca de paleta é
+a do `src/design-system/guard`.
 
 ---
 

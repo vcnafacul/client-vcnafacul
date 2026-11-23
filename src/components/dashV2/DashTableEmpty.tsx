@@ -1,7 +1,6 @@
 import { Inbox } from "lucide-react";
 import { TABLE_SKELETON_ROWS, TableSkeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { dashV2 } from "./tokens";
+import { Button } from "@/components/ui/button";
 
 /**
  * Estados da `DashTable` — vazio, erro e carregando.
@@ -31,19 +30,11 @@ export function DashTableErro({ onRetry }: { onRetry?: () => void }) {
       data-testid="dash-table-erro"
       className="flex flex-col items-center gap-2 px-4 py-8 text-center"
     >
-      <p className={cn("text-body", dashV2.text.secondary)}>{TEXTO_ERRO}</p>
+      <p className="text-body text-muted-foreground">{TEXTO_ERRO}</p>
       {onRetry ? (
-        <button
-          type="button"
-          onClick={onRetry}
-          className={cn(
-            "rounded-sm text-body font-medium underline-offset-2 hover:underline",
-            dashV2.text.primary,
-            dashV2.focus,
-          )}
-        >
+        <Button type="button" variant="ghost" onClick={onRetry} className="text-foreground">
           {TEXTO_TENTAR_DE_NOVO}
-        </button>
+        </Button>
       ) : null}
     </div>
   );
@@ -62,9 +53,9 @@ export function DashTableVazio() {
       data-testid="dash-table-vazio"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <Inbox aria-hidden="true" className={cn("h-8 w-8", dashV2.text.muted)} />
-      <p className={cn("text-body font-medium", dashV2.text.primary)}>{TEXTO_VAZIO}</p>
-      <p className={cn("text-caption", dashV2.text.secondary)}>{DICA_VAZIO}</p>
+      <Inbox aria-hidden="true" className="h-8 w-8 text-muted-foreground" />
+      <p className="text-body font-medium text-foreground">{TEXTO_VAZIO}</p>
+      <p className="text-caption text-muted-foreground">{DICA_VAZIO}</p>
     </div>
   );
 }

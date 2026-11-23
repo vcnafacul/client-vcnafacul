@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -38,8 +37,8 @@ export function SetaDeNavegacao({
       className={cn(
         "shrink-0 rounded-md p-1 print:hidden",
         "disabled:cursor-not-allowed disabled:opacity-30",
-        dashV2.text.secondary,
-        dashV2.focus,
+        "text-muted-foreground",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
       )}
     >
       <Icone className="h-5 w-5" />

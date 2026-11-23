@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { dashV2 } from "@/components/dashV2";
+import { VARIANTE_POR_TONE } from "@/components/dashV2";
 import {
   STATUS_COMPLETA,
   STATUS_EM_CADASTRO,
@@ -71,10 +71,8 @@ describe("statusDaProva", () => {
     ];
     for (const s of todos) {
       expect(s.tone, s.label).not.toBe("missing");
-      // Cinto e suspensório: nenhum dos tons usados pinta de vermelho.
-      expect(JSON.stringify(dashV2.status[s.tone]), s.label).not.toContain(
-        "red",
-      );
+      // Cinto e suspensório: nenhum dos tons usados vira a variante vermelha.
+      expect(VARIANTE_POR_TONE[s.tone], s.label).not.toBe("destructive");
     }
   });
 

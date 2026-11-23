@@ -1,14 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { Children, useEffect, useId, useRef, useState } from "react";
 import { Search } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { dashV2 } from "./tokens";
+import { useAcimaDeSm } from "./useAcimaDeSm";
 import type { DashFilterBarProps } from "./types";
 
 /**
- * ⚠️ 250ms. Hoje o `Filter` do V1 dispara `onChange` a cada tecla e a tela
- * refiltra a lista inteira a cada caractere.
+ * ⚠️ 400ms (tickets/059 D22): cada busca refiltra a lista inteira ou baixa
+ * tudo de novo do servidor. O `Filter` do V1 disparava a cada tecla.
  */
-export const DEBOUNCE_BUSCA_MS = 250;
+export const DEBOUNCE_BUSCA_MS = 400;
 
 /**
  * Faixa de filtros — **acima da tabela e separada da toolbar de ações**.
@@ -47,25 +49,30 @@ export function DashFilterBar({
 
   const mostrarLimpar = activeCount > 0 && !!onClear;
 
+  // D22: abaixo de 768 só a busca fica à mostra; o resto fica atrás de "Mais
+  // filtros (N)". Em JS e não em CSS: com CSS os campos existiriam duas vezes
+  // no DOM (ver `useAcimaDeSm`).
+  const acimaDeSm = useAcimaDeSm();
+  const [aberto, setAberto] = useState(false);
+  const idDosFiltros = useId();
+  const temFiltros = Children.toArray(children).length > 0;
+  const recolhido = !acimaDeSm && temFiltros;
+  // A busca ativa já está na tela; o botão conta só o que ele esconde.
+  const escondidos = Math.max(0, activeCount - (valorExterno.trim() ? 1 : 0));
+  const sufixo = escondidos > 0 ? ` (${escondidos})` : "";
+
   return (
     <div
       data-testid="dash-filter-bar"
-      className={cn(
-        "flex flex-wrap items-center gap-3 border-b px-4 py-2",
-        dashV2.surface,
-        dashV2.border,
-      )}
+      className="flex flex-wrap items-center gap-3 border-b border-border bg-card px-4 py-2"
     >
       {search ? (
         // No celular a busca ocupa a linha inteira e os filtros descem; a
         // partir de 768px (o `sm` do projeto) volta a dividir a linha.
-        <div className="relative min-w-0 flex-1 basis-full sm:basis-auto sm:max-w-xs">
-          <Search
-            aria-hidden="true"
-            className={cn("pointer-events-none absolute left-2 top-2 h-5 w-5", dashV2.text.muted)}
-          />
-          <input
+        <div className="min-w-0 flex-1 basis-full sm:max-w-xs sm:basis-auto">
+          <Input
             type="search"
+            leading={<Search aria-hidden="true" />}
             aria-label={search.placeholder ?? "Buscar"}
             placeholder={search.placeholder ?? "Buscar"}
             value={rascunho}
@@ -76,35 +83,46 @@ export function DashFilterBar({
               if (rascunho !== valorExterno) aoMudarRef.current?.(rascunho);
               search.onSubmit(rascunho);
             }}
-            className={cn(
-              "h-9 w-full rounded-md border pl-8 pr-3 text-body outline-none",
-              dashV2.border,
-              dashV2.surface,
-              dashV2.text.primary,
-              dashV2.focus,
-            )}
           />
         </div>
       ) : null}
 
-      {children}
+      {recolhido ? (
+        <Button
+          type="button"
+          variant="outline"
+          aria-expanded={aberto}
+          aria-controls={idDosFiltros}
+          onClick={() => setAberto(!aberto)}
+        >
+          {aberto ? "Menos filtros" : "Mais filtros"}
+          {sufixo}
+        </Button>
+      ) : null}
+
+      {recolhido ? (
+        aberto ? (
+          <div id={idDosFiltros} className="flex basis-full flex-col gap-3">
+            {children}
+          </div>
+        ) : null
+      ) : (
+        children
+      )}
 
       {/*
         ⚠️ Some quando não há filtro — não fica desabilitado. Desabilitado ocupa
         o espaço, pede uma leitura e não serve para nada.
       */}
       {mostrarLimpar ? (
-        <button
+        <Button
           type="button"
+          variant="ghost"
           onClick={onClear}
-          className={cn(
-            "ml-auto shrink-0 rounded-sm text-body underline-offset-2 hover:underline",
-            dashV2.text.primary,
-            dashV2.focus,
-          )}
+          className={cn("ml-auto shrink-0 text-foreground hover:underline")}
         >
           Limpar filtros ({activeCount})
-        </button>
+        </Button>
       ) : null}
     </div>
   );

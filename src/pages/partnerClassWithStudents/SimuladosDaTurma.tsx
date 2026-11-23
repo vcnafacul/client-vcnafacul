@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import type { SimuladoComCartao } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { RelatorioDoSimuladoConteudo } from "@/pages/relatorioSimulado/RelatorioDoSimuladoConteudo";
@@ -29,10 +28,10 @@ function VazioDaTurma() {
       data-testid="simulados-da-turma-vazio"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <p className={cn("text-body font-medium", dashV2.text.primary)}>
+      <p className={cn("text-body font-medium", "text-foreground")}>
         {TEXTO_VAZIO}
       </p>
-      <p className={cn("text-caption", dashV2.text.secondary)}>{TEXTO_VAZIO_DICA}</p>
+      <p className={cn("text-caption", "text-muted-foreground")}>{TEXTO_VAZIO_DICA}</p>
     </div>
   );
 }
@@ -97,7 +96,7 @@ export function SimuladosDaTurma({
 
   if (estado === "loading") {
     return (
-      <p className={cn("px-4 py-10 text-center text-body", dashV2.text.secondary)}>
+      <p className={cn("px-4 py-10 text-center text-body", "text-muted-foreground")}>
         Carregando…
       </p>
     );
@@ -106,11 +105,11 @@ export function SimuladosDaTurma({
   if (estado === "error") {
     return (
       <div className="flex flex-col items-center gap-2 px-4 py-10 text-center">
-        <p className={cn("text-body", dashV2.text.primary)}>{TEXTO_ERRO}</p>
+        <p className={cn("text-body", "text-foreground")}>{TEXTO_ERRO}</p>
         <button
           type="button"
           onClick={carregar}
-          className={cn("text-caption underline", dashV2.text.secondary)}
+          className={cn("text-caption underline", "text-muted-foreground")}
         >
           {TEXTO_TENTAR}
         </button>
@@ -137,17 +136,17 @@ export function SimuladosDaTurma({
         nada — quem abre a aba quer ver os estudantes.
       */}
       <label className="flex flex-wrap items-center gap-2 px-4 pt-3 text-body">
-        <span className={dashV2.text.secondary}>{ROTULO_SELETOR}</span>
+        <span className="text-muted-foreground">{ROTULO_SELETOR}</span>
         <select
           data-testid="seletor-de-simulado"
           value={escolhido}
           onChange={(e) => setEscolhido(e.target.value)}
           className={cn(
             "h-9 min-w-0 max-w-full rounded-md border px-2 text-body outline-none",
-            dashV2.border,
-            dashV2.surface,
-            dashV2.text.primary,
-            dashV2.focus,
+            "border-border",
+            "bg-card",
+            "text-foreground",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           )}
         >
           {simulados.map((s) => (
@@ -187,7 +186,7 @@ export function SimuladosDaTurma({
             data-toggle-comparacao
             onClick={() => setComparando((v) => !v)}
             aria-expanded={comparando}
-            className={cn("text-caption underline", dashV2.text.secondary)}
+            className={cn("text-caption underline", "text-muted-foreground")}
           >
             {comparando ? "▾ " : "▸ "}
             Comparar duas aplicações

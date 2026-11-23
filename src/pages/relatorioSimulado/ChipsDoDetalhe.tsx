@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import {
   FILTROS,
@@ -59,11 +58,11 @@ export function ChipsDoDetalhe({
             className={cn(
               "rounded-full border px-3 py-1 text-caption font-medium",
               "disabled:cursor-not-allowed disabled:opacity-40",
-              dashV2.border,
-              dashV2.focus,
+              "border-border",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               selecionado
-                ? cn(dashV2.action.primary, "border-transparent")
-                : cn(dashV2.surface, dashV2.text.secondary),
+                ? cn("bg-cta text-cta-foreground", "border-transparent")
+                : cn("bg-card", "text-muted-foreground"),
             )}
           >
             {ROTULO_DO_FILTRO[f]} ({n})

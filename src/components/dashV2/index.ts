@@ -62,8 +62,12 @@ export {
   totalDePaginas,
 } from "./paginacao";
 export { dataOrdenavel, proximoSort, sortRows } from "./sortRows";
-export { StatusBadge, VARIANTE_POR_TONE, type StatusBadgeProps } from "./StatusBadge";
-export { dashV2, type StatusV2 } from "./tokens";
+export {
+  StatusBadge,
+  VARIANTE_POR_TONE,
+  type StatusBadgeProps,
+  type StatusV2,
+} from "./StatusBadge";
 export type {
   DashAction,
   DashColumn,

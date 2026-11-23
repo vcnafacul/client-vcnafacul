@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef, useState } from "react";
 import { ATRASO_MS, LARGURA, posicaoDaDica, type Posicao } from "./posicaoDaDica";
@@ -135,9 +134,9 @@ export function DicaRapida({
               "pointer-events-none fixed z-popover",
               "rounded-md border px-3 py-2 text-caption font-normal shadow-lg",
               "print:hidden",
-              dashV2.surface,
-              dashV2.border,
-              dashV2.text.secondary,
+              "bg-card",
+              "border-border",
+              "text-muted-foreground",
             )}
           >
             {texto}

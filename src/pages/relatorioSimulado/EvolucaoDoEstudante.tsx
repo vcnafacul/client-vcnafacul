@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import type { PontoDaSerie } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import {
@@ -70,7 +69,7 @@ function caminho(
 export function EvolucaoDoEstudante({ pontos }: { pontos: PontoDaSerie[] }) {
   if (pontos.length === 0) {
     return (
-      <p data-evolucao-vazia className={cn("text-caption", dashV2.text.muted)}>
+      <p data-evolucao-vazia className={cn("text-caption", "text-muted-foreground")}>
         {TEXTO_SEM_APLICACAO}
       </p>
     );
@@ -85,11 +84,11 @@ export function EvolucaoDoEstudante({ pontos }: { pontos: PontoDaSerie[] }) {
   if (pontos.length < MINIMO_PARA_SERIE) {
     return (
       <div data-evolucao-unica className="flex flex-col gap-1">
-        <p className={cn("text-body", dashV2.text.primary)}>
+        <p className={cn("text-body", "text-foreground")}>
           {pontos[0].nome ?? "Simulado"} ·{" "}
           {Math.round(pontos[0].aproveitamento * 100)}%
         </p>
-        <p className={cn("text-caption", dashV2.text.muted)}>
+        <p className={cn("text-caption", "text-muted-foreground")}>
           {TEXTO_UMA_APLICACAO}
         </p>
       </div>
@@ -164,11 +163,11 @@ export function EvolucaoDoEstudante({ pontos }: { pontos: PontoDaSerie[] }) {
         caiu 7 numa turma que caiu 10 SUBIU de posição, e ler isso do desenho
         exige comparar duas inclinações de cabeça.
       */}
-      <p data-variacao className={cn("text-caption", dashV2.text.secondary)}>
+      <p data-variacao className={cn("text-caption", "text-muted-foreground")}>
         {textoDaVariacao(pontos)}
       </p>
 
-      <p className={cn("text-caption", dashV2.text.muted)}>
+      <p className={cn("text-caption", "text-muted-foreground")}>
         A linha tracejada é a média do recorte em cada aplicação.
       </p>
     </section>

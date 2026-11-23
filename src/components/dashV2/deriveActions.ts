@@ -53,7 +53,7 @@ function paraAcao(botao: ButtonProps, indice: number): DashAction {
  * secundária, na ordem original. `destructive` vira `destructive`.
  *
  * ⚠️ **No máximo uma principal**, mesmo que o array traga duas `primary` — é a
- * regra do `tokens.ts`, e o tipo do `DashToolbar` já a torna impossível de
+ * regra do design system, e o tipo do `DashToolbar` já a torna impossível de
  * burlar. A segunda desce para secundária.
  */
 export function deriveActions(buttons?: readonly ButtonProps[]): AcoesDerivadas {

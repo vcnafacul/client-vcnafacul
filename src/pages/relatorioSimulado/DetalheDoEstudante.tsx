@@ -1,6 +1,5 @@
 import {
   DashTable,
-  dashV2,
   StatusBadge,
   type DashColumn,
 } from "@/components/dashV2";
@@ -197,7 +196,7 @@ function VazioDeRespostas() {
       data-testid="respostas-vazio"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <p className={cn("text-body font-medium", dashV2.text.primary)}>
+      <p className={cn("text-body font-medium", "text-foreground")}>
         {TEXTO_SEM_RESPOSTAS}
       </p>
     </div>
@@ -415,18 +414,18 @@ export function DetalheDoEstudante({
               <DialogTitle
                 className={cn(
                   "truncate pr-0 text-h3 font-semibold",
-                  dashV2.text.primary,
+                  "text-foreground",
                 )}
               >
                 {estudante.nome}
               </DialogTitle>
-              <p className={cn("text-caption", dashV2.text.muted)}>
+              <p className={cn("text-caption", "text-muted-foreground")}>
                 {estudante.matricula}
               </p>
               {nomeDoSimulado && (
                 <p
                   data-testid="simulado-do-detalhe"
-                  className={cn("truncate text-caption", dashV2.text.secondary)}
+                  className={cn("truncate text-caption", "text-muted-foreground")}
                 >
                   {nomeDoSimulado}
                 </p>
@@ -448,7 +447,7 @@ export function DetalheDoEstudante({
           {navegacao !== undefined && navegacao.posicao > 0 && (
             <span
               data-testid="posicao-na-navegacao"
-              className={cn("shrink-0 text-caption", dashV2.text.muted)}
+              className={cn("shrink-0 text-caption", "text-muted-foreground")}
             >
               {navegacao.posicao} de {navegacao.total}
             </span>
@@ -481,7 +480,7 @@ export function DetalheDoEstudante({
 
         {estado === "error" && (
           <div className="flex flex-col items-start gap-2">
-            <p className={cn("text-body", dashV2.text.secondary)}>
+            <p className={cn("text-body", "text-muted-foreground")}>
               Erro ao carregar o detalhe.
             </p>
             <button
@@ -489,8 +488,8 @@ export function DetalheDoEstudante({
               onClick={carregar}
               className={cn(
                 "rounded-sm text-body font-medium underline-offset-2 hover:underline",
-                dashV2.text.primary,
-                dashV2.focus,
+                "text-foreground",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               )}
             >
               Tentar novamente
@@ -503,7 +502,7 @@ export function DetalheDoEstudante({
           informação acionável da tela neste caso — diz o que fazer com a folha.
         */}
         {estado === "idle" && detalhe?.status === "failed" && (
-          <p className={cn("text-body", dashV2.text.secondary)}>
+          <p className={cn("text-body", "text-muted-foreground")}>
             {detalhe.falha?.descricao ?? TEXTO_FALHA_SEM_DESCRICAO}
           </p>
         )}
@@ -531,7 +530,7 @@ export function DetalheDoEstudante({
           )}
 
         {estado === "idle" && processando && (
-          <p className={cn("text-body", dashV2.text.secondary)}>
+          <p className={cn("text-body", "text-muted-foreground")}>
             {TEXTO_PROCESSANDO}
           </p>
         )}
@@ -544,7 +543,7 @@ export function DetalheDoEstudante({
         {estado === "idle" && statusDesconhecido && (
           <p
             data-testid="status-desconhecido"
-            className={cn("text-body", dashV2.text.secondary)}
+            className={cn("text-body", "text-muted-foreground")}
           >
             {TEXTO_STATUS_DESCONHECIDO}
           </p>

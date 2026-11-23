@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import {
   faixasDoProgresso,
@@ -25,7 +24,7 @@ export function ProgressoCell({ prova }: { prova: ContagensDaProva }) {
         data-testid="progresso"
         data-sem-questoes="true"
         title={TITULO_SEM_QUESTOES}
-        className={cn("block text-body", dashV2.text.muted)}
+        className={cn("block text-body", "text-muted-foreground")}
       >
         {TEXTO_SEM_QUESTOES}
       </span>
@@ -47,22 +46,22 @@ export function ProgressoCell({ prova }: { prova: ContagensDaProva }) {
         aria-hidden="true"
         className={cn(
           "flex h-1.5 min-w-0 flex-1 overflow-hidden rounded-full",
-          dashV2.progress.track,
+          "bg-muted",
         )}
       >
         <div
           data-faixa="validadas"
           style={{ width: `${faixas.pctValidadas}%` }}
-          className={dashV2.progress.done}
+          className="bg-success"
         />
         <div
           data-faixa="pendentes"
           style={{ width: `${faixas.pctPendentes}%` }}
-          className={dashV2.progress.pending}
+          className="bg-cta/40"
         />
       </div>
       <span
-        className={cn("shrink-0 whitespace-nowrap text-caption tabular-nums", dashV2.text.secondary)}
+        className={cn("shrink-0 whitespace-nowrap text-caption tabular-nums", "text-muted-foreground")}
       >
         {prova.totalQuestaoValidadas ?? 0}/{prova.totalQuestao ?? 0}
       </span>

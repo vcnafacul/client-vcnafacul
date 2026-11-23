@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import type { FaixaDoHistograma } from "./distribuicao";
 import { DicaRapida } from "./DicaRapida";
@@ -61,7 +60,7 @@ export function HistogramaDaTurma({
           className="flex h-full flex-1 items-end"
         >
           <span
-            className={cn("w-full rounded-sm", dashV2.progress.done)}
+            className={cn("w-full rounded-sm", "bg-success")}
             /*
               ⚠️ Altura mínima visível para balde NÃO vazio: uma barra de 1 em
               30 daria 3% e sumiria, e "ninguém nessa faixa" é diferente de

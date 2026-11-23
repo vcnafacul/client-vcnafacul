@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 
 const getTodasAsGeolocalizacoes = vi.hoisted(() => vi.fn());
 vi.mock("../../services/geolocation/getAllGeolocation", () => ({
@@ -36,8 +36,53 @@ const geo = (id: string, name: string, over = {}) => ({
   ...over,
 });
 
+beforeAll(() => {
+  globalThis.ResizeObserver ??= class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  };
+  Element.prototype.hasPointerCapture ??= () => false;
+  Element.prototype.scrollIntoView ??= () => {};
+});
+
+/** O `sm` do projeto é 768px; o jsdom não tem `matchMedia`. */
+function larguraDeTela(acimaDeSm: boolean) {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    configurable: true,
+    value: (query: string) => ({
+      media: query,
+      matches: query === "(min-width: 768px)" ? acimaDeSm : !acimaDeSm,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+}
+
+/** Select do Radix (poucas opções): abre pelo teclado, como no `options-select.test`. */
+function escolherNoSelect(rotulo: string, opcao: string) {
+  fireEvent.keyDown(screen.getByRole("combobox", { name: rotulo }), {
+    key: "Enter",
+  });
+  fireEvent.click(screen.getByRole("option", { name: opcao }));
+}
+
+/** Combobox (lista longa, como os estados): abre no clique. */
+function escolherNoCombobox(rotulo: string, opcao: string) {
+  fireEvent.click(screen.getByRole("combobox", { name: rotulo }));
+  fireEvent.click(screen.getByText(opcao));
+}
+
 describe("DashGeo (V2)", () => {
-  beforeEach(() => getTodasAsGeolocalizacoes.mockReset());
+  beforeEach(() => {
+    getTodasAsGeolocalizacoes.mockReset();
+    larguraDeTela(true);
+  });
 
   it("lista com nome, status e o selo de relatos", async () => {
     getTodasAsGeolocalizacoes.mockResolvedValue([
@@ -54,12 +99,10 @@ describe("DashGeo (V2)", () => {
     getTodasAsGeolocalizacoes.mockResolvedValue([geo("1", "Cursinho A")]);
     render(<DashGeo />);
     await screen.findByText("Cursinho A");
-    fireEvent.change(screen.getByLabelText("Buscar"), {
+    fireEvent.change(screen.getByLabelText("Nome, sigla ou campus"), {
       target: { value: "semear" },
     });
-    fireEvent.change(screen.getByLabelText("Estado"), {
-      target: { value: "SP" },
-    });
+    escolherNoCombobox("Estado", "São Paulo");
     fireEvent.click(screen.getByLabelText("Endereço"));
     await waitFor(() =>
       expect(getTodasAsGeolocalizacoes).toHaveBeenLastCalledWith(
@@ -79,41 +122,57 @@ describe("DashGeo (V2)", () => {
   it("universidade desliga o tipo de cursinho e limpa o que estava escolhido", async () => {
     getTodasAsGeolocalizacoes.mockResolvedValue([]);
     render(<DashGeo />);
-    fireEvent.change(await screen.findByLabelText("Tipo de cursinho"), {
-      target: { value: "Gratuito" },
-    });
-    fireEvent.change(screen.getByLabelText("Tipo"), { target: { value: "1" } });
-    const categoria = screen.getByLabelText("Tipo de cursinho");
+    await screen.findByRole("combobox", { name: "Tipo de cursinho" });
+    escolherNoSelect("Tipo de cursinho", "Gratuito");
+    expect(
+      screen.getByRole("combobox", { name: "Tipo de cursinho" }),
+    ).toHaveTextContent("Gratuito");
+    escolherNoSelect("Tipo", "Universidade");
+    const categoria = screen.getByRole("combobox", { name: "Tipo de cursinho" });
     expect(categoria).toBeDisabled();
-    expect(categoria).toHaveValue("");
+    expect(categoria).toHaveTextContent("Todos");
   });
 
   it("no celular, 'Mais filtros' mostra quantos filtros estão escondidos", async () => {
     getTodasAsGeolocalizacoes.mockResolvedValue([]);
+    larguraDeTela(false);
     render(<DashGeo />);
-    fireEvent.change(await screen.findByLabelText("Estado"), {
-      target: { value: "SP" },
-    });
-    const botao = screen.getByRole("button", { name: "Mais filtros (1)" });
-    expect(botao).toHaveAttribute("aria-expanded", "false");
+    // Recolhido: só a busca está à mostra (D22).
+    const botaoFechado = await screen.findByRole("button", { name: "Mais filtros" });
+    expect(screen.getByLabelText("Nome, sigla ou campus")).toBeInTheDocument();
+    expect(screen.queryByRole("combobox", { name: "Estado" })).toBeNull();
+    fireEvent.click(botaoFechado);
+    escolherNoCombobox("Estado", "São Paulo");
+    const botao = screen.getByRole("button", { name: "Menos filtros (1)" });
+    expect(botao).toHaveAttribute("aria-expanded", "true");
     fireEvent.click(botao);
     expect(
-      screen.getByRole("button", { name: "Menos filtros (1)" }),
-    ).toHaveAttribute("aria-expanded", "true");
+      screen.getByRole("button", { name: "Mais filtros (1)" }),
+    ).toHaveAttribute("aria-expanded", "false");
   });
 
   it("status 'Todos' manda -1", async () => {
     getTodasAsGeolocalizacoes.mockResolvedValue([]);
     render(<DashGeo />);
-    fireEvent.change(await screen.findByLabelText("Status"), {
-      target: { value: "-1" },
-    });
+    await screen.findByRole("combobox", { name: "Status" });
+    escolherNoSelect("Status", "Todos");
     await waitFor(() =>
       expect(getTodasAsGeolocalizacoes).toHaveBeenLastCalledWith(
         "tok",
         expect.objectContaining({ status: -1 }),
       ),
     );
+  });
+
+  it("o título da lista é o h1 da página", async () => {
+    getTodasAsGeolocalizacoes.mockResolvedValue([]);
+    render(<DashGeo />);
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: "Validação Localiza Cursinho",
+      }),
+    ).toBeInTheDocument();
   });
 
   it("erro na carga mostra 'tentar de novo', que recarrega", async () => {

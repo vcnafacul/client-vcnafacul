@@ -1,6 +1,5 @@
 import {
   DashTable,
-  dashV2,
   sortRows,
   type DashColumn,
   type SortState,
@@ -174,7 +173,7 @@ export function TabelaDeComparacao({
   return (
     <section data-comparacao className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center gap-2 px-4 text-body print:hidden">
-        <label className={dashV2.text.secondary}>
+        <label className="text-muted-foreground">
           De{" "}
           <select
             data-seletor-antes
@@ -185,7 +184,7 @@ export function TabelaDeComparacao({
             {opcoes}
           </select>
         </label>
-        <label className={dashV2.text.secondary}>
+        <label className="text-muted-foreground">
           para{" "}
           <select
             data-seletor-depois
@@ -199,13 +198,13 @@ export function TabelaDeComparacao({
       </div>
 
       {antesId === depoisId && (
-        <p data-mesma-aplicacao className={cn("px-4 text-caption", dashV2.text.muted)}>
+        <p data-mesma-aplicacao className={cn("px-4 text-caption", "text-muted-foreground")}>
           {TEXTO_ESCOLHA}
         </p>
       )}
 
       {comparacao !== null && comparacao.linhas.length === 0 && (
-        <p data-sem-intersecao className={cn("px-4 text-caption", dashV2.text.muted)}>
+        <p data-sem-intersecao className={cn("px-4 text-caption", "text-muted-foreground")}>
           {TEXTO_SEM_INTERSECAO}
         </p>
       )}
@@ -217,7 +216,7 @@ export function TabelaDeComparacao({
             sentido a cada linha: sem saber que a turma caiu 10, "−7 p.p." se lê
             como queda.
           */}
-          <p data-resumo className={cn("px-4 text-body", dashV2.text.secondary)}>
+          <p data-resumo className={cn("px-4 text-body", "text-muted-foreground")}>
             {comparacao.linhas.length} estudante(s) fizeram as duas · a turma:{" "}
             <strong>{formatarDelta(comparacao.deltaDaMedia ?? 0)}</strong>
           </p>
@@ -241,7 +240,7 @@ export function TabelaDeComparacao({
         30 parece que perdeu gente.
       */}
       {comparacao !== null && comparacao.foraDaIntersecao > 0 && (
-        <p data-fora className={cn("px-4 text-caption", dashV2.text.muted)}>
+        <p data-fora className={cn("px-4 text-caption", "text-muted-foreground")}>
           {comparacao.foraDaIntersecao} estudante(s) fizeram só uma das duas
           aplicações e não entram na comparação.
         </p>

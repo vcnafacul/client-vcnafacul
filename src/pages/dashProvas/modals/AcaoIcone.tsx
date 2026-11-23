@@ -1,5 +1,4 @@
 import { Spinner } from "@/components/ui/spinner";
-import { dashV2 } from "@/components/dashV2";
 import {
   Tooltip,
   TooltipContent,
@@ -68,15 +67,15 @@ export function AcaoIcone({
           }}
           className={cn(
             "inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors",
-            dashV2.focus,
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             inerte
               ? cn(
-                  dashV2.text.muted,
+                  "text-muted-foreground",
                   "opacity-50",
                   carregando ? "cursor-wait" : "cursor-not-allowed",
                 )
               : cn(
-                  dashV2.text.secondary,
+                  "text-muted-foreground",
                   "hover:bg-page hover:text-foreground",
                 ),
           )}

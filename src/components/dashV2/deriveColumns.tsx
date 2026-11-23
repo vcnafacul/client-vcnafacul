@@ -2,7 +2,7 @@ import type { CardDash } from "@/components/molecules/cardDash";
 import { StatusContent } from "@/enums/content/statusContent";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { StatusBadge } from "./StatusBadge";
-import type { StatusV2 } from "./tokens";
+import type { StatusV2 } from "./StatusBadge";
 import type { DashColumn } from "./types";
 
 /**
@@ -48,7 +48,7 @@ const TONE_POR_STATUS: Partial<Record<number, StatusV2>> = {
 
 /**
  * ⚠️ O rótulo é obrigatório no `StatusBadge` e é ele que carrega o significado —
- * a cor do ponto é reforço. Ver a medição de contraste no `tokens.ts`.
+ * a cor do ponto é reforço. Contraste: ver `src/design-system/contrast.test.ts`.
  */
 const ROTULO_POR_STATUS: Partial<Record<number, string>> = {
   [StatusEnum.Approved]: "Aprovado",

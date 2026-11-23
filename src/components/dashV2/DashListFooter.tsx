@@ -1,7 +1,6 @@
 import { PaginationWrapper } from "@/components/organisms/paginationWrapper";
 import { cn } from "@/lib/utils";
 import { intervaloDaPagina, totalDePaginas } from "./paginacao";
-import { dashV2 } from "./tokens";
 
 export interface DashListFooterProps {
   /** 1-based. */
@@ -52,8 +51,7 @@ export function DashListFooter({
       className={cn(
         "flex flex-wrap items-center justify-between gap-3 border-t px-4 py-2",
         "[&_nav]:mx-0 [&_nav]:my-0 [&_nav]:w-auto",
-        dashV2.surface,
-        dashV2.border,
+        "border-border bg-card",
       )}
     >
       {/*
@@ -63,7 +61,7 @@ export function DashListFooter({
       */}
       <p
         aria-live="polite"
-        className={cn("text-body", dashV2.text.secondary)}
+        className="text-body text-muted-foreground"
       >
         Mostrando {inicio}–{fim} de {total}
       </p>

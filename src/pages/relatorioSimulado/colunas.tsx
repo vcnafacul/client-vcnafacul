@@ -1,4 +1,4 @@
-import { dashV2, StatusBadge, type DashColumn } from "@/components/dashV2";
+import { StatusBadge, type DashColumn } from "@/components/dashV2";
 import type {
   LinhaDoRelatorio,
   MediaPorMateria,
@@ -123,10 +123,10 @@ export function colunasDoRelatorio({
       primary: true,
       cell: (l) => (
         <>
-          <span className={cn("block font-medium", dashV2.text.primary)}>
+          <span className={cn("block font-medium", "text-foreground")}>
             {l.nome}
           </span>
-          <span className={cn("block text-caption", dashV2.text.muted)}>
+          <span className={cn("block text-caption", "text-muted-foreground")}>
             {l.matricula}
             {/*
               tickets/036: quem enviou o cartão e depois cancelou ou teve a
@@ -224,7 +224,7 @@ export function colunasDoRelatorio({
             {l.cartaoCode !== undefined && (
               <span
                 data-cartao
-                className={cn("mt-0.5 block text-caption", dashV2.text.muted)}
+                className={cn("mt-0.5 block text-caption", "text-muted-foreground")}
               >
                 {l.cartaoCode}
               </span>
@@ -251,7 +251,7 @@ export function colunasDoRelatorio({
                 data-motivo
                 className={cn(
                   "mt-0.5 block whitespace-normal text-caption",
-                  dashV2.text.secondary,
+                  "text-muted-foreground",
                 )}
               >
                 {motivo}
@@ -346,7 +346,7 @@ export function colunasDoRelatorio({
               {desvio !== null && (
                 <span
                   data-desvio
-                  className={cn("block text-caption", dashV2.text.muted)}
+                  className={cn("block text-caption", "text-muted-foreground")}
                 >
                   {desvio}
                 </span>
@@ -358,10 +358,10 @@ export function colunasDoRelatorio({
 
         return (
           <>
-            <span className={cn("block font-medium", dashV2.text.primary)}>
+            <span className={cn("block font-medium", "text-foreground")}>
               {par}
             </span>
-            <span className={cn("block text-caption", dashV2.text.muted)}>
+            <span className={cn("block text-caption", "text-muted-foreground")}>
               {percentual}
               {desvio !== null && <span data-desvio> · {desvio}</span>}
             </span>

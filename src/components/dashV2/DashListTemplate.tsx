@@ -1,11 +1,11 @@
 import { Inbox } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { FiltroSelect } from "@/components/dashV2/FiltroSelect";
+import { Button } from "@/components/ui/button";
 import {
   useDashCardContext,
   type DashCardContextProps,
 } from "@/context/dashCardContext";
-import { cn } from "@/lib/utils";
 import { DashFilterBar } from "./DashFilterBar";
 import { DashListFooter } from "./DashListFooter";
 import { DashTable } from "./DashTable";
@@ -14,7 +14,6 @@ import { deriveActions } from "./deriveActions";
 import { deriveColumns } from "./deriveColumns";
 import { subtituloDaContagem, totalDePaginas } from "./paginacao";
 import { sortRows } from "./sortRows";
-import { dashV2 } from "./tokens";
 import type { DashAction, DashColumn, SortState } from "./types";
 
 /**
@@ -124,27 +123,24 @@ function VazioDaLista({
       data-testid="dash-list-vazio"
       className="flex flex-col items-center gap-2 px-4 py-10 text-center"
     >
-      <Inbox aria-hidden="true" className={cn("h-8 w-8", dashV2.text.muted)} />
-      <p className={cn("text-body font-medium", dashV2.text.primary)}>
+      <Inbox aria-hidden="true" className="h-8 w-8 text-muted-foreground" />
+      <p className="text-body font-medium text-foreground">
         {comFiltro ? TEXTO_VAZIO_COM_FILTRO : textoSemFiltro}
       </p>
       {comFiltro ? (
         <>
-          <p className={cn("text-caption", dashV2.text.secondary)}>
+          <p className="text-caption text-muted-foreground">
             {DICA_VAZIO_COM_FILTRO}
           </p>
           {onClearFilters ? (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={onClearFilters}
-              className={cn(
-                "rounded-sm text-body font-medium underline-offset-2 hover:underline",
-                dashV2.text.primary,
-                dashV2.focus,
-              )}
+              className="text-foreground"
             >
               {TEXTO_LIMPAR_FILTROS}
-            </button>
+            </Button>
           ) : null}
         </>
       ) : null}
@@ -336,7 +332,7 @@ export function DashListTemplate<T>({
   const totalDeRegistros = entities.length;
 
   return (
-    <div className={cn("min-h-[calc(100vh-theme(spacing.header))]", dashV2.page)}>
+    <div className="min-h-[calc(100vh-theme(spacing.header))] bg-page">
       <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
         {/*
           ⚠️ Toolbar e filtros num bloco só. As duas peças trazem `border-b`
@@ -345,11 +341,7 @@ export function DashListTemplate<T>({
           contra a borda do bloco.
         */}
         <div
-          className={cn(
-            "overflow-hidden rounded-md border [&>:last-child]:border-b-0",
-            dashV2.surface,
-            dashV2.border,
-          )}
+          className="overflow-hidden rounded-md border border-border bg-card [&>:last-child]:border-b-0"
         >
           <DashToolbar
             title={title}
@@ -372,7 +364,7 @@ export function DashListTemplate<T>({
                 <FiltroSelect
                   key={indice}
                   {...select}
-                  className="max-w-[12rem]"
+                  className="sm:max-w-[12rem]"
                   setState={(valor) => {
                     voltarParaPrimeiraPagina();
                     select.setState(valor);
@@ -394,7 +386,7 @@ export function DashListTemplate<T>({
           deixaria de grudar em silêncio. O bloco já é branco, então a tabela
           encostar nos cantos arredondados não aparece.
         */}
-        <div className={cn("rounded-md border", dashV2.surface, dashV2.border)}>
+        <div className="rounded-md border border-border bg-card">
           <DashTable<T>
             rows={linhasDaPagina}
             columns={colunas}

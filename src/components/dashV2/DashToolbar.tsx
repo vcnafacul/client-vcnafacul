@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { controlRing } from "@/components/ui/input";
 import {
   Popover,
   PopoverContent,
@@ -10,7 +12,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { dashV2 } from "./tokens";
 import { useAcimaDeSm } from "./useAcimaDeSm";
 import type { DashAction, DashToolbarProps } from "./types";
 
@@ -21,35 +22,40 @@ import type { DashAction, DashToolbarProps } from "./types";
  */
 export const MAX_SECUNDARIAS_NA_BARRA = 3;
 
-const BASE_BOTAO =
-  "inline-flex h-9 shrink-0 items-center justify-center gap-2 rounded-md px-3 text-body font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40";
-
 type Variante = "primary" | "secondary" | "menu";
 
-function corDaAcao(acao: DashAction, variante: Variante): string {
+/**
+ * ⚠️ No máximo um `cta` por tela — a ação que cria o registro dali. No menu o
+ * destrutivo é só texto vermelho (hover a 10%): `destructive` preenchido numa
+ * linha de menu vira um bloco de largura inteira. O rótulo nunca é só a cor.
+ */
+function propsDoBotao(acao: DashAction, variante: Variante) {
   if (variante === "menu") {
-    // ⚠️ Papéis próprios, e não `action.destructive`: vermelho preenchido numa
-    // linha de menu vira um bloco de largura inteira. Ver o comentário dos dois
-    // no `tokens.ts`.
-    return acao.destructive ? dashV2.action.destructiveGhost : dashV2.action.menuItem;
+    return {
+      variant: "ghost" as const,
+      className: cn(
+        "w-full justify-start px-2 text-left",
+        acao.destructive && "text-destructive hover:bg-destructive/10 hover:text-destructive",
+      ),
+    };
   }
-  if (acao.destructive) return dashV2.action.destructive;
-  return variante === "primary" ? dashV2.action.primary : dashV2.action.secondary;
+  if (acao.destructive) return { variant: "destructive" as const, className: undefined };
+  return {
+    variant: variante === "primary" ? ("cta" as const) : ("outline" as const),
+    className: undefined,
+  };
 }
 
 function Botao({ acao, variante }: { acao: DashAction; variante: Variante }) {
+  const { variant, className } = propsDoBotao(acao, variante);
   const botao = (
-    <button
+    <Button
       type="button"
+      variant={variant}
       data-action-id={acao.id}
       onClick={acao.onClick}
       disabled={acao.disabled}
-      className={cn(
-        BASE_BOTAO,
-        variante === "menu" && "h-9 w-full justify-start px-2 text-left",
-        dashV2.focus,
-        corDaAcao(acao, variante),
-      )}
+      className={className}
     >
       {acao.icon ? (
         <span aria-hidden="true" className="inline-flex shrink-0">
@@ -57,7 +63,7 @@ function Botao({ acao, variante }: { acao: DashAction; variante: Variante }) {
         </span>
       ) : null}
       {acao.label}
-    </button>
+    </Button>
   );
 
   if (!acao.disabled || !acao.disabledReason) return botao;
@@ -72,7 +78,7 @@ function Botao({ acao, variante }: { acao: DashAction; variante: Variante }) {
   return (
     <Tooltip delayDuration={200}>
       <TooltipTrigger asChild>
-        <span tabIndex={0} className={cn("inline-flex rounded-md", dashV2.focus)}>
+        <span tabIndex={0} className={cn("inline-flex rounded-md", controlRing)}>
           {botao}
         </span>
       </TooltipTrigger>
@@ -85,18 +91,11 @@ function MenuOverflow({ acoes }: { acoes: DashAction[] }) {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label="Mais ações"
-          className={cn(
-            BASE_BOTAO,
-            "w-9 px-0 text-h3",
-            dashV2.focus,
-            dashV2.action.secondary,
-          )}
-        >
-          <span aria-hidden="true">⋯</span>
-        </button>
+        <Button type="button" variant="outline" size="icon" aria-label="Mais ações">
+          <span aria-hidden="true" className="text-h3 leading-none">
+            ⋯
+          </span>
+        </Button>
       </PopoverTrigger>
       {/*
         ⚠️ São botões dentro de um popover, navegáveis por Tab — e nada de
@@ -105,7 +104,7 @@ function MenuOverflow({ acoes }: { acoes: DashAction[] }) {
         nenhuma. (`@radix-ui/react-dropdown-menu` não está no projeto e não
         vamos instalar por causa de um `⋯`.)
       */}
-      <PopoverContent align="end" className={cn("w-56 p-1", dashV2.surface, dashV2.border)}>
+      <PopoverContent align="end" className="w-56 p-1">
         <div className="flex flex-col gap-0.5">
           {acoes.map((acao) => (
             <Botao key={acao.id} acao={acao} variante="menu" />
@@ -140,20 +139,15 @@ export function DashToolbar({
     <TooltipProvider delayDuration={200}>
       <div
         data-testid="dash-toolbar"
-        className={cn(
-          "flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3",
-          dashV2.surface,
-          dashV2.border,
-        )}
+        className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card px-4 py-3"
       >
         <div className="flex min-w-0 items-center gap-2">
           {backButton}
           <div className="min-w-0">
-            <h2 className={cn("truncate text-h3 font-semibold", dashV2.text.primary)}>
-              {title}
-            </h2>
+            {/* O título da lista é o h1 da página (um por página, tickets/059 §6). */}
+            <h1 className="truncate text-h3 font-semibold text-foreground">{title}</h1>
             {subtitle ? (
-              <div className={cn("truncate text-body", dashV2.text.secondary)}>{subtitle}</div>
+              <div className="truncate text-body text-muted-foreground">{subtitle}</div>
             ) : null}
           </div>
         </div>

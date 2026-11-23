@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { DASH, PARTNER_CLASS, PARTNER_PROVAS } from "@/routes/path";
 import { Roles } from "@/enums/roles/roles";
@@ -123,8 +122,8 @@ function RelatorioSimulado({
             onClick={voltar}
             className={cn(
               "inline-flex w-fit items-center gap-2 text-body print:hidden",
-              dashV2.text.secondary,
-              dashV2.focus,
+              "text-muted-foreground",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
             )}
           >
             <ArrowLeft className="h-4 w-4" />

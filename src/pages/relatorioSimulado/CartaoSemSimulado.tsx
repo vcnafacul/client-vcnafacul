@@ -5,7 +5,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { dashV2 } from "@/components/dashV2";
 import type { LinhaDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { AcaoDeReenvio } from "./AcaoDeReenvio";
@@ -48,12 +47,12 @@ export function CartaoSemSimulado({
               <DialogTitle
                 className={cn(
                   "truncate pr-0 text-h3 font-semibold",
-                  dashV2.text.primary,
+                  "text-foreground",
                 )}
               >
                 {linha.nome}
               </DialogTitle>
-              <p className={cn("text-caption", dashV2.text.muted)}>
+              <p className={cn("text-caption", "text-muted-foreground")}>
                 {linha.matricula}
               </p>
             </div>
@@ -73,7 +72,7 @@ export function CartaoSemSimulado({
         </DialogHeader>
         <DialogBody className="flex flex-col gap-4">
         <p
-          className={cn("text-body", dashV2.text.secondary)}
+          className={cn("text-body", "text-muted-foreground")}
           data-testid="cartao-sem-simulado"
         >
           {falhou

@@ -3,7 +3,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DashTable } from "./DashTable";
 import { LINHAS_SKELETON, TEXTO_TENTAR_DE_NOVO, TEXTO_VAZIO } from "./DashTableEmpty";
 import { StatusBadge } from "./StatusBadge";
-import { dashV2 } from "./tokens";
 import type { DashColumn } from "./types";
 
 /**
@@ -278,12 +277,12 @@ describe("DashTable — linhas", () => {
   it("a densidade sai dos tokens do 02", () => {
     const { container, rerender } = montar({ density: "compact" });
     expect((container.querySelector("[data-row-key]") as HTMLElement).className).toContain(
-      dashV2.row.compact,
+      "h-8",
     );
 
     rerender(<DashTable rows={LINHAS} columns={COLUNAS} rowKey={(r) => r.id} density="base" />);
     expect((container.querySelector("[data-row-key]") as HTMLElement).className).toContain(
-      dashV2.row.base,
+      "h-10",
     );
   });
 

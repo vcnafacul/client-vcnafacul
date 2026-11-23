@@ -1,9 +1,29 @@
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DashFilterBar } from "./DashFilterBar";
-import { dashV2 } from "./tokens";
 
-beforeEach(() => vi.useFakeTimers());
+/** O `sm` do projeto é 768px; o jsdom não tem `matchMedia`, então a largura é injetada. */
+function larguraDeTela(acimaDeSm: boolean) {
+  Object.defineProperty(window, "matchMedia", {
+    writable: true,
+    configurable: true,
+    value: (query: string) => ({
+      media: query,
+      matches: query === "(min-width: 768px)" ? acimaDeSm : !acimaDeSm,
+      onchange: null,
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      addListener: () => {},
+      removeListener: () => {},
+      dispatchEvent: () => false,
+    }),
+  });
+}
+
+beforeEach(() => {
+  vi.useFakeTimers();
+  larguraDeTela(true);
+});
 afterEach(() => vi.useRealTimers());
 
 function digitar(campo: HTMLElement, texto: string) {
@@ -11,13 +31,13 @@ function digitar(campo: HTMLElement, texto: string) {
 }
 
 describe("DashFilterBar — busca com debounce", () => {
-  it("não dispara onChange antes dos 250ms", () => {
+  it("não dispara onChange antes dos 400ms", () => {
     const onChange = vi.fn();
     render(<DashFilterBar search={{ value: "", onChange, placeholder: "Buscar prova" }} />);
     const campo = screen.getByLabelText("Buscar prova");
 
     digitar(campo, "e");
-    act(() => void vi.advanceTimersByTime(249));
+    act(() => void vi.advanceTimersByTime(399));
 
     expect(onChange).not.toHaveBeenCalled();
   });
@@ -34,13 +54,13 @@ describe("DashFilterBar — busca com debounce", () => {
     digitar(campo, "en");
     act(() => void vi.advanceTimersByTime(50));
     digitar(campo, "ene");
-    act(() => void vi.advanceTimersByTime(250));
+    act(() => void vi.advanceTimersByTime(400));
 
     expect(onChange).toHaveBeenCalledTimes(1);
     expect(onChange).toHaveBeenCalledWith("ene");
   });
 
-  it("digitação em rajada nunca passa de uma chamada por 250ms", () => {
+  it("digitação em rajada nunca passa de uma chamada por 400ms", () => {
     const onChange = vi.fn();
     render(<DashFilterBar search={{ value: "", onChange }} />);
     const campo = screen.getByLabelText("Buscar");
@@ -50,7 +70,7 @@ describe("DashFilterBar — busca com debounce", () => {
       digitar(campo, "a".repeat(i));
       act(() => void vi.advanceTimersByTime(20));
     }
-    act(() => void vi.advanceTimersByTime(250));
+    act(() => void vi.advanceTimersByTime(400));
 
     expect(onChange).toHaveBeenCalledTimes(1);
   });
@@ -105,9 +125,91 @@ describe("DashFilterBar — limpar filtros", () => {
     render(<DashFilterBar activeCount={2} onClear={vi.fn()} />);
     const link = screen.getByRole("button", { name: "Limpar filtros (2)" });
 
-    expect(link.className).toContain(dashV2.text.primary);
+    expect(link.className).toContain("text-foreground");
     expect(link.className).toContain("hover:underline");
     expect(link.className).not.toMatch(/bg-red|text-red/);
+  });
+});
+
+describe("DashFilterBar — D22: filtros recolhidos abaixo de 768", () => {
+  const filtros = (
+    <>
+      <select aria-label="Ano">
+        <option>2024</option>
+      </select>
+      <select aria-label="Status">
+        <option>Todos</option>
+      </select>
+    </>
+  );
+
+  it("abaixo de 768 só a busca aparece, e 'Mais filtros (2)' revela os outros campos", () => {
+    larguraDeTela(false);
+    render(
+      <DashFilterBar search={{ value: "", onChange: vi.fn() }} activeCount={2}>
+        {filtros}
+      </DashFilterBar>,
+    );
+
+    expect(screen.getByRole("searchbox")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Ano")).toBeNull();
+    expect(screen.queryByLabelText("Status")).toBeNull();
+
+    const botao = screen.getByRole("button", { name: "Mais filtros (2)" });
+    expect(botao).toHaveAttribute("aria-expanded", "false");
+    fireEvent.click(botao);
+
+    expect(screen.getByLabelText("Ano")).toBeInTheDocument();
+    expect(screen.getByLabelText("Status")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Menos filtros (2)" })).toHaveAttribute(
+      "aria-expanded",
+      "true",
+    );
+  });
+
+  it("a busca ativa não entra na conta do botão (ela já está na tela)", () => {
+    larguraDeTela(false);
+    render(
+      <DashFilterBar search={{ value: "ene", onChange: vi.fn() }} activeCount={3}>
+        {filtros}
+      </DashFilterBar>,
+    );
+    expect(screen.getByRole("button", { name: "Mais filtros (2)" })).toBeInTheDocument();
+  });
+
+  it("sem filtro ativo o botão é só 'Mais filtros'", () => {
+    larguraDeTela(false);
+    render(
+      <DashFilterBar search={{ value: "", onChange: vi.fn() }}>{filtros}</DashFilterBar>,
+    );
+    expect(screen.getByRole("button", { name: "Mais filtros" })).toBeInTheDocument();
+  });
+
+  it("sem filtros além da busca não há botão", () => {
+    larguraDeTela(false);
+    render(<DashFilterBar search={{ value: "", onChange: vi.fn() }} />);
+    expect(screen.queryByRole("button", { name: /Mais filtros/ })).toBeNull();
+  });
+
+  it("a partir de 768 os campos ficam na linha e não há botão", () => {
+    larguraDeTela(true);
+    render(
+      <DashFilterBar search={{ value: "", onChange: vi.fn() }} activeCount={2}>
+        {filtros}
+      </DashFilterBar>,
+    );
+    expect(screen.getByLabelText("Ano")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: /Mais filtros/ })).toBeNull();
+  });
+
+  it("'Limpar filtros' continua à mostra com os filtros recolhidos", () => {
+    larguraDeTela(false);
+    render(
+      <DashFilterBar search={{ value: "", onChange: vi.fn() }} activeCount={2} onClear={vi.fn()}>
+        {filtros}
+      </DashFilterBar>,
+    );
+    expect(screen.getByRole("button", { name: "Limpar filtros (2)" })).toBeInTheDocument();
   });
 });
 
@@ -115,11 +217,12 @@ describe("DashFilterBar — foco e composição", () => {
   it("o campo de busca usa o anel laranja, e nenhum anel azul sobra", () => {
     render(<DashFilterBar search={{ value: "", onChange: vi.fn() }} activeCount={1} onClear={vi.fn()} />);
 
-    for (const el of [
-      screen.getByLabelText("Buscar"),
-      screen.getByRole("button", { name: "Limpar filtros (1)" }),
-    ]) {
-      expect(el.className).toContain("focus-visible:ring-ring");
+    // O campo com ícone leva o anel na casca (`has-[input:focus-visible]`).
+    const casca = screen.getByLabelText("Buscar").parentElement!;
+    expect(casca.className).toContain("has-[input:focus-visible]:ring-ring");
+    const limpar = screen.getByRole("button", { name: "Limpar filtros (1)" });
+    expect(limpar.className).toContain("focus-visible:ring-ring");
+    for (const el of [casca, limpar]) {
       expect(el.className).not.toMatch(/ring-blue|focus:ring-blue|outline-blue/);
     }
   });

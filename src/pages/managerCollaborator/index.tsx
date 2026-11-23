@@ -22,8 +22,6 @@ import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import type { CardDash } from "@/components/molecules/cardDash";
 import { DashCardContext } from "@/context/dashCardContext";
 import { StatusEnum } from "@/enums/generic/statusEnum";
-import { cn } from "@/lib/utils";
-import { dashV2 } from "@/components/dashV2/tokens";
 import { colunasDeColaborador } from "./columns";
 import ModalEditRole from "./modals/ModalEditRole";
 import ModalNewRole from "./modals/ModalNewRole";
@@ -523,16 +521,10 @@ export default function ManagerCollaborator() {
   // Ex-membros: a mesma moldura do Dash V2, sem a tabela de colaboradores.
   if (aba === "ex-membros") {
     return (
-      <div className={cn("min-h-[calc(100vh-theme(spacing.header))]", dashV2.page)}>
+      <div className="min-h-[calc(100vh-theme(spacing.header))] bg-page">
         <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
-          <div
-            className={cn(
-              "rounded-md border px-4 py-3",
-              dashV2.surface,
-              dashV2.border,
-            )}
-          >
-            <h1 className={cn("text-h3 font-semibold", dashV2.text.primary)}>
+          <div className="rounded-md border border-border bg-card px-4 py-3">
+            <h1 className="text-h3 font-semibold text-foreground">
               Colaboradores
             </h1>
           </div>

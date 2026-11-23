@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import { RichTextRenderer } from "@/components/atoms/richTextRenderer/RichTextRenderer";
 import {
   Dialog,
@@ -143,12 +142,12 @@ export function PreviewDaQuestao({
       {/* tickets/059 D21: era max-w-3xl (768px), então `lg`. Só leitura: clicar fora fecha. */}
       <DialogContent size="lg" aria-describedby={undefined}>
         <DialogHeader>
-          <DialogTitle className={cn("font-semibold", dashV2.text.primary)}>
+          <DialogTitle className={cn("font-semibold", "text-foreground")}>
             {questao.numero === null
               ? "Questão sem número"
               : `Questão ${questao.numero}`}
           </DialogTitle>
-          <p className={cn("text-caption", dashV2.text.secondary)}>
+          <p className={cn("text-caption", "text-muted-foreground")}>
             {questao.respondentes} respondente(s) neste recorte
           </p>
         </DialogHeader>
@@ -165,15 +164,15 @@ export function PreviewDaQuestao({
 
         {estado === "error" && (
           <div className="flex flex-col items-start gap-2">
-            <p className={cn("text-body", dashV2.text.primary)}>{TEXTO_ERRO}</p>
+            <p className={cn("text-body", "text-foreground")}>{TEXTO_ERRO}</p>
             <button
               type="button"
               onClick={carregar}
               className={cn(
                 "rounded-md border px-3 py-1.5 text-body",
-                dashV2.border,
-                dashV2.text.secondary,
-                dashV2.focus,
+                "border-border",
+                "text-muted-foreground",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               )}
             >
               Tentar de novo
@@ -195,7 +194,7 @@ export function PreviewDaQuestao({
             )}
 
             {semAlternativasEmTexto ? (
-              <p className={cn("text-body", dashV2.text.secondary)}>
+              <p className={cn("text-body", "text-muted-foreground")}>
                 {TEXTO_SEM_ALTERNATIVAS}
               </p>
             ) : (
@@ -211,13 +210,13 @@ export function PreviewDaQuestao({
                         "flex items-start gap-3 rounded-md border px-3 py-2",
                         correta
                           ? "border-success bg-success-muted"
-                          : cn(dashV2.border, dashV2.surface),
+                          : cn("border-border", "bg-card"),
                       )}
                     >
                       <span
                         className={cn(
                           "font-semibold",
-                          correta ? "text-success" : dashV2.text.primary,
+                          correta ? "text-success" : "text-foreground",
                         )}
                       >
                         {letra}
@@ -238,7 +237,7 @@ export function PreviewDaQuestao({
                         data-testid={`preview-pct-${letra}`}
                         className={cn(
                           "shrink-0 text-body tabular-nums",
-                          dashV2.text.secondary,
+                          "text-muted-foreground",
                         )}
                       >
                         {formatarPercentual(
@@ -270,7 +269,7 @@ export function PreviewDaQuestao({
               exatamente assim que o texto anterior acabou desmentindo o
               destaque verde que este componente desenha.
             */}
-            <div className={cn("flex flex-col gap-1 text-caption", dashV2.text.muted)}>
+            <div className={cn("flex flex-col gap-1 text-caption", "text-muted-foreground")}>
               <p data-aviso-gabarito>{TEXTO_GABARITO_DA_CORRECAO}</p>
               <p data-aviso-enunciado>
                 {dados.congelada

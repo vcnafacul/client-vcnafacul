@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import type { FalhaHistorico } from "@/dtos/cartaoResposta/resultados";
 import { cn } from "@/lib/utils";
 import { reprocessarCartao } from "@/services/cartaoResposta/reprocessarCartao";
@@ -82,7 +81,7 @@ export function AcaoDeReenvio({
         <label
           className={cn(
             "flex flex-col items-start gap-1 text-body font-medium",
-            dashV2.text.primary,
+            "text-foreground",
           )}
         >
           {TEXTO_REENVIAR}
@@ -99,7 +98,7 @@ export function AcaoDeReenvio({
               e.target.value = "";
               if (file) void enviar(file);
             }}
-            className={cn("text-body font-normal", dashV2.text.secondary)}
+            className={cn("text-body font-normal", "text-muted-foreground")}
           />
         </label>
       )}
@@ -111,8 +110,8 @@ export function AcaoDeReenvio({
           onClick={() => void enviar()}
           className={cn(
             "rounded-sm text-body font-medium underline-offset-2 hover:underline disabled:no-underline disabled:opacity-60",
-            dashV2.text.primary,
-            dashV2.focus,
+            "text-foreground",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
           )}
         >
           {enviando ? TEXTO_ENVIANDO : TEXTO_REPROCESSAR}
@@ -120,11 +119,11 @@ export function AcaoDeReenvio({
       )}
 
       {pedeFoto && enviando && (
-        <p className={cn("text-body", dashV2.text.secondary)}>{TEXTO_ENVIANDO}</p>
+        <p className={cn("text-body", "text-muted-foreground")}>{TEXTO_ENVIANDO}</p>
       )}
 
       {erro && (
-        <p className={cn("text-body", dashV2.text.secondary)} role="alert">
+        <p className={cn("text-body", "text-muted-foreground")} role="alert">
           {erro}
         </p>
       )}

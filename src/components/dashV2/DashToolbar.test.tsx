@@ -9,7 +9,6 @@ import {
   vi,
 } from "vitest";
 import { DashToolbar, MAX_SECUNDARIAS_NA_BARRA } from "./DashToolbar";
-import { dashV2 } from "./tokens";
 import type { DashAction } from "./types";
 
 beforeAll(() => {
@@ -118,9 +117,9 @@ describe("DashToolbar — hierarquia", () => {
 
   it("título e subtítulo, com o subtítulo em darkGrey", () => {
     render(<DashToolbar title="Provas" subtitle="128 provas" />);
-    expect(screen.getByRole("heading", { name: "Provas" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1, name: "Provas" })).toBeInTheDocument();
     expect(screen.getByText("128 provas").className).toContain(
-      dashV2.text.secondary,
+      "text-muted-foreground",
     );
   });
 
@@ -205,14 +204,13 @@ describe("DashToolbar — colapso automático", () => {
     fireEvent.click(within(menu).getByRole("button", { name: "quatro" }));
     expect(quatro.onClick).toHaveBeenCalledTimes(1);
 
-    // ⚠️ Os itens do menu usam os papéis do `02` (`menuItem` e
-    // `destructiveGhost`), não cor escrita à mão aqui dentro — a catraca de
-    // paleta do `tokens.test.ts` só guarda o arquivo de tokens.
+    // ⚠️ Item de menu é `ghost`; o destrutivo é só texto vermelho, nunca o
+    // bloco `destructive` preenchido de largura inteira.
     expect(
       within(menu).getByRole("button", { name: "arquivar" }).className,
-    ).toContain(dashV2.action.menuItem);
+    ).toContain("text-foreground");
     const destrutivo = within(menu).getByRole("button", { name: "excluir" });
-    expect(destrutivo.className).toContain(dashV2.action.destructiveGhost);
+    expect(destrutivo.className).toContain("text-destructive hover:bg-destructive/10");
     expect(destrutivo.className.split(/\s+/)).not.toContain("bg-red");
   });
 });
@@ -343,7 +341,7 @@ describe("DashToolbar — comportamento dos botões", () => {
     );
     const botao = screen.getByRole("button", { name: "Excluir" });
 
-    expect(botao.className).toContain(dashV2.action.destructive);
+    expect(botao.className).toContain("bg-destructive text-destructive-foreground");
     expect(botao.className.split(/\s+/)).not.toContain("bg-cta");
   });
 

@@ -205,6 +205,13 @@ function DashGeo() {
         cardTransformation,
         limitCards,
         totalItems: geolocations.length,
+        // A busca do DashFilterBar: a que sobra à mostra no celular (tickets/059 D22).
+        filterProps: {
+          placeholder: "Nome, sigla ou campus",
+          defaultValue: filtros.texto,
+          filtrar: (e) =>
+            setFiltros((atual) => ({ ...atual, texto: e.target.value })),
+        },
       }}
     >
       <DashListTemplate<Geolocation>

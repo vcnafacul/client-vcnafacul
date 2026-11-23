@@ -1,4 +1,3 @@
-import { dashV2 } from "@/components/dashV2";
 import type { LinhaDoRelatorio } from "@/dtos/relatorioSimulado/relatorioSimulado";
 import { cn } from "@/lib/utils";
 import { AlertTriangle } from "lucide-react";
@@ -111,7 +110,7 @@ export function AlertaDeLeitura({
                 onClick={() => aoAbrirCartao(c.linha)}
                 className={cn(
                   "rounded-sm underline underline-offset-2",
-                  dashV2.focus,
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
                 )}
               >
                 {c.linha.nome}
