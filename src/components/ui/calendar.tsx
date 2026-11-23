@@ -1,5 +1,5 @@
 import * as React from "react"
-import { ChevronLeft, ChevronRight } from "lucide-react"
+import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react"
 import { DayPicker } from "react-day-picker"
 import { ptBR } from "date-fns/locale/pt-BR"
 
@@ -18,6 +18,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
       labels={{
         labelPrevious: () => "Mês anterior",
         labelNext: () => "Próximo mês",
+        labelMonthDropdown: () => "Mês",
+        labelYearDropdown: () => "Ano",
       }}
       classNames={{
         root: "w-fit text-body",
@@ -25,6 +27,10 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         month: "grid gap-2",
         month_caption: "flex h-9 items-center justify-center",
         caption_label: "text-label capitalize",
+        dropdowns: "relative inline-flex h-9 items-center justify-center gap-1.5",
+        dropdown_root:
+          "relative inline-flex h-11 items-center rounded-md border border-input has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ring sm:h-9 [&>span]:flex [&>span]:items-center [&>span]:gap-1 [&>span]:pl-2 [&>span]:pr-1",
+        dropdown: "absolute inset-0 cursor-pointer opacity-0",
         nav: "absolute inset-x-0 top-0 flex h-9 items-center justify-between",
         button_previous:
           "inline-flex h-11 w-11 items-center justify-center rounded-md text-foreground hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring sm:h-9 sm:w-9",
@@ -54,6 +60,8 @@ function Calendar({ className, classNames, showOutsideDays = true, ...props }: C
         Chevron: ({ orientation, className: cls }) =>
           orientation === "left" ? (
             <ChevronLeft className={cn("size-4", cls)} aria-hidden="true" />
+          ) : orientation === "down" ? (
+            <ChevronDown className={cn("size-4", cls)} aria-hidden="true" />
           ) : (
             <ChevronRight className={cn("size-4", cls)} aria-hidden="true" />
           ),

@@ -13,10 +13,11 @@ import { getSummaryByStudent } from "@/services/prepCourse/attendanceRecord/getS
 import { getAlertaEvasao } from "@/services/prepCourse/alertaEvasao";
 import { useAuthStore } from "@/store/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Calendar } from "primereact/calendar";
+import { Field } from "@/components/ui/field";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { paraIntervalo, paraPar } from "@/lib/datasBr";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
-import { CalendarIcon } from "lucide-react";
 import * as yup from "yup";
 import { summaryByDate } from "../summary/summaryByDate";
 import { summaryByStudent } from "../summary/summaryByStudent";
@@ -262,57 +263,30 @@ export default function AttendanceRecordSummaryModal({
               </p>
             )}
           </div>
-          <div className="space-y-2">
-            <label
-              htmlFor="range"
-              className="block text-body font-medium text-foreground"
-            >
-              Selecione o intervalo
-            </label>
-
-            <div className="relative">
-              <CalendarIcon
-                size="1em"
-                className="absolute top-1.5 left-3 text-muted-foreground pointer-events-none"
-              />
-              <Controller
-                name="range"
-                control={control}
-                defaultValue={[start, end]}
-                render={({ field }) => (
-                  <Calendar
-                    appendTo="self"
-                    inputId="range"
-                    dateFormat="dd/mm/yy"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.value)}
-                    selectionMode="range"
-                    readOnlyInput
-                    hideOnRangeSelection
-                    viewDate={new Date()}
-                    className="w-full pl-10 rounded-md border border-border focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    minDate={
-                      coursePeriodStart
-                        ? new Date(coursePeriodStart)
-                        : undefined
-                    }
-                    maxDate={(() => {
-                      const today = new Date();
-                      const periodEnd = coursePeriodEnd
-                        ? new Date(coursePeriodEnd)
-                        : today;
-                      return periodEnd < today ? periodEnd : today;
-                    })()}
-                  />
-                )}
-              />
-            </div>
-            {errors.range && (
-              <p className="text-caption text-destructive font-medium text-wrap max-w-60">
-                {errors.range.message}
-              </p>
+          <Controller
+            name="range"
+            control={control}
+            defaultValue={[start, end]}
+            render={({ field }) => (
+              <Field
+                label="Selecione o intervalo"
+                error={errors.range?.message}
+              >
+                <DateRangePicker
+                  value={paraIntervalo(field.value)}
+                  onChange={(r) => field.onChange(paraPar(r))}
+                  min={coursePeriodStart ? new Date(coursePeriodStart) : undefined}
+                  max={(() => {
+                    const today = new Date();
+                    const periodEnd = coursePeriodEnd
+                      ? new Date(coursePeriodEnd)
+                      : today;
+                    return periodEnd < today ? periodEnd : today;
+                  })()}
+                />
+              </Field>
             )}
-          </div>
+          />
         </form>
 
         <DialogFooter>

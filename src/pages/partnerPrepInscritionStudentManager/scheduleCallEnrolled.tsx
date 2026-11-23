@@ -8,7 +8,9 @@ import {
 } from "@/components/ui/dialog";
 
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Calendar } from "primereact/calendar";
+import { Field } from "@/components/ui/field";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { paraIntervalo, paraPar } from "@/lib/datasBr";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -63,36 +65,18 @@ export function ScheduleCallEnrolle(props: Props) {
           id="form-programar-convocacao"
           onSubmit={handleSubmit(scheduleEnrolled)}
         >
-          <div className="card flex justify-content-center h-16 border pt-4 pl-4 rounded-md relative mb-4  row-start-3 col-start-1">
-            <label
-              className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
-              htmlFor="range"
-            >
-              Inicio - Fim
-            </label>
-            <Controller
-              name="range"
-              control={control}
-              render={({ field }) => (
-                <Calendar
-                  id="range"
-                  dateFormat="dd/mm/yy"
-                  value={field.value}
-                  onChange={(e) => field.onChange(e.value)}
-                  selectionMode="range"
-                  className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 w-full"
-                  readOnlyInput
-                  hideOnRangeSelection
-                  appendTo="self"
+          <Controller
+            name="range"
+            control={control}
+            render={({ field }) => (
+              <Field label="Inicio - Fim" error={errors.range?.message}>
+                <DateRangePicker
+                  value={paraIntervalo(field.value)}
+                  onChange={(r) => field.onChange(paraPar(r))}
                 />
-              )}
-            />
-            {errors.range && (
-              <p className="absolute text-destructive text-caption mt-1 -bottom-5 left-0">
-                {errors.range.message}
-              </p>
+              </Field>
             )}
-          </div>
+          />
         </form>
         <DialogFooter>
           <Button

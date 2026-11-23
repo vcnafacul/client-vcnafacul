@@ -26,51 +26,74 @@ export interface DateRangePickerProps
   value?: DateRange
   onChange: (value: DateRange | undefined) => void
   placeholder?: string
+  /** Datas fora do intervalo ficam desabilitadas. */
+  min?: Date
+  max?: Date
+  /** Injetado pelo `Field`; o gatilho é um `button`, então só `aria-required` vale. */
+  required?: boolean
 }
 
 const DateRangePicker = React.forwardRef<HTMLButtonElement, DateRangePickerProps>(
-  ({ value, onChange, placeholder = "Selecionar período", className, disabled, ...props }, ref) => (
-    <Popover>
-      <PopoverTrigger asChild>
-        <button
-          ref={ref}
-          type="button"
-          disabled={disabled}
-          className={cn(gatilhoDeData, controlRing, className)}
-          {...props}
-        >
-          <CalendarDays aria-hidden="true" />
-          <span className={cn(!value?.from && "text-muted-foreground")}>
-            {rotuloDoPeriodo(value, placeholder)}
-          </span>
-        </button>
-      </PopoverTrigger>
-      <PopoverContent align="start" className="z-popover w-auto p-0">
-        <Calendar
-          mode="range"
-          selected={
-            value?.from
-              ? {
-                  from: paraDiaDoCalendario(value.from),
-                  to: value.to ? paraDiaDoCalendario(value.to) : undefined,
-                }
-              : undefined
-          }
-          defaultMonth={value?.from ? paraDiaDoCalendario(value.from) : undefined}
-          onSelect={(r) =>
-            onChange(
-              r?.from
+  (
+    { value, onChange, placeholder = "Selecionar período", min, max, className, disabled, required: _required, ...props },
+    ref
+  ) => {
+    void _required
+    const [aberto, setAberto] = React.useState(false)
+    return (
+      <Popover open={aberto} onOpenChange={setAberto}>
+        <PopoverTrigger asChild>
+          <button
+            ref={ref}
+            type="button"
+            disabled={disabled}
+            className={cn(gatilhoDeData, controlRing, className)}
+            {...props}
+          >
+            <CalendarDays aria-hidden="true" />
+            <span className={cn(!value?.from && "text-muted-foreground")}>
+              {rotuloDoPeriodo(value, placeholder)}
+            </span>
+          </button>
+        </PopoverTrigger>
+        <PopoverContent align="start" className="z-popover w-auto p-0">
+          <Calendar
+            mode="range"
+            selected={
+              value?.from
                 ? {
-                    from: doDiaDoCalendario(r.from),
-                    to: r.to ? doDiaDoCalendario(r.to) : undefined,
+                    from: paraDiaDoCalendario(value.from),
+                    to: value.to ? paraDiaDoCalendario(value.to) : undefined,
                   }
                 : undefined
-            )
-          }
-        />
-      </PopoverContent>
-    </Popover>
-  )
+            }
+            defaultMonth={value?.from ? paraDiaDoCalendario(value.from) : undefined}
+            // Primeiro toque marca o início; o segundo, no mesmo dia ou depois,
+            // marca o fim e fecha. Um toque antes do início, ou com o período
+            // completo, começa outro. (O `onSelect` do calendário não serve: ele
+            // devolve o período de um dia só já no primeiro toque.)
+            onSelect={(_, dia) => {
+              const escolhido = doDiaDoCalendario(dia)
+              const ordem = (d: Date) => formatarData(d, "yyyy-MM-dd")
+              if (value?.from && !value.to && ordem(escolhido) >= ordem(value.from)) {
+                onChange({
+                  from: doDiaDoCalendario(paraDiaDoCalendario(value.from)),
+                  to: escolhido,
+                })
+                setAberto(false)
+                return
+              }
+              onChange({ from: escolhido, to: undefined })
+            }}
+            disabled={[
+              ...(min ? [{ before: paraDiaDoCalendario(min) }] : []),
+              ...(max ? [{ after: paraDiaDoCalendario(max) }] : []),
+            ]}
+          />
+        </PopoverContent>
+      </Popover>
+    )
+  }
 )
 DateRangePicker.displayName = "DateRangePicker"
 

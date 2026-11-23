@@ -1,4 +1,5 @@
 import { startOfDay } from "date-fns"
+import type { DateRange } from "react-day-picker"
 import { formatInTimeZone, fromZonedTime, toZonedTime } from "date-fns-tz"
 
 // Datas do produto são sempre as de São Paulo (tickets/059 §3).
@@ -13,3 +14,13 @@ export const doDiaDoCalendario = (d: Date) =>
 
 export const formatarData = (d: Date, formato = "dd/MM/yyyy") =>
   formatInTimeZone(d, FUSO_DO_BRASIL, formato)
+
+/**
+ * Os pares `[início, fim]` que os formulários guardam, e o `DateRange` do
+ * calendário. Com só o início escolhido, o par tem um item.
+ */
+export const paraIntervalo = (par?: ReadonlyArray<Date | null | undefined> | null): DateRange | undefined =>
+  par?.[0] ? { from: par[0], to: par[1] ?? undefined } : undefined
+
+export const paraPar = (v?: DateRange): Date[] | undefined =>
+  v?.from ? (v.to ? [v.from, v.to] : [v.from]) : undefined

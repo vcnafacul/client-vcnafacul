@@ -21,5 +21,14 @@ type Story = StoryObj<typeof meta>
 
 export const Empty: Story = {}
 export const WithValue: Story = { args: { value: new Date("2026-11-12T12:00:00-03:00") } }
+export const BirthDate: Story = {
+  args: {
+    value: new Date("2000-05-10T12:00:00-03:00"),
+    captionLayout: "dropdown",
+    startMonth: new Date(1900, 0),
+    endMonth: new Date(2026, 11),
+    "aria-label": "Data de nascimento",
+  },
+}
 export const Invalid: Story = { args: { "aria-invalid": true } }
 export const Disabled: Story = { args: { disabled: true } }

@@ -12,7 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Calendar } from "primereact/calendar";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { paraIntervalo, paraPar } from "@/lib/datasBr";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -152,32 +153,18 @@ export function InscriptionInfoCreateEditModal({
           </div>
 
           <div className="sm:col-span-2">
-            <Label
-              htmlFor="range"
-              className="text-body text-foreground font-semibold block mb-1"
-            >
-              Período de Inscrição
-            </Label>
             <Controller
               name="range"
               control={control}
               render={({ field }) => (
-                <Calendar
-                  id="range"
-                  dateFormat="dd/mm/yy"
-                  value={field.value}
-                  onChange={(e) => field.onChange(e.value)}
-                  selectionMode="range"
-                  readOnlyInput
-                  hideOnRangeSelection
-                  appendTo="self"
-                  className="w-full"
-                />
+                <Field label="Período de Inscrição" error={errors.range?.message}>
+                  <DateRangePicker
+                    value={paraIntervalo(field.value)}
+                    onChange={(r) => field.onChange(paraPar(r))}
+                  />
+                </Field>
               )}
             />
-            {errors.range && (
-              <p className="text-destructive text-caption mt-1">{errors.range.message}</p>
-            )}
           </div>
 
           <div className="sm:col-span-2 flex items-center gap-2">

@@ -13,7 +13,7 @@ import {
 } from "@/services/prepCourse/coursePeriod/createCoursePeriod";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "primereact/calendar";
+import { DatePicker } from "@/components/ui/date-picker";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -153,68 +153,44 @@ export function CoursePeriodCreateEditModal({
           </Field>
 
           {/* Datas */}
-          <div className="flex flex-col sm:grid grid-cols-2 gap-x-4">
+          <div className="flex flex-col gap-4 sm:grid grid-cols-2">
             {/* Data de Início */}
-            <div className="flex flex-col justify-content-center h-16 border pt-7 pl-4 rounded-md relative">
-              <label
-                className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
-                htmlFor="startDate"
-              >
-                Data de Início *
-              </label>
-              <Controller
-                name="startDate"
-                control={control}
-                render={({ field }) => (
-                  <Calendar
-                    appendTo="self"
-                    id="startDate"
-                    dateFormat="dd/mm/yy"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.value)}
-                    className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
-                    readOnlyInput
+            <Controller
+              name="startDate"
+              control={control}
+              render={({ field }) => (
+                <Field
+                  label="Data de Início"
+                  required
+                  error={errors.startDate?.message}
+                >
+                  <DatePicker
+                    value={field.value ? new Date(field.value) : undefined}
+                    onChange={(d) => d && field.onChange(d)}
                     placeholder="Selecione a data"
                   />
-                )}
-              />
-              {errors.startDate && (
-                <p className="text-destructive text-caption mt-1">
-                  {errors.startDate.message}
-                </p>
+                </Field>
               )}
-            </div>
+            />
 
             {/* Data de Fim */}
-            <div className="flex flex-col justify-content-center h-16 border pt-7 pl-4 rounded-md relative">
-              <label
-                className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
-                htmlFor="endDate"
-              >
-                Data de Fim *
-              </label>
-              <Controller
-                name="endDate"
-                control={control}
-                render={({ field }) => (
-                  <Calendar
-                    appendTo="self"
-                    id="endDate"
-                    dateFormat="dd/mm/yy"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.value)}
-                    className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md"
-                    readOnlyInput
+            <Controller
+              name="endDate"
+              control={control}
+              render={({ field }) => (
+                <Field
+                  label="Data de Fim"
+                  required
+                  error={errors.endDate?.message}
+                >
+                  <DatePicker
+                    value={field.value ? new Date(field.value) : undefined}
+                    onChange={(d) => d && field.onChange(d)}
                     placeholder="Selecione a data"
                   />
-                )}
-              />
-              {errors.endDate && (
-                <p className="text-destructive text-caption mt-1">
-                  {errors.endDate.message}
-                </p>
+                </Field>
               )}
-            </div>
+            />
           </div>
         </form>
 

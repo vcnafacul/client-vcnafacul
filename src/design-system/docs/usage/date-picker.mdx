@@ -14,12 +14,14 @@ mostra um ícone de calendário e a data no formato `dd/MM/yyyy`. O dia é sempr
   inscrição.
 - **`DateRangePicker`:** um período com início e fim, como o filtro "Inicia em" de uma lista ou o intervalo de
   um relatório.
+- `min` e `max` desabilitam os dias fora do intervalo (período letivo, "até hoje").
 - Dentro de um `Field`, para ter rótulo, dica, erro e `required`.
 
 ## Quando não usar
 
-- **Data de nascimento ou data muito distante:** quem preenche precisa voltar muitos anos no calendário.
-  Use três campos numéricos (dia, mês, ano) ou um `Input` com máscara.
+- **Data muito distante sem os seletores:** quem preenche precisa voltar muitos anos no calendário. Para
+  data de nascimento use `captionLayout="dropdown"` com `startMonth` e `endMonth` (seletores de mês e ano),
+  ou um `Input` com máscara.
 - **Data que a pessoa já sabe de cabeça e digita rápido** (CPF, RG, protocolo): use o `Input`.
 - **Filtro de lista no celular em que o teclado de data nativo basta:** o `DateRangeFields`
   (`<input type="date">`, usado pela Dash V2) é mais leve e tem teclado e leitor de tela de graça.
@@ -30,7 +32,8 @@ mostra um ícone de calendário e a data no formato `dd/MM/yyyy`. O dia é sempr
 - O gatilho e os botões do mês têm **44px**, e cada dia do calendário é um alvo de **44px**.
 - O calendário mostra **um mês** por vez e cabe na largura do aparelho (7 dias × 44px).
 - Nada depende de hover: toque no campo abre, toque num dia escolhe e fecha. No período, o primeiro toque
-  marca o início e o segundo marca o fim.
+  marca o início e o segundo (no mesmo dia ou depois) marca o fim e fecha o calendário; um toque antes do
+  início, ou com o período completo, começa outro.
 - Quem precisa digitar a data tem `DateRangeFields` ou `Input` como alternativa.
 
 ## Acessibilidade

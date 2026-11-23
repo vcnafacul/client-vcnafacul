@@ -4,8 +4,6 @@ import Step2 from "./step2";
 import { UserRegister } from "@/types/user/userRegister";
 
 vi.mock("@/hooks/useToastAsync", () => ({ useToastAsync: () => vi.fn() }));
-// O calendário do primereact pede o locale pt-br registrado no boot do app
-vi.mock("@/components/atoms/controlCalendar", () => ({ default: () => null }));
 
 // O checkbox do Radix (nome social) mede o próprio tamanho; o jsdom não tem
 globalThis.ResizeObserver ??= class {

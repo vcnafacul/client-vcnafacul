@@ -6,9 +6,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Calendar } from "primereact/calendar";
+import { DatePicker } from "@/components/ui/date-picker";
+import { Field } from "@/components/ui/field";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 
@@ -63,35 +63,19 @@ export function ExtendInscriptionModal({
           className="flex flex-col gap-6"
           onSubmit={handleSubmit(resolver)}
         >
-          <div>
-            <Label
-              htmlFor="endDate"
-              className="text-body text-foreground font-semibold block mb-1"
-            >
-              Nova Data de Fim
-            </Label>
-            <Controller
-              name="endDate"
-              control={control}
-              render={({ field }) => (
-                <Calendar
-                  id="endDate"
-                  dateFormat="dd/mm/yy"
+          <Controller
+            name="endDate"
+            control={control}
+            render={({ field }) => (
+              <Field label="Nova Data de Fim" error={errors.endDate?.message}>
+                <DatePicker
                   value={field.value}
-                  onChange={(e) => field.onChange(e.value)}
-                  readOnlyInput
-                  appendTo="self"
-                  className="w-full"
-                  minDate={
-                    currentEndDate ? new Date(currentEndDate) : new Date()
-                  }
+                  onChange={(d) => d && field.onChange(d)}
+                  min={currentEndDate ? new Date(currentEndDate) : new Date()}
                 />
-              )}
-            />
-            {errors.endDate && (
-              <p className="text-destructive text-caption mt-1">{errors.endDate.message}</p>
+              </Field>
             )}
-          </div>
+          />
         </form>
 
         <DialogFooter>

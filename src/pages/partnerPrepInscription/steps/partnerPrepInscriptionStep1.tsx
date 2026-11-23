@@ -11,17 +11,13 @@ import {
 } from "@/pages/register/data";
 import { phoneMask } from "@/utils/phoneMask";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { addLocale } from "primereact/api";
-import { Calendar } from "primereact/calendar";
+import { DatePicker } from "@/components/ui/date-picker";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
-import { ptBr } from "../data";
 import "./styles.css";
-
-addLocale("pt-br", { ...ptBr["pt-br"] });
 
 interface PartnerPrepInscriptionStep1Props extends EachStepProps {
   updateData?: (data: Partial<StudentInscriptionDTO>) => void;
@@ -275,36 +271,22 @@ export function PartnerPrepInscriptionStep1({
           }}
         />
       </Field>
-      <div className="card flex justify-content-center h-16 border hover:border-cta pt-4 pl-4 rounded-md relative mb-4 row-start-3 col-start-1 z-raised">
-        <label
-          className="absolute top-1 left-3 text-caption text-muted-foreground font-semibold"
-          htmlFor="date"
-        >
-          Data de Nascimento*
-        </label>
-        <Controller
-          name="birthday"
-          control={control}
-          defaultValue={currentData?.birthday || new Date()}
-          render={({ field }) => (
-            <Calendar
-              id="birthday"
-              dateFormat="dd/mm/yy"
-              value={field.value}
-              onChange={(e) => field.onChange(e.value)}
-              selectionMode="single"
-              className="focus-visible:ring-none w-full h-14 bg-transparent"
-              locale="pt-br"
-              showIcon
+      <Controller
+        name="birthday"
+        control={control}
+        defaultValue={currentData?.birthday || new Date()}
+        render={({ field }) => (
+          <Field label="Data de Nascimento" required error={errors.birthday?.message}>
+            <DatePicker
+              value={field.value ? new Date(field.value) : undefined}
+              onChange={field.onChange}
+              captionLayout="dropdown"
+              startMonth={new Date(1900, 0)}
+              endMonth={new Date()}
             />
-          )}
-        />
-        {errors.birthday && (
-          <p className="absolute text-destructive text-caption mt-1 -bottom-5 left-0">
-            {errors.birthday.message}
-          </p>
+          </Field>
         )}
-      </div>
+      />
       <div className="flex gap-4">
         <div className="flex-1">
           <Field label="RG" maxLength={15} error={errors.rg?.message}>

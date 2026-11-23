@@ -21,13 +21,37 @@ export interface DatePickerProps
   /** Datas fora do intervalo ficam desabilitadas. */
   min?: Date
   max?: Date
+  /** Injetado pelo `Field`; o gatilho é um `button`, então só `aria-required` vale. */
+  required?: boolean
+  /**
+   * `"dropdown"` troca o título do mês por seletores de mês e ano (data muito
+   * distante, como a de nascimento). Pede `startMonth` e `endMonth`.
+   */
+  captionLayout?: "label" | "dropdown"
+  startMonth?: Date
+  endMonth?: Date
 }
 
 const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
   (
-    { value, onChange, placeholder = "Selecionar data", min, max, className, disabled, ...props },
+    {
+      value,
+      onChange,
+      placeholder = "Selecionar data",
+      min,
+      max,
+      captionLayout,
+      startMonth,
+      endMonth,
+      className,
+      disabled,
+      // `required` não vale em <button>: o Field já põe aria-required
+      required: _required,
+      ...props
+    },
     ref
   ) => {
+    void _required
     const [aberto, setAberto] = React.useState(false)
     return (
       <Popover open={aberto} onOpenChange={setAberto}>
@@ -48,6 +72,9 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
         <PopoverContent align="start" className="z-popover w-auto p-0">
           <Calendar
             mode="single"
+            captionLayout={captionLayout}
+            startMonth={startMonth}
+            endMonth={endMonth}
             selected={value ? paraDiaDoCalendario(value) : undefined}
             defaultMonth={value ? paraDiaDoCalendario(value) : undefined}
             onSelect={(dia) => {

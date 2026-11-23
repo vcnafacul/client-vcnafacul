@@ -10,7 +10,9 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { createPeriodJustification } from "@/services/prepCourse/periodJustification/createPeriodJustification";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { useAuthStore } from "@/store/auth";
-import { Calendar } from "primereact/calendar";
+import { Field } from "@/components/ui/field";
+import { DateRangePicker } from "@/components/ui/date-range-picker";
+import { formatarData, paraIntervalo, paraPar } from "@/lib/datasBr";
 import { useState } from "react";
 
 interface PeriodJustificationModalProps {
@@ -53,8 +55,8 @@ export function PeriodJustificationModal({
       action: () =>
         createPeriodJustification(token, {
           studentCourseId,
-          startDate: dateRange[0]!.toLocaleDateString("en-CA"),
-          endDate: dateRange[1]!.toLocaleDateString("en-CA"),
+          startDate: formatarData(dateRange[0]!, "yyyy-MM-dd"),
+          endDate: formatarData(dateRange[1]!, "yyyy-MM-dd"),
           justification: justification.trim(),
         }),
       loadingMessage: "Criando justificativa de período...",
@@ -82,32 +84,15 @@ export function PeriodJustificationModal({
           <DialogTitle>Nova Justificativa de Período</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor="period-range"
-            className="text-caption text-muted-foreground font-semibold"
-          >
-            Período (início — fim)
-          </label>
-          <div className="flex flex-col justify-content-center border rounded-md px-3 py-2">
-            <Calendar
-              appendTo="self"
-              inputId="period-range"
-              dateFormat="dd/mm/yy"
-              value={dateRange as Date[]}
-              onChange={(e) => setDateRange(e.value as (Date | null)[])}
-              selectionMode="range"
-              className="focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-md w-full"
-              readOnlyInput
-              numberOfMonths={1}
-              minDate={
-                coursePeriodStart ? new Date(coursePeriodStart) : undefined
-              }
-              maxDate={coursePeriodEnd ? new Date(coursePeriodEnd) : undefined}
-              placeholder="Selecione o período"
-            />
-          </div>
-        </div>
+        <Field label="Período (início — fim)">
+          <DateRangePicker
+            value={paraIntervalo(dateRange)}
+            onChange={(r) => setDateRange(paraPar(r) ?? null)}
+            min={coursePeriodStart ? new Date(coursePeriodStart) : undefined}
+            max={coursePeriodEnd ? new Date(coursePeriodEnd) : undefined}
+            placeholder="Selecione o período"
+          />
+        </Field>
 
         <div className="flex flex-col gap-1">
           <label
