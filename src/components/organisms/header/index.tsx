@@ -2,7 +2,13 @@ import { useCallback, useMemo, useState } from "react";
 
 import { ReactComponent as MenuIcon } from "../../../assets/icons/menu.svg";
 
-import DropdwonMenu from "@/components/atoms/dropdownMenu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Link } from "react-router-dom";
 import { report } from "@/pages/homeLegacy/data";
 import { ReactComponent as Reporticon } from "../../../assets/icons/warning.svg";
 import { useBaseTemplateContext } from "../../../context/baseTemplateContext";
@@ -114,9 +120,28 @@ function Header({ solid, className }: HeaderProps) {
             </div>
           )}
         </div>
-        <DropdwonMenu userNavigation={report} triggerLabel="Reportar um problema ou ideia">
-          <Reporticon className="hidden sm:block w-8 h-8" />
-        </DropdwonMenu>
+        <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              aria-label="Reportar um problema ou ideia"
+              className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <Reporticon className="hidden sm:block w-8 h-8" />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {report.map((item, index) => (
+                <DropdownMenuItem key={index} asChild>
+                  <Link
+                    to={item.Home_Menu_Item_id.link}
+                    target={item.Home_Menu_Item_id.target}
+                  >
+                    {item.Home_Menu_Item_id.name}
+                  </Link>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         {headerAction}
       </div>
     </header>
