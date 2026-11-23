@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from 'react';
-import { FrenteDto } from '@/dtos/content/contentDtoInput';
 import { getMaterias } from '@/services/content/getMaterias';
-import { Input } from '@/components/ui/input';
+import { Combobox } from '@/components/ui/combobox';
+import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useFrentesSelection } from '../hooks/useFrentesSelection';
 import { X } from 'lucide-react';
@@ -17,9 +17,6 @@ export function CollaboratorFrentes({
   initialSelectedIds = [],
   onSelectionChange,
 }: CollaboratorFrentesProps) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-
   const {
     availableFrentes,
     selectedFrentes,
@@ -45,24 +42,17 @@ export function CollaboratorFrentes({
       .catch((err) => console.error("Erro ao carregar matérias:", err));
   }, [token]);
 
-  // Filtrar frentes disponíveis por busca (nome da frente ou nome da matéria)
-  const filteredFrentes = useMemo(() => {
-    const term = searchTerm.trim().toLowerCase();
-    if (!term) {
-      return availableFrentes; // Lista completa, com scroll no dropdown
-    }
-    return availableFrentes.filter((frente) => {
-      const nomeFrente = (frente.nome ?? "").toLowerCase();
-      const nomeMateria = (materiaNomeMap[frente.materia] ?? "").toLowerCase();
-      return nomeFrente.includes(term) || nomeMateria.includes(term);
-    });
-  }, [availableFrentes, searchTerm, materiaNomeMap]);
+  // A busca do Combobox cobre o nome da frente e o da matéria: os dois vão no rótulo.
+  const opcoes = useMemo(
+    () =>
+      availableFrentes.map((frente) => ({
+        value: frente.id,
+        label: `${frente.nome ?? "—"} · ${materiaNomeMap[frente.materia] ?? frente.materia}`,
+      })),
+    [availableFrentes, materiaNomeMap],
+  );
 
-  const handleSelect = (frente: FrenteDto) => {
-    selectFrente(frente.id);
-    setSearchTerm('');
-    setShowDropdown(false);
-  };
+  const handleSelect = (frenteId: string) => selectFrente(frenteId);
 
   const handleRemove = (frenteId: string) => {
     removeFrente(frenteId);
@@ -80,74 +70,36 @@ export function CollaboratorFrentes({
   return (
     <div className="space-y-4">
       <div>
-        <label className="block text-body font-medium text-foreground mb-2">
+        <Label
+          id="frentes-de-afinidade-rotulo"
+          htmlFor="frentes-de-afinidade"
+          className="block text-body font-medium text-foreground mb-2"
+        >
           Frentes de Afinidade
-        </label>
+        </Label>
         <p className="text-caption text-muted-foreground mb-4">
           Selecione as frentes com as quais você tem mais afinidade. Digite o nome da frente ou da matéria para filtrar; a lista completa pode ser rolada.
         </p>
 
-        {/* Input de busca e seleção */}
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder="Buscar por nome da frente ou da matéria..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setShowDropdown(true);
-            }}
-            onFocus={() => setShowDropdown(true)}
-            className="w-full"
-          />
-
-          {/* Dropdown customizado */}
-          {showDropdown && filteredFrentes.length > 0 && (
-            <>
-              <div
-                className="fixed inset-0 z-raised"
-                onClick={() => setShowDropdown(false)}
-              />
-              <div className="absolute z-sticky w-full mt-1 bg-white border border-border rounded-lg shadow-lg max-h-80 overflow-y-auto overflow-x-hidden">
-                {filteredFrentes.map((frente) => (
-                  <button
-                    key={frente.id}
-                    type="button"
-                    onClick={() => handleSelect(frente)}
-                    className="w-full text-left px-4 py-2 hover:bg-muted focus:bg-muted focus:outline-none transition-colors"
-                  >
-                    <div className="font-medium text-body">{frente.nome ?? "—"}</div>
-                    <div className="text-caption text-muted-foreground">
-                      {materiaNomeMap[frente.materia] ?? frente.materia}
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
-
-          {showDropdown && searchTerm && filteredFrentes.length === 0 && (
-            <>
-              <div
-                className="fixed inset-0 z-raised"
-                onClick={() => setShowDropdown(false)}
-              />
-              <div className="absolute z-sticky w-full mt-1 bg-white border border-border rounded-lg shadow-lg p-4">
-                <p className="text-body text-muted-foreground">
-                  Nenhuma frente encontrada com "{searchTerm}"
-                </p>
-              </div>
-            </>
-          )}
-        </div>
+        {/* Busca e seleção: Combobox do ui (popover com busca por frente ou matéria) */}
+        <Combobox
+          id="frentes-de-afinidade"
+          aria-labelledby="frentes-de-afinidade-rotulo"
+          options={opcoes}
+          value=""
+          onValueChange={handleSelect}
+          placeholder="Buscar por nome da frente ou da matéria..."
+          searchPlaceholder="Buscar por nome da frente ou da matéria..."
+          emptyText="Nenhuma frente encontrada"
+        />
       </div>
 
       {/* Frentes selecionadas */}
       {selectedFrentes.length > 0 && (
         <div>
-          <label className="block text-body font-medium text-foreground mb-2">
+          <p className="block text-body font-medium text-foreground mb-2">
             Frentes Selecionadas ({selectedFrentes.length})
-          </label>
+          </p>
           <div className="flex flex-wrap gap-2">
             {selectedFrentes.map((frente) => (
               <Badge
