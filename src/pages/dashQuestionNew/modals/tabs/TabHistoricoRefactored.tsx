@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Timeline, TimelineItem } from "@/components/ui/timeline";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -160,35 +159,12 @@ export function TabHistoricoRefactored({
     return translations[fieldName] || fieldName;
   };
 
-  if (isLoading) {
-    return (
-      <div className="space-y-4 p-6">
-        <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-48 w-full" />
-        <Skeleton className="h-48 w-full" />
-      </div>
-    );
-  }
-
-  if (logs.length === 0) {
-    return (
-      <Card className="m-6">
-        <CardContent className="flex flex-col items-center justify-center p-12">
-          <History className="h-16 w-16 text-muted-foreground mb-4" />
-          <h3 className="text-h2 font-semibold text-foreground mb-2">
-            Nenhum histórico encontrado
-          </h3>
-          <p className="text-muted-foreground">
-            Esta questão ainda não possui registros de alterações
-          </p>
-        </CardContent>
-      </Card>
-    );
-  }
+  const estado = isLoading ? "loading" : logs.length ? "ready" : "empty";
 
   return (
     <div className="space-y-6 p-2 sm:p-6">
       {/* Header */}
+      {estado === "ready" && (
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -201,9 +177,18 @@ export function TabHistoricoRefactored({
           </p>
         </CardHeader>
       </Card>
+      )}
 
       {/* Timeline de Logs (D18) */}
-      <Timeline aria-label="Histórico de alterações da questão">
+      <Timeline
+        aria-label="Histórico de alterações da questão"
+        state={estado}
+        empty={{
+          icon: History,
+          title: "Nenhum histórico encontrado",
+          hint: "Esta questão ainda não possui registros de alterações",
+        }}
+      >
         {logs.map((log, index) => {
           const changes = parseChanges(log.changes);
           const isExpanded = expandedLogs.has(index);

@@ -54,9 +54,21 @@ describe("TabHistoricoRefactored (Timeline)", () => {
     expect(screen.getByRole("button", { name: /Mostrar menos/ })).toBeInTheDocument();
   });
 
-  it("sem registros mostra o vazio", async () => {
+  it("sem registros mostra o vazio do Timeline, com o texto de antes e sem o cabeçalho de contagem", async () => {
     getLogs.mockResolvedValue([]);
     render(<TabHistoricoRefactored questionId="q1" />);
     expect(await screen.findByText("Nenhum histórico encontrado")).toBeInTheDocument();
+    expect(
+      screen.getByText("Esta questão ainda não possui registros de alterações"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/registros? de alteração/)).toBeNull();
+    expect(document.querySelector('[data-slot="empty-state"]')).not.toBeNull();
+  });
+
+  it("carregando mostra o estado de carga do Timeline", () => {
+    getLogs.mockReturnValue(new Promise(() => {}));
+    render(<TabHistoricoRefactored questionId="q1" />);
+    expect(document.querySelector('[aria-busy="true"]')).not.toBeNull();
+    expect(screen.queryByText("Nenhum histórico encontrado")).toBeNull();
   });
 });
