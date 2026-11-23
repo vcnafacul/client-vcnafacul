@@ -274,7 +274,7 @@ describe("DashTable — linhas", () => {
     expect(status.hasAttribute("title")).toBe(false);
   });
 
-  it("a densidade sai dos tokens do 02", () => {
+  it("a densidade compacta é h-8 e a base é h-10", () => {
     const { container, rerender } = montar({ density: "compact" });
     expect((container.querySelector("[data-row-key]") as HTMLElement).className).toContain(
       "h-8",

@@ -64,7 +64,7 @@ export function DashTableVazio() {
  * Linhas de skeleton com **as mesmas colunas** da tabela.
  *
  * ⚠️ Moraram aqui; agora são o `TableSkeleton` do `components/ui/skeleton`
- * (tickets/059 §3). Os nomes ficam até a Task 11.
+ * (tickets/059 §3). Os nomes ficam até a limpeza (Task 13).
  */
 export function LinhasSkeleton({
   colunas,

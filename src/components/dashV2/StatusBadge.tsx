@@ -24,7 +24,7 @@ export const VARIANTE_POR_TONE: Record<StatusV2, StatusVariant> = {
 
 /**
  * Adaptador do `components/ui/status-badge`, com a API de sempre (`tone` +
- * `label`) até a Task 11 (tickets/059). O `data-tone` continua: as telas testam
+ * `label`) até a limpeza (Task 13, tickets/059). O `data-tone` continua: as telas testam
  * por ele.
  *
  * ⚠️ Burro de propósito: quem traduz `StatusEnum` → `tone` + rótulo é a tela.

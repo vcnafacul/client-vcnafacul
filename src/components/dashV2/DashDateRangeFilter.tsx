@@ -1,5 +1,5 @@
 // O componente mudou para `components/ui/date-range-picker` (tickets/059 R15).
-// Este arquivo só mantém o nome e as props que a Dash V2 já usa.
+// Sem importadores: as telas usam o `ui` direto. Fica só até a limpeza (Task 13, tickets/059), que o apaga.
 import {
   DateRangeFields,
   TEXTO_INTERVALO_INVERTIDO,

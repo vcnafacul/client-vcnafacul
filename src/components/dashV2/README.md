@@ -32,7 +32,7 @@ de cursinhos com foto, banco de imagens, vitrine de conteúdo.
 
 > **Nada do V1 muda.** `templates/dashCardTemplate`, `molecules/cardDash`, `context/dashCardContext`,
 > `atoms/filter` e `atoms/select` não são editados por trabalho do V2. Os componentes de `components/ui/*`
-> pertencem ao design system e seguem as regras dele: ver `docs/` do design system (tickets/059 §7.2, item 8) e
+> pertencem ao design system e seguem as regras dele: ver `src/design-system/docs/` (tickets/059 §7.2, item 8) e
 > o Storybook.
 
 Uma tela migrada volta ao V1 trocando uma linha de import. É isso que torna a POC segura, e é a razão
@@ -125,7 +125,7 @@ Como `entities` chega já filtrada pela tela, o template não sabe o total. Com 
 ativo, o subtítulo vira "3 de 12 registros" — sem ele, "3 registros" com filtro ligado parece que só
 existem três. Sem filtro ativo, o total não aparece mesmo se passado.
 
-### Filtro de intervalo de datas: `DashDateRangeFilter`
+### Filtro de intervalo de datas: `DateRangeFields` (`components/ui/date-range-picker`)
 
 Para o `filters` do template. Controlado (`value` / `onChange`, em `yyyy-mm-dd`); a regra de
 comparação é `dentroDoIntervalo(data, intervalo)`, que a tela aplica na sua lista.
@@ -166,10 +166,9 @@ Cada uma tem medição. Se alguém "consertar" uma delas, quebra algo que foi me
 
 ### O botão principal tem texto `marine`, não branco
 
-Branco sobre `#FF7600` dá **2.68:1** — reprova até no limite de 3:1 de componente gráfico. `marine`
-sobre o mesmo laranja dá **5.62:1** e mantém o laranja exato da marca.
-
-O `typeStyle="primary"` do V1 continua com texto branco e **não é tocado**.
+Branco sobre `#FF7600` dava **2.68:1**. Hoje o botão principal é o `Button variant="cta"` do `ui`: o par
+`cta` / `cta-foreground` do design system (tickets/059 D8), com o contraste medido em
+`src/design-system/contrast.test.ts`. A medição antiga (`marine` sobre laranja) não vale mais.
 
 ### O ponto de status "em andamento" fica em 2.21:1, de propósito
 

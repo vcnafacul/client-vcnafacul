@@ -6,7 +6,7 @@ import { useAcimaDeSm } from "./useAcimaDeSm";
 
 /**
  * Tabela densa da dash: adaptador do `components/ui/data-table` com a API de
- * sempre, até a Task 11 (tickets/059). Quem desenha é a DataTable; aqui só se
+ * sempre, até a limpeza (Task 13, tickets/059). Quem desenha é a DataTable; aqui só se
  * traduzem as colunas e os estados.
  *
  * ⚠️ **Não reordena `rows`.** Clicar no cabeçalho só chama `onSortChange`. A

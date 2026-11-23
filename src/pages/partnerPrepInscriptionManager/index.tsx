@@ -1,9 +1,6 @@
 import type { FiltroSelectProps } from "@/components/dashV2/FiltroSelect";
-import {
-  DashDateRangeFilter,
-  DashListTemplate,
-  type DashAction,
-} from "@/components/dashV2";
+import { DashListTemplate, type DashAction } from "@/components/dashV2";
+import { DateRangeFields } from "@/components/ui/date-range-picker";
 import { FilterProps } from "@/components/atoms/filter";
 import {
   AlertDialog,
@@ -157,12 +154,12 @@ export function PartnerPrepInscriptionManager() {
 
   const filtrosDeData = (
     <>
-      <DashDateRangeFilter
+      <DateRangeFields
         label="Inicia em"
         value={filtros.iniciaEm}
         onChange={(iniciaEm) => filtrar({ iniciaEm })}
       />
-      <DashDateRangeFilter
+      <DateRangeFields
         label="Criado em"
         value={filtros.criadoEm}
         onChange={(criadoEm) => filtrar({ criadoEm })}
