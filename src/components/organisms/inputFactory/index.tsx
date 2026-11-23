@@ -11,7 +11,6 @@ import {
 } from "@/components/templates/baseLayoutInput";
 import { InputProps } from "@/components/ui/input";
 import { CheckboxProps } from "@radix-ui/react-checkbox";
-import { DropdownProps } from "primereact/dropdown";
 
 export type InputFactoryType =
   | "text"
@@ -44,10 +43,10 @@ export function InputFactory({
         <div
           className={`card flex justify-content-center h-16 pt-8 pl-2 border border-input rounded-md 
       text-caption shadow-sm disabled:opacity-50 ${
-        (props as DropdownProps).className
+        (props as InputSelectProps).className
       }`}
         >
-          <InputSelect {...(props as DropdownProps)} />
+          <InputSelect {...(props as InputSelectProps)} />
         </div>
       );
       break;
