@@ -4,12 +4,19 @@ import type { DateRange } from "react-day-picker"
 
 import { cn } from "@/lib/utils"
 import { Calendar } from "./calendar"
-import { doDiaDoCalendario, formatarData, paraDiaDoCalendario } from "@/lib/datasBr"
+import { doDiaDoCalendario, formatarData, paraDataValida, paraDiaDoCalendario } from "@/lib/datasBr"
 import { gatilhoDeData } from "./date-picker"
 import { controlRing } from "./input"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover"
 
 export type { DateRange }
+
+/** Datas inválidas (`new Date("")`) contam como vazio, como no `DatePicker`. */
+function normalizar(v: DateRange | undefined): DateRange | undefined {
+  const from = paraDataValida(v?.from)
+  if (!from) return undefined
+  return { from, to: paraDataValida(v?.to) }
+}
 
 function rotuloDoPeriodo(v: DateRange | undefined, vazio: string) {
   if (!v?.from) return vazio
@@ -35,10 +42,11 @@ export interface DateRangePickerProps
 
 const DateRangePicker = React.forwardRef<HTMLButtonElement, DateRangePickerProps>(
   (
-    { value, onChange, placeholder = "Selecionar período", min, max, className, disabled, required: _required, ...props },
+    { value: valorBruto, onChange, placeholder = "Selecionar período", min, max, className, disabled, required: _required, ...props },
     ref
   ) => {
     void _required
+    const value = normalizar(valorBruto)
     const [aberto, setAberto] = React.useState(false)
     return (
       <Popover open={aberto} onOpenChange={setAberto}>

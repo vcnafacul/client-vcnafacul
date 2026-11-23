@@ -45,6 +45,21 @@ describe("DatePicker", () => {
 });
 
 describe("DateRangePicker", () => {
+  it("período com data inválida (new Date(\"\")) conta como vazio: placeholder, sem lançar", () => {
+    const { rerender } = render(
+      <DateRangePicker value={{ from: new Date(""), to: undefined }} onChange={vi.fn()} aria-label="Período" />,
+    );
+    expect(screen.getByRole("button", { name: "Período" }).textContent).toBe("Selecionar período");
+    rerender(
+      <DateRangePicker
+        value={{ from: doze, to: new Date("") }}
+        onChange={vi.fn()}
+        aria-label="Período"
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Período" }).textContent).toBe("12/11/2026");
+  });
+
   it("resume o período e mostra o placeholder vazio", () => {
     const { rerender } = render(<DateRangePicker onChange={vi.fn()} aria-label="Período" />);
     expect(screen.getByRole("button", { name: "Período" }).textContent).toBe("Selecionar período");
