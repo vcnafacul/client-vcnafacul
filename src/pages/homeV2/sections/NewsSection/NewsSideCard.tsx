@@ -10,9 +10,9 @@ export function NewsSideCard({ item, index }: { item: NewsItem; index: number })
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-10%" }}
       transition={{ duration: 0.4, delay: 0.07 * index }}
-      className="rounded-xl p-4 flex-1 block bg-white text-[#da005a] shadow-md hover:shadow-lg transition-shadow"
+      className="rounded-xl p-4 flex-1 block bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow"
     >
-      <span className="text-[10px] tracking-widest font-bold uppercase opacity-70">
+      <span className="text-[10px] tracking-widest font-bold uppercase text-highlight">
         {item.category}
       </span>
       <h4 className="mt-1 text-lg md:text-xl font-bold leading-snug line-clamp-2">

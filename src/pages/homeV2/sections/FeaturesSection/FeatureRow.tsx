@@ -2,6 +2,7 @@
 import { useRef, useEffect } from "react";
 import { ensureGsapRegistered, gsap, ScrollTrigger } from "../../../../lib/motion/gsapSetup";
 import { usePrefersReducedMotion } from "../../../../lib/motion/motionPreference";
+import { palette } from "@/lib/palette";
 import { FeatureItem } from "../../adapters/featuresAdapter";
 
 export function FeatureRow({
@@ -85,14 +86,19 @@ export function FeatureRow({
             decoding="async"
           />
         ) : (
-          <div data-feature-image className="w-full h-full bg-gradient-to-br from-[#0b2747] to-[#37d6b5]" />
+          <div
+            data-feature-image
+            className="w-full h-full"
+            style={{ backgroundImage: `linear-gradient(to bottom right, ${palette.marine[900]}, ${palette.mint[400]})` }}
+          />
         )}
       </div>
       <div className="relative">
         <span
           aria-hidden="true"
           data-feature-text
-          className="absolute -top-10 -left-2 md:-left-6 text-[6rem] md:text-[8rem] font-extrabold text-[#da005a] opacity-10 leading-none select-none pointer-events-none"
+          className="absolute -top-10 -left-2 md:-left-6 text-[6rem] md:text-[8rem] font-extrabold opacity-10 leading-none select-none pointer-events-none"
+          style={{ color: palette.pink[600] }}
         >
           {String(index + 1).padStart(2, "0")}
         </span>

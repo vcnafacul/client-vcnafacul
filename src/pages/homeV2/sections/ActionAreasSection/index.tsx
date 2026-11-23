@@ -13,7 +13,7 @@ export const ActionAreasSection: SectionComponent<AreaGroup[]> = ({ data }) => {
   return (
     <div className="relative">
       <div className="container mx-auto px-4 mb-10 md:mb-16 text-center">
-        <p className="home-section__eyebrow mb-3" style={{ color: "#37d6b5" }}>
+        <p className="home-section__eyebrow mb-3">
           ÁREAS DE AÇÃO
         </p>
         <h2 className="text-3xl md:text-5xl font-extrabold leading-tight [text-wrap:balance]">

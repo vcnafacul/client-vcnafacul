@@ -18,10 +18,10 @@ export function AboutVideoCard({ thumbnail, videoId }: { thumbnail: string; vide
           viewport={{ once: true, margin: "-10%" }}
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="
-            relative w-full h-full block bg-black rounded-tl-3xl rounded-bl-3xl
+            relative w-full h-full block bg-background rounded-tl-3xl rounded-bl-3xl
             md:rounded-tl-3xl md:rounded-bl-3xl rounded-2xl
             overflow-hidden group cursor-pointer
-            focus-visible:outline outline-2 outline-offset-2 outline-[#37d6b5]
+            focus-visible:outline outline-2 outline-offset-2 outline-ring
           "
           aria-label="Assistir vídeo: conheça vcnafacul"
         >
@@ -30,18 +30,18 @@ export function AboutVideoCard({ thumbnail, videoId }: { thumbnail: string; vide
             alt=""
             className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background/40 to-transparent" />
           <motion.div
             animate={{ scale: [1, 1.04, 1] }}
             transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
             className="
-              absolute inset-0 m-auto h-20 w-20 rounded-full bg-white
+              absolute inset-0 m-auto h-20 w-20 rounded-full bg-primary
               flex items-center justify-center shadow-lg
               motion-reduce:animate-none
             "
           >
             <span
-              className="block w-0 h-0 ml-1 border-y-[12px] border-y-transparent border-l-[18px] border-l-[#0b2747]"
+              className="block w-0 h-0 ml-1 border-y-[12px] border-y-transparent border-l-[18px] border-l-primary-foreground"
             />
           </motion.div>
         </motion.button>

@@ -1,3 +1,4 @@
+import { palette } from "@/lib/palette";
 import { useEffect, useState } from "react";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import Text from "../../components/atoms/text";
@@ -76,14 +77,14 @@ export default function QuemSomosPage() {
         {/* Triângulo decorativo canto superior esquerdo */}
         <div
           className="absolute top-0 left-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-none"
-          style={{ background: "#8CC408", clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
+          style={{ background: palette.mint[400], clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
         />
 
         {/* Seção: Quem Somos */}
         <div className="max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-6 pt-16">
           <Text size="secondary">Quem Somos?</Text>
           <div className="prose prose-xl max-w-none text-justify">
-            <RichTextRenderer content={data.description} contentFormat="markdown" className="text-marine text-base text-justify" />
+            <RichTextRenderer content={data.description} contentFormat="markdown" className="text-foreground text-base text-justify" />
           </div>
         </div>
 
@@ -97,7 +98,7 @@ export default function QuemSomosPage() {
               <Text size="secondary" className="text-left mb-4">
                 História do Projeto
               </Text>
-              <p className="text-marine text-base leading-relaxed whitespace-pre-line">
+              <p className="text-foreground text-base leading-relaxed whitespace-pre-line">
                 {HISTORIA_TEXT}
               </p>
             </div>

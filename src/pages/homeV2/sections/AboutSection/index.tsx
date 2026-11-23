@@ -10,8 +10,7 @@ export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
     <div className="relative overflow-hidden pb-24 md:pb-32">
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute -top-40 -right-32 h-[460px] w-[460px] rounded-full blur-3xl opacity-40"
-        style={{ background: "#37d6b5" }}
+        className="pointer-events-none absolute -top-40 -right-32 h-[460px] w-[460px] rounded-full bg-highlight blur-3xl opacity-40"
       />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative">
         <div className="px-4 pt-12 md:pt-16 pb-4 max-w-2xl md:ml-auto flex flex-col justify-center">

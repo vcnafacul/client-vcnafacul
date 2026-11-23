@@ -1,6 +1,7 @@
 // client-vcnafacul/src/pages/homeV2/adapters/actionAreasAdapter.ts
 import { actionAreas } from "../../../pages/homeLegacy/data";
 import type React from "react";
+import { palette } from "@/lib/palette";
 
 export interface SubjectItem {
   id: number;
@@ -16,9 +17,9 @@ export interface AreaGroup {
 }
 
 const COLORS = [
-  { themeColor: "#da005a", textColor: "#ffffff" }, // Linguagens
-  { themeColor: "#37d6b5", textColor: "#0b2747" }, // Natureza+Mat
-  { themeColor: "#f7b733", textColor: "#0b2747" }, // Humanas
+  { themeColor: palette.pink[600], textColor: palette.marine[50] }, // Linguagens
+  { themeColor: palette.mint[400], textColor: palette.marine[900] }, // Natureza+Mat
+  { themeColor: palette.yellow[400], textColor: palette.marine[900] }, // Humanas
 ];
 
 export const actionAreasData: AreaGroup[] = actionAreas.areas.map((a, i) => ({

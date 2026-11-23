@@ -17,7 +17,7 @@ export const NewsSection: SectionComponent<NewsItem[]> = ({ data }) => {
             Novidades vcnafacul
           </h2>
         </div>
-        <a href={NEWS} className="text-[#da005a] font-semibold text-sm">
+        <a href={NEWS} className="text-highlight font-semibold text-sm">
           Ver todas →
         </a>
       </div>

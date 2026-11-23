@@ -47,15 +47,15 @@ export function ImpactoSection() {
   ];
 
   return (
-    <div className="bg-gray-50 py-20">
+    <div className="bg-page py-20">
       <div className="max-w-5xl mx-auto px-6">
-        <p className="text-xs font-semibold tracking-widest uppercase mb-3 text-center text-marine/60">
+        <p className="text-xs font-semibold tracking-widest uppercase mb-3 text-center text-foreground/60">
           NOSSOS NÚMEROS
         </p>
-        <h2 className="text-3xl md:text-4xl font-extrabold text-marine text-center leading-tight mb-4">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-foreground text-center leading-tight mb-4">
           Impacto do Projeto
         </h2>
-        <p className="text-base text-gray-600 text-justify max-w-5xl mx-auto leading-relaxed mb-12">
+        <p className="text-base text-muted-foreground text-justify max-w-5xl mx-auto leading-relaxed mb-12">
           Ao longo dos anos, o projeto Você na Facul tem se dedicado a transformar a educação de muitos estudantes. Através de parcerias estratégicas e do esforço contínuo de nossa equipe e voluntários, temos alcançado resultados expressivos. O impacto positivo gerado é um reflexo do compromisso e da paixão que todos envolvidos têm pelo nosso objetivo.
         </p>
 

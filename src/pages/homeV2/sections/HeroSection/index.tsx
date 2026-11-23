@@ -44,7 +44,7 @@ export const HeroSection: SectionComponent<HeroData> = ({ data }) => {
               visible: { opacity: 1, y: 0 },
             }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="inline-block text-[#37d6b5]"
+            className="inline-block text-highlight"
           >
             {data.titleAccent}
           </motion.span>

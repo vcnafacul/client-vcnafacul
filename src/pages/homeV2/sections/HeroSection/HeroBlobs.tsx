@@ -1,5 +1,6 @@
 // client-vcnafacul/src/pages/homeV2/sections/HeroSection/HeroBlobs.tsx
 import React, { useRef } from "react";
+import { palette } from "@/lib/palette";
 import { useSectionScroll } from "../../../../lib/motion/useSectionScroll";
 
 export function HeroBlobs({
@@ -24,12 +25,11 @@ export function HeroBlobs({
       <div
         ref={pinkRef}
         className="absolute -top-32 -left-32 h-[420px] w-[420px] rounded-full blur-3xl opacity-40"
-        style={{ background: "#da005a" }}
+        style={{ background: palette.pink[600] }}
       />
       <div
         ref={greenRef}
-        className="absolute -bottom-40 -right-32 h-[460px] w-[460px] rounded-full blur-3xl opacity-40"
-        style={{ background: "#37d6b5" }}
+        className="absolute -bottom-40 -right-32 h-[460px] w-[460px] rounded-full bg-highlight blur-3xl opacity-40"
       />
     </div>
   );

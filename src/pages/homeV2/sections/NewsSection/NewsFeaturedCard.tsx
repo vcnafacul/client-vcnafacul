@@ -1,11 +1,13 @@
 import { motion } from "motion/react";
+import { palette } from "@/lib/palette";
 import { NewsItem } from "../../adapters/newsAdapter";
 
+// Texto branco sobre o fim do gradiente: o degradê termina no passo 600 (AA com branco), não no 400.
 const CAT_BG: Record<NewsItem["category"], string> = {
-  DESTAQUE: "from-[#0b2747] to-[#da005a]",
-  NOTÍCIA: "from-[#0b2747] to-[#37d6b5]",
-  EVENTO: "from-[#0b2747] to-[#37d6b5]",
-  PARCERIA: "from-[#0b2747] to-[#f7b733]",
+  DESTAQUE: `linear-gradient(to bottom right, ${palette.marine[900]}, ${palette.pink[600]})`,
+  NOTÍCIA: `linear-gradient(to bottom right, ${palette.marine[900]}, ${palette.mint[600]})`,
+  EVENTO: `linear-gradient(to bottom right, ${palette.marine[900]}, ${palette.mint[600]})`,
+  PARCERIA: `linear-gradient(to bottom right, ${palette.marine[900]}, ${palette.yellow[600]})`,
 };
 
 export function NewsFeaturedCard({ item }: { item: NewsItem }) {
@@ -13,20 +15,16 @@ export function NewsFeaturedCard({ item }: { item: NewsItem }) {
     <motion.a
       href={item.href}
       whileHover={{ scale: 1.005 }}
-      className={[
-        "relative rounded-2xl overflow-hidden block",
-        "h-[320px] md:h-full",
-        "bg-gradient-to-br",
-        CAT_BG[item.category],
-      ].join(" ")}
+      style={{ backgroundImage: CAT_BG[item.category] }}
+      className="relative rounded-2xl overflow-hidden block h-[320px] md:h-full"
     >
-      <div className="absolute bg-green inset-0 p-6 md:p-8 flex flex-col justify-end text-white">
-        <span className="self-start mb-3 text-[10px] tracking-widest font-bold uppercase bg-white/20 backdrop-blur px-3 py-1 rounded-full">
+      <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-primary-foreground">
+        <span className="self-start mb-3 text-[10px] tracking-widest font-bold uppercase bg-primary-foreground/20 backdrop-blur px-3 py-1 rounded-full">
           {item.category}
         </span>
-        <h1 className="text-3xl md:text-4xl font-extrabold leading-tight line-clamp-3">
+        <h3 className="text-3xl md:text-4xl font-extrabold leading-tight line-clamp-3">
           {item.title}
-        </h1>
+        </h3>
         {item.description && (
           <p className="mt-3 text-base md:text-lg opacity-90 line-clamp-3">
             {item.description}

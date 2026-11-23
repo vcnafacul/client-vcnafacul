@@ -18,7 +18,7 @@ export function SubjectPill({
       style={{ background: group.themeColor, color: group.textColor }}
       className={[
         "rounded-full inline-flex items-center gap-2 transition-transform shadow-md",
-        "hover:scale-110 focus-visible:outline outline-2 outline-offset-2 outline-white",
+        "hover:scale-110 focus-visible:outline outline-2 outline-offset-2 outline-ring",
         size === "lg" ? "px-4 py-2 text-base" : "px-3 py-1.5 text-sm",
       ].join(" ")}
     >

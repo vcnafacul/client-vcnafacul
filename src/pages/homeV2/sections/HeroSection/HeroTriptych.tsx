@@ -3,10 +3,10 @@ import { motion } from "motion/react";
 import { HeroPersona } from "../../data/heroData";
 
 const VARIANT_CLASSES: Record<HeroPersona["variant"], string> = {
-  primary: "bg-[#da005a] text-white col-span-2 md:col-span-1 md:row-span-1",
-  secondary:
-    "bg-[#001b3a] text-white border border-[#37d6b5]",
-  tertiary: "bg-[#37d6b5] text-[#0b2747]",
+  // A ação principal da home (pré-cadastro) é a única `cta` da tela (tickets/059/01 §7.2); as outras usam o tema.
+  primary: "bg-cta text-cta-foreground col-span-2 md:col-span-1 md:row-span-1",
+  secondary: "bg-card text-card-foreground border border-highlight",
+  tertiary: "bg-highlight text-primary-foreground",
 };
 
 export function HeroTriptych({ personas }: { personas: HeroPersona[] }) {
@@ -30,7 +30,7 @@ export function HeroTriptych({ personas }: { personas: HeroPersona[] }) {
           whileHover={{ scale: 1.02 }}
           className={[
             "rounded-2xl p-5 md:p-7 flex flex-col justify-between min-h-[160px] md:min-h-[200px]",
-            "shadow-lg focus-visible:outline outline-2 outline-offset-2 outline-[#37d6b5]",
+            "shadow-lg focus-visible:outline outline-2 outline-offset-2 outline-ring",
             VARIANT_CLASSES[p.variant],
             p.variant === "primary"
               ? "col-span-2 md:col-span-1 md:[grid-column:1/2]"

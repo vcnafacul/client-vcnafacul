@@ -1,12 +1,14 @@
 import type { ReactNode } from "react";
 import { Eye, Target, Gem } from "lucide-react";
+import { palette } from "@/lib/palette";
 import visaoImg from "../../assets/images/visao.png";
 import missaoImg from "../../assets/images/missao.png";
 import valoresImg from "../../assets/images/valores.png";
 
-const PINK = "#da005a";
-const TEAL = "#37d6b5";
-const LIME = "#8dc63f";
+// Acentos dos cards: o ícone branco fica sobre eles, então ficam nos passos 600 (AA com branco).
+const PINK = palette.pink[600];
+const TEAL = palette.mint[600];
+const LIME = palette.orange[600];
 
 const VISAO_TEXT =
   "Ser a principal plataforma de apoio educacional para estudantes de baixa renda, ajudando-os a conquistar uma vaga na faculdade dos sonhos por meio de conteúdos acessíveis, suporte comunitário e estratégias eficazes de estudo.";
@@ -43,7 +45,7 @@ function ValorCard({
         >
           {icon}
         </div>
-        <h3 className="text-xl font-bold text-marine mb-3">{title}</h3>
+        <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
         {children}
       </div>
     </div>
@@ -90,18 +92,18 @@ export function NossosValores() {
       {/* Triângulo decorativo canto superior esquerdo */}
       <div
         className="absolute top-0 left-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-none"
-        style={{ background: "#D96B45", clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
+        style={{ background: palette.orange[500], clipPath: "polygon(0 0, 100% 0, 0 100%)" }}
       />
       {/* Triângulo decorativo canto inferior direito */}
       <div
         className="absolute bottom-0 right-0 w-20 h-20 sm:w-28 sm:h-28 md:w-32 md:h-32 lg:w-40 lg:h-40 pointer-events-none"
-        style={{ background: "#D9AF45", clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
+        style={{ background: palette.yellow[400], clipPath: "polygon(100% 0, 100% 100%, 0 100%)" }}
       />
       <div className="container mx-auto px-4 text-center">
-        <p className="text-xs font-semibold tracking-widest uppercase mb-3" style={{ color: PINK }}>
+        <p className="text-overline text-highlight mb-3">
           O QUE NOS GUIA
         </p>
-        <h2 className="text-3xl md:text-4xl font-extrabold text-marine leading-tight">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-foreground leading-tight">
           Nossos Valores
         </h2>
       </div>
@@ -112,7 +114,7 @@ export function NossosValores() {
         imgAlt="Visão do projeto"
         card={
           <ValorCard icon={<Eye size={26} color="white" strokeWidth={2} />} title="Visão" accent={PINK}>
-            <p className="text-gray-600 text-base leading-relaxed">{VISAO_TEXT}</p>
+            <p className="text-muted-foreground text-base leading-relaxed">{VISAO_TEXT}</p>
           </ValorCard>
         }
       />
@@ -124,7 +126,7 @@ export function NossosValores() {
         reverse
         card={
           <ValorCard icon={<Target size={26} color="white" strokeWidth={2} />} title="Missão" accent={TEAL}>
-            <p className="text-gray-600 text-base leading-relaxed">{MISSAO_TEXT}</p>
+            <p className="text-muted-foreground text-base leading-relaxed">{MISSAO_TEXT}</p>
           </ValorCard>
         }
       />
@@ -135,7 +137,7 @@ export function NossosValores() {
         imgAlt="Valores do projeto"
         card={
           <ValorCard icon={<Gem size={26} color="white" strokeWidth={2} />} title="Valores" accent={LIME}>
-            <ul className="text-gray-600 text-base space-y-1">
+            <ul className="text-muted-foreground text-base space-y-1">
               {VALORES_LIST.map((v) => (
                 <li key={v} className="flex items-center gap-2">
                   <span className="text-xs" style={{ color: LIME }}>•</span>

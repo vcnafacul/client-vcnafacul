@@ -56,7 +56,7 @@ export function VolunteerTile({
       style={forceUniformOnMobile ? undefined : desktopStyle}
       className={[
         "relative overflow-hidden rounded-2xl group",
-        hasImage ? "bg-white" : "bg-gray-300",
+        hasImage ? "bg-card" : "bg-muted",
         forceUniformOnMobile ? "aspect-square" : "min-h-[120px]",
       ].join(" ")}
     >
@@ -70,7 +70,7 @@ export function VolunteerTile({
         />
       )}
       {!hasImage && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-3 text-gray-700">
+        <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-3 text-foreground">
           <p className="text-sm font-semibold leading-tight">
             {volunteer.name}
           </p>

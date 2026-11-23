@@ -1,4 +1,5 @@
 // client-vcnafacul/src/pages/homeV2/sections/VolunteersSection/index.tsx
+import { palette } from "@/lib/palette";
 import { SectionComponent } from "../../../../components/templates/homeSection/Section.types";
 import { Volunteer } from "../../adapters/volunteersAdapter";
 import { useIsMobile } from "../../../../lib/motion/motionPreference";
@@ -25,7 +26,8 @@ export const VolunteersSection: React.FC<
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-2xl bg-[#da005a22] aspect-square animate-pulse"
+            className="rounded-2xl aspect-square animate-pulse"
+            style={{ background: palette.pink[50] }}
           />
         ))}
       </div>

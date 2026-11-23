@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { SectionComponent } from "../../../../components/templates/homeSection/Section.types";
 import { PrepCourse } from "../../adapters/prepCoursesAdapter";
 import { GEOLOCATION_SEARCH } from "../../../../routes/path";
@@ -11,7 +12,7 @@ const LOGO_CLASS =
 
 const TRIGGER_CLASS =
   "flex-none flex items-center justify-center rounded-md " +
-  "focus-visible:outline outline-2 outline-offset-4 outline-[#37d6b5]";
+  "focus-visible:outline outline-2 outline-offset-4 outline-ring";
 
 export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({
   data,
@@ -51,20 +52,9 @@ export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({
         <p className="text-base md:text-lg font-medium">
           Conhece um cursinho popular?
         </p>
-        <a
-          href={GEOLOCATION_SEARCH}
-          className="
-            inline-flex items-center gap-2 rounded-full
-            px-6 py-3 text-base font-semibold
-            bg-[#37d6b5] text-[#0b2747]
-            shadow-md hover:shadow-lg
-            hover:-translate-y-0.5 hover:bg-[#2bbfa1]
-            transition-all duration-200
-            focus-visible:outline outline-2 outline-offset-2 outline-[#0b2747]
-          "
-        >
-          Indique um cursinho →
-        </a>
+        <Button asChild variant="primary" size="lg">
+          <a href={GEOLOCATION_SEARCH}>Indique um cursinho →</a>
+        </Button>
       </div>
     </>
   );

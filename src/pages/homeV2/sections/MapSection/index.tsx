@@ -94,13 +94,13 @@ export const MapSection: SectionComponent<null> = () => {
           bg-white/90 backdrop-blur-xl backdrop-saturate-150 border border-white/40
           rounded-2xl shadow-xl px-4 py-3
           transition-colors hover:bg-white
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marine
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
         "
       >
-        <span className="text-marine font-bold text-2xl">Localiza Cursinho</span>
+        <span className="text-foreground font-bold text-2xl">Localiza Cursinho</span>
         <ArrowRight
           aria-hidden
-          className="h-6 w-6 text-marine transition-transform group-hover:translate-x-1"
+          className="h-6 w-6 text-foreground transition-transform group-hover:translate-x-1"
         />
       </Link>
       <MapInfoCard

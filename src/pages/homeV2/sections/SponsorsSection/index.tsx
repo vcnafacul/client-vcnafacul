@@ -22,7 +22,7 @@ const LOGO_CLASS =
 
 const TRIGGER_CLASS =
   "flex-none flex items-center justify-center rounded-md " +
-  "focus-visible:outline outline-2 outline-offset-4 outline-[#f7b733] " +
+  "focus-visible:outline outline-2 outline-offset-4 outline-ring " +
   "bg-transparent border-0 p-0 cursor-pointer";
 
 function hasDescription(s: Sponsor): boolean {
