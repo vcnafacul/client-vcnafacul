@@ -408,6 +408,7 @@ export function ModalConditions({
                           error={errors[`${index}-questionId`] || undefined}
                         >
 <OptionsSelect
+                            emptyText="Nenhuma questão ativa disponível"
                             value={condition.questionId}
                             onValueChange={(v) =>
                               updateCondition(index, "questionId", v)

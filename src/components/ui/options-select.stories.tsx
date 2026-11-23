@@ -41,6 +41,15 @@ export const Long: Story = {
     </Field>
   ),
 }
+/** Sem opções: o texto de estado vazio ocupa a lista. */
+export const Empty: Story = {
+  args: { options: [], emptyText: "Nenhuma questão ativa disponível", onValueChange: () => {} },
+  render: (args) => (
+    <Field label="Questão de referência">
+      <OptionsSelect {...args} />
+    </Field>
+  ),
+}
 export const WithValueAndError: Story = {
   args: { options: gender, value: 2, onValueChange: () => {} },
   render: (args) => (

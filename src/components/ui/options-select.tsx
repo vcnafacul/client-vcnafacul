@@ -23,6 +23,11 @@ export interface OptionsSelectProps<T extends string | number> {
   /** Devolve o valor da opção com o tipo original (número continua número). */
   onValueChange: (value: T) => void
   placeholder?: string
+  /**
+   * Estado vazio: texto, ou função do que foi digitado na busca (só no `Combobox`).
+   * Sem opções, o `Select` mostra o texto no lugar da lista.
+   */
+  emptyText?: React.ReactNode | ((busca: string) => React.ReactNode)
   disabled?: boolean
   id?: string
   className?: string
@@ -41,6 +46,7 @@ function OptionsSelectInner<T extends string | number>(
     value,
     onValueChange,
     placeholder = "Selecione",
+    emptyText,
     disabled,
     id,
     className,
@@ -69,6 +75,7 @@ function OptionsSelectInner<T extends string | number>(
         className={className}
         disabled={disabled}
         placeholder={placeholder}
+        emptyText={emptyText}
         options={items.map((o) => ({ value: String(o.value), label: o.label }))}
         value={current}
         onValueChange={pick}
@@ -83,6 +90,13 @@ function OptionsSelectInner<T extends string | number>(
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
+        {items.length === 0 ? (
+          <p className="px-2 py-6 text-center text-body-sm text-muted-foreground">
+            {typeof emptyText === "function"
+              ? emptyText("")
+              : (emptyText ?? "Nenhuma opção disponível")}
+          </p>
+        ) : null}
         {items.map((o) => (
           <SelectItem key={String(o.value)} value={String(o.value)}>
             {o.label}

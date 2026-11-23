@@ -79,4 +79,27 @@ describe("OptionsSelect", () => {
     fireEvent.click(screen.getByText("Opção 3"));
     expect(onValueChange).toHaveBeenCalledWith("v3");
   });
+
+  it("sem opções, o Select mostra o emptyText no lugar da lista", () => {
+    render(
+      <Field label="Questão">
+        <OptionsSelect options={[]} emptyText="Nenhuma questão ativa disponível" onValueChange={vi.fn()} />
+      </Field>,
+    );
+    abrir("Questão");
+    expect(screen.getByText("Nenhuma questão ativa disponível")).toBeInTheDocument();
+    expect(screen.queryAllByRole("option")).toHaveLength(0);
+  });
+
+  it("acima de 10 opções, o emptyText chega ao Combobox (em função da busca)", () => {
+    const muitas = Array.from({ length: 12 }, (_, i) => ({ value: i + 1, label: `Item ${i + 1}` }));
+    render(
+      <Field label="Muitos">
+        <OptionsSelect options={muitas} emptyText={(b) => `Nada com "${b}"`} onValueChange={vi.fn()} />
+      </Field>,
+    );
+    fireEvent.click(screen.getByRole("combobox", { name: "Muitos" }));
+    fireEvent.change(screen.getByPlaceholderText("Buscar…"), { target: { value: "zzz" } });
+    expect(screen.getByText('Nada com "zzz"')).toBeInTheDocument();
+  });
 });

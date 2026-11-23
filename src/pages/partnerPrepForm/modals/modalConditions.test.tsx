@@ -37,4 +37,18 @@ describe("ModalConditions (tickets-documentacao, 27)", () => {
     expect(lista.getByText(/Idade/)).toBeInTheDocument();
     expect(lista.getByText(/Número/)).toBeInTheDocument();
   });
+
+  it("sem questão ativa para referência, a lista mostra o aviso", () => {
+    render(
+      <ModalConditions
+        isOpen
+        handleClose={vi.fn()}
+        availableQuestions={[q("renda", "Renda")]}
+        questaoId="renda"
+        onSave={vi.fn()}
+      />,
+    );
+    fireEvent.keyDown(screen.getByRole("combobox", { name: /Questão de Referência/ }), { key: "Enter" });
+    expect(screen.getByText("Nenhuma questão ativa disponível")).toBeInTheDocument();
+  });
 });
