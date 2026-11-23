@@ -58,6 +58,9 @@ jobs:
       # Os 22 excluídos rodam no local, pela skill `abrir-pr`.
       - name: Test app vCnafacul
         run: yarn test:ci
+      # tickets/059 §7.5.1: eslint (flat + jsx-a11y) barra PR.
+      - name: Lint app vCnafacul
+        run: yarn lint
       - name: Build app vCnafacul
         run: yarn build
 
