@@ -293,7 +293,7 @@ export type ProcessarLista = (lista: Lista, ctx: Contexto) => void;
 export type RevisarTexto = (texto: string, no: ts.Node, ctx: Contexto) => string[];
 
 type Pedaco = { inicio: number; fim: number; texto: string; parcialInicio: boolean; parcialFim: boolean };
-type Edicao = { inicio: number; fim: number; texto: string };
+export type Edicao = { inicio: number; fim: number; texto: string };
 
 export const JA_MARCADO = /^\s*\/\*\s*ds-review/;
 
