@@ -1,7 +1,7 @@
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Timeline, TimelineItem } from "@/components/ui/timeline";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getLogs } from "@/services/question/getLogs";
@@ -10,14 +10,12 @@ import { AuditLog } from "@/types/auditLog/auditLog";
 import { formatDistanceToNow } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import {
-  Calendar,
   ChevronDown,
   ChevronUp,
   Clock,
   FileEdit,
   History,
   Mail,
-  User,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -62,17 +60,6 @@ export function TabHistoricoRefactored({
       newExpanded.add(index);
     }
     setExpandedLogs(newExpanded);
-  };
-
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return new Intl.DateTimeFormat("pt-BR", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    }).format(date);
   };
 
   const formatRelativeTime = (dateString: string) => {
@@ -215,71 +202,33 @@ export function TabHistoricoRefactored({
         </CardHeader>
       </Card>
 
-      {/* Timeline de Logs */}
-      <div className="relative space-y-4">
-        {/* Linha vertical da timeline */}
-        <div className="absolute left-4 sm:left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-primary/50 to-transparent" />
-
+      {/* Timeline de Logs (D18) */}
+      <Timeline aria-label="Histórico de alterações da questão">
         {logs.map((log, index) => {
           const changes = parseChanges(log.changes);
           const isExpanded = expandedLogs.has(index);
           const changesCount = Object.keys(changes).length;
 
           return (
-            <Card
+            <TimelineItem
               key={index}
-              className="ml-8 sm:ml-12 relative hover:shadow-lg transition-shadow duration-300"
-            >
-              {/* Ponto da timeline */}
-              <div className="absolute -left-[23px] sm:-left-[27px] top-6 w-4 h-4 rounded-full bg-primary border-4 border-background shadow-md" />
-
-              <CardHeader className="pb-3">
-                <div className="flex flex-wrap items-start justify-between gap-2 sm:gap-4">
-                  <div className="flex-1 min-w-0 space-y-2">
-                    {/* Usuário */}
-                    <div className="flex items-center gap-2">
-                      <div className="p-2 rounded-full bg-primary/10">
-                        <User className="h-4 w-4 text-primary" />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-semibold text-body break-words">
-                          {log.user.name}
-                        </p>
-                        <div className="flex items-center gap-1 text-body text-muted-foreground min-w-0">
-                          <Mail className="h-3 w-3 shrink-0" />
-                          <span className="break-all">{log.user.email}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Data/Hora */}
-                    <div className="flex flex-wrap items-center gap-4 text-body text-muted-foreground">
-                      <div className="flex items-center gap-1.5">
-                        <Calendar className="h-3.5 w-3.5" />
-                        {formatDate(log.createdAt)}
-                      </div>
-                      <div className="flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5" />
-                        {formatRelativeTime(log.createdAt)}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Badge de quantidade de alterações */}
-                  <Badge
-                    variant="secondary"
-                    className="flex items-center gap-1"
-                  >
-                    <FileEdit className="h-3 w-3" />
-                    {changesCount}{" "}
-                    {changesCount === 1 ? "alteração" : "alterações"}
-                  </Badge>
-                </div>
-              </CardHeader>
-
-              <CardContent>
-                {/* Alterações */}
+              icon={FileEdit}
+              variant="info"
+              who={<span className="break-words">{log.user.name}</span>}
+              what={`${changesCount} ${changesCount === 1 ? "alteração" : "alterações"}`}
+              when={new Date(log.createdAt)}
+              detail={
                 <div className="space-y-2">
+                  <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-body-sm text-muted-foreground">
+                    <span className="flex min-w-0 items-center gap-1">
+                      <Mail aria-hidden="true" className="h-3 w-3 shrink-0" />
+                      <span className="break-all">{log.user.email}</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock aria-hidden="true" className="h-3 w-3 shrink-0" />
+                      {formatRelativeTime(log.createdAt)}
+                    </span>
+                  </p>
                   {Object.entries(changes)
                     .slice(0, isExpanded ? undefined : 3)
                     .map(([key, value], idx) => (
@@ -289,16 +238,12 @@ export function TabHistoricoRefactored({
                           key
                         )}`}
                       >
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex-1">
-                            <p className="text-caption font-semibold uppercase opacity-75 mb-1">
-                              {translateFieldName(key)}
-                            </p>
-                            <p className="text-body font-medium break-words">
-                              {renderChangeValue(key, value)}
-                            </p>
-                          </div>
-                        </div>
+                        <p className="text-caption font-semibold uppercase opacity-75 mb-1">
+                          {translateFieldName(key)}
+                        </p>
+                        <p className="text-body font-medium break-words">
+                          {renderChangeValue(key, value)}
+                        </p>
                       </div>
                     ))}
 
@@ -308,7 +253,7 @@ export function TabHistoricoRefactored({
                       variant="ghost"
                       size="sm"
                       onClick={() => toggleLogExpansion(index)}
-                      className="w-full mt-2"
+                      className="w-full"
                     >
                       {isExpanded ? (
                         <>
@@ -325,11 +270,11 @@ export function TabHistoricoRefactored({
                     </Button>
                   )}
                 </div>
-              </CardContent>
-            </Card>
+              }
+            />
           );
         })}
-      </div>
+      </Timeline>
     </div>
   );
 }
