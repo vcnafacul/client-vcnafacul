@@ -1,4 +1,5 @@
-import BLink from "@/components/molecules/bLink";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { HOME_PATH } from "@/routes/path";
 import { CheckCircle } from "lucide-react";
 
@@ -19,9 +20,9 @@ export function PartnerPrepInscriptionStepSucess() {
         </p>
       </div>
 
-      <BLink to={HOME_PATH} className="mt-4 text-body">
-        Ir para a Página Inicial
-      </BLink>
+      <Button asChild variant="cta" className="mt-4">
+        <Link to={HOME_PATH}>Ir para a Página Inicial</Link>
+      </Button>
     </div>
   );
 }

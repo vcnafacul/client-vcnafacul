@@ -1,4 +1,5 @@
-import BLink from "@/components/molecules/bLink";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { DataInscription } from "@/dtos/student/studentInscriptionDTO";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { HOME_PATH } from "@/routes/path";
@@ -71,9 +72,9 @@ export default function PartnerPrepInscriptionStepPedingOrRejected({
       </p>
 
       <div>
-        <BLink to={HOME_PATH} className="mt-4 text-body w-96">
-          Ir para a Página Inicial
-        </BLink>
+        <Button asChild className="mt-4 w-full max-w-96">
+          <Link to={HOME_PATH}>Ir para a Página Inicial</Link>
+        </Button>
       </div>
     </div>
   );

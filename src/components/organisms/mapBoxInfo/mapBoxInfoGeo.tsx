@@ -8,7 +8,8 @@ import { ReactComponent as SocialTiktok } from "@/assets/icons/social-tiktok.svg
 import { ReactComponent as SocialWhatsapp } from "@/assets/icons/social-whatsapp.svg";
 import { ReactComponent as SocialX } from "@/assets/icons/social-x.svg";
 import { ReactComponent as SocialYoutube } from "@/assets/icons/social-youtube.svg";
-import BLink from "../../molecules/bLink";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { TypeMarker } from "../../../types/map/marker";
 import { MarkerPin } from "../../molecules/mapBox";
 import { palette } from "@/lib/palette";
@@ -112,9 +113,9 @@ function MapBoxInfoGeo({ geo, ctaLink, label, markerType }: MapBoxInfoProps) {
             Conhece um cursinho popular?
           </p>
           <div>
-            <BLink className="min-w-[300px]" to={ctaLink}>
-              Cadastrar um Cursinho
-            </BLink>
+            <Button asChild variant="cta" className="min-w-[300px]">
+              <Link to={ctaLink}>Cadastrar um Cursinho</Link>
+            </Button>
           </div>
         </>
       )}

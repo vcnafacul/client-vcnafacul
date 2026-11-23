@@ -1,4 +1,5 @@
-import BLink from "@/components/molecules/bLink";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import { DASH, HOME_PATH, REGISTRATION_MONITOR } from "@/routes/path";
 import { AlertCircle } from "lucide-react";
 
@@ -18,16 +19,15 @@ export function PartnerPrepInscriptionStepError({
       <h2 className="text-h1 font-semibold text-foreground">Atenção</h2>
       <p className="text-h3 text-muted-foreground max-w-md">{message}</p>
       {alreadyInscribed ? (
-        <BLink
-          to={`${DASH}/${REGISTRATION_MONITOR}`}
-          className="mt-4 text-body"
-        >
-          Ir para minhas inscrições
-        </BLink>
+        <Button asChild className="mt-4">
+          <Link to={`${DASH}/${REGISTRATION_MONITOR}`}>
+            Ir para minhas inscrições
+          </Link>
+        </Button>
       ) : (
-        <BLink to={HOME_PATH} className="mt-4 text-body">
-          Ir para a Página Inicial
-        </BLink>
+        <Button asChild className="mt-4">
+          <Link to={HOME_PATH}>Ir para a Página Inicial</Link>
+        </Button>
       )}
     </div>
   );

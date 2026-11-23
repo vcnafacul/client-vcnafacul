@@ -1,5 +1,5 @@
 import { ReactComponent as UserIcon } from "../../../assets/icons/user.svg";
-import BLink from "../../molecules/bLink";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -19,15 +19,18 @@ export interface SingProps {
 function Sign({ solid, className, userNavigation }: SingProps) {
     return (
         <div className={`flex ${className}`}>
-            <BLink to={userNavigation[0].Home_Menu_Item_id.link} type="tertiary" size="small"
-                className={`border-none ${solid ? 'text-foreground' : 'text-white'}`}>
-                {userNavigation[0].Home_Menu_Item_id.name}
-            </BLink>
-            <BLink to={userNavigation[1].Home_Menu_Item_id.link} type="primary" size="small"
-                className={`border-none hidden text-body md:flex md:justify-center md:items-center rounded-sm`}>
-                <UserIcon className="mr-3 ml-0" />
-                {userNavigation[1].Home_Menu_Item_id.name}
-            </BLink>
+            <Button asChild variant="ghost" size="sm"
+                className={solid ? 'text-foreground' : 'text-white hover:bg-white/10 hover:text-white'}>
+                <Link to={userNavigation[0].Home_Menu_Item_id.link}>
+                    {userNavigation[0].Home_Menu_Item_id.name}
+                </Link>
+            </Button>
+            <Button asChild size="sm" className="hidden md:inline-flex">
+                <Link to={userNavigation[1].Home_Menu_Item_id.link}>
+                    <UserIcon aria-hidden="true" />
+                    {userNavigation[1].Home_Menu_Item_id.name}
+                </Link>
+            </Button>
             <div className="md:hidden">
                 <DropdownMenu>
                     <DropdownMenuTrigger

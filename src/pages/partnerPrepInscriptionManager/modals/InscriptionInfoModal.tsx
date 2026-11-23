@@ -33,7 +33,7 @@ import {
 } from "./InscriptionInfoCreateEditModal";
 
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
-import BLink from "@/components/molecules/bLink";
+import { Link } from "react-router-dom";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
@@ -362,14 +362,13 @@ export function InscriptionInfoModal({
               </ShadcnTooltip>
             </div>
             <div className="order-1 sm:order-2 w-full sm:w-36">
-              <BLink
-                className="h-10 sm:h-8 w-full bg-success border-none hover:bg-success/60"
-                to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
-              >
-                <div className="flex justify-center gap-1.5">
-                  <p className="text-body w-fit">Lista de Alunos</p>
-                </div>
-              </BLink>
+              <Button asChild className="h-10 sm:h-8 w-full">
+                <Link
+                  to={`${DASH}/${PARTNER_PREP_INSCRIPTION}/${inscriptionSelected?.id}`}
+                >
+                  Lista de Alunos
+                </Link>
+              </Button>
             </div>
             <div className="order-3 flex flex-col-reverse gap-3 sm:flex-row sm:flex-1 sm:justify-end sm:gap-4">
               <Button variant="destructive" size="lg"

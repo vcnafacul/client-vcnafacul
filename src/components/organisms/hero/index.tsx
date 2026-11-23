@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Navigation, Pagination } from "swiper/modules";
 import { useHeroContext } from "../../../context/heroContext";
-import BLink from "../../molecules/bLink";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import Carousel from "../../molecules/carousel";
 import { HeroSkeleton } from "../heroSkeleton";
 
@@ -62,15 +63,17 @@ function Hero({ className }: HeroProps) {
                 </div>
                 <div className="flex gap-4 px-2 min-w-80 max-w-lg">
                   {slide.links.map((link: any) => (
-                    <BLink
-                      type="tertiary"
-                      target={link.target}
-                      hover
-                      key={link.id}
-                      to={link.link}
-                    >
-                      {link.text}
-                    </BLink>
+                    <Button asChild variant="outline" key={link.id}>
+                      {link.link.includes("#") ? (
+                        <a href={link.link} target={link.target}>
+                          {link.text}
+                        </a>
+                      ) : (
+                        <Link to={link.link} target={link.target}>
+                          {link.text}
+                        </Link>
+                      )}
+                    </Button>
                   ))}
                 </div>
               </div>
