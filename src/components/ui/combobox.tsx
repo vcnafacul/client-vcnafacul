@@ -52,16 +52,16 @@ const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
     const [aberto, setAberto] = React.useState(defaultOpen ?? false)
     const idLista = React.useId()
     const [busca, setBusca] = React.useState("")
+    // Fechar, por qualquer caminho (Esc, clique fora ou escolher), zera a busca:
+    // a próxima abertura mostra a lista inteira.
+    const mudarAberto = (a: boolean) => {
+      setAberto(a)
+      if (!a) setBusca("")
+    }
     const escolhida = options.find((o) => o.value === value)
 
     return (
-      <Popover
-        open={aberto}
-        onOpenChange={(a) => {
-          setAberto(a)
-          if (!a) setBusca("")
-        }}
-      >
+      <Popover open={aberto} onOpenChange={mudarAberto}>
         <PopoverTrigger asChild>
           <button
             ref={ref}
@@ -109,7 +109,7 @@ const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
                   disabled={o.disabled}
                   onSelect={() => {
                     onValueChange(o.value)
-                    setAberto(false)
+                    mudarAberto(false)
                   }}
                   className="relative flex min-h-11 cursor-default select-none items-center rounded-md py-1.5 pl-2 pr-8 text-body outline-none data-[disabled=true]:pointer-events-none data-[disabled=true]:opacity-50 data-[selected=true]:bg-accent data-[selected=true]:text-accent-foreground sm:min-h-8"
                 >
