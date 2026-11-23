@@ -119,13 +119,6 @@ const EXCECOES: [
   motivo: string,
 ][] = [
   [
-    "root",
-    "highlight",
-    "muted",
-    4.48,
-    "orange-700 sobre neutral-100; decidir token (Task 2)",
-  ],
-  [
     "marine",
     "foreground",
     "page",
@@ -243,20 +236,6 @@ const EXCECOES: [
     "background",
     2.98,
     "seção escura: token de status/gráfico/page não é usado nela",
-  ],
-  [
-    "neutral",
-    "highlight",
-    "muted",
-    4.48,
-    "orange-700 sobre neutral-100; decidir token (Task 2)",
-  ],
-  [
-    "yellow",
-    "input",
-    "background",
-    2.99,
-    "borda de campo ligeiramente abaixo de 3:1 sobre yellow-50; decidir token (Task 2)",
   ],
 ];
 

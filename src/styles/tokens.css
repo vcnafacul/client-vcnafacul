@@ -19,7 +19,7 @@
   --orange-400: 21 100% 69%;        /* #FF9A62 */
   --orange-500: 28 100% 50%;        /* #FF7600 */
   --orange-600: 27 100% 39%;        /* #C55A00 */
-  --orange-700: 28 100% 35%;        /* #B35300 */
+  --orange-700: 28 100% 34%;        /* #AD5100 */
   --orange-800: 25 100% 20%;        /* #662B00 */
   --orange-900: 22 100% 12%;        /* #3E1700 */
   --orange-950: 15 100% 6%;         /* #1F0800 */
@@ -114,7 +114,7 @@
   --accent: var(--marine-100);              /* hover/highlight background in menus, rows */
   --accent-foreground: var(--marine-900);
 
-  --cta: var(--orange-700);                 /* #B35300 — at most one per screen */
+  --cta: var(--orange-700);                 /* #AD5100 — at most one per screen */
   --cta-foreground: 0 0% 100%;
   --highlight: var(--orange-700);           /* eyebrows + highlighted words (home) */
 
@@ -178,4 +178,5 @@
   --background: var(--yellow-50);
   --border: var(--yellow-100);
   --highlight: var(--yellow-700);
+  --input: var(--neutral-500);              /* neutral-400 fica em 2.99:1 sobre yellow-50 */
 }

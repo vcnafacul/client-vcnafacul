@@ -125,7 +125,12 @@ Os temas da home e das seções públicas **só reapontam tokens semânticos**. 
 |---|---|
 | `neutral` | Nada: são os tokens globais. `highlight` continua `orange-700`. |
 | `marine` | `background` = `marine-900`; `foreground` e `primary` brancos; `primary-foreground` = `marine-900`; `card` e `muted` = `marine-800`; `muted-foreground` = `marine-200`; `border` = `marine-700`; `cta` = `orange-500` com `cta-foreground` = `marine-900` (5,62:1); `highlight` = `mint-400`; `ring` = `orange-500`. |
-| `yellow` | `background` = `yellow-50`; `border` = `yellow-100`; `highlight` = `yellow-700`. |
+| `yellow` | `background` = `yellow-50`; `border` = `yellow-100`; `highlight` = `yellow-700`; `input` = `neutral-500`. |
+
+Numa seção `marine`, use só os tokens que o tema reaponta. Os de status (`destructive`, `success`, `warning`,
+`info`), os `chart-*` e o `page` continuam com os valores do fundo claro e não têm contraste sobre o marinho:
+selos de status, alertas e gráficos não entram em seções escuras. O `contrast.test.ts` lista esses pares como
+exceções nomeadas.
 
 Use o seletor de tema da barra de ferramentas do Storybook para ver qualquer componente em cada tema.
 
