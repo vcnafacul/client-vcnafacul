@@ -8,8 +8,8 @@ import { AlertCircle, Edit, Save, X } from "lucide-react";
 import { PendingImageStore } from "@/utils/pendingImageStore";
 import { lazy, Suspense } from "react";
 import { Controller, UseFormReturn } from "react-hook-form";
-import { ListaDePendencias } from "./PendenciasDoConteudo";
-import { ancoraDoCampo, Pendencia } from "./pendencias";
+import { ErrorSummary } from "@/components/ui/error-summary";
+import { ancoraDoCampo, Pendencia, ROTULO_DA_ABA } from "./pendencias";
 import { ConteudoFormData } from "./schema";
 
 const RichTextEditor = lazy(
@@ -236,7 +236,13 @@ export function TabConteudo({
                 )}
                 {pendencias.length > 0 && (
                   <div className="mt-1">
-                    <ListaDePendencias pendencias={pendencias} onIrPara={onIrPara} />
+                    <ErrorSummary
+                      items={pendencias.map((p) => ({
+                        message: p.mensagem,
+                        where: `· aba ${ROTULO_DA_ABA[p.aba]}`,
+                        onGoTo: () => onIrPara(p),
+                      }))}
+                    />
                   </div>
                 )}
               </div>

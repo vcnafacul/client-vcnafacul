@@ -211,7 +211,7 @@ export function ModalCreateQuestion({
         },
       ]}
       footerContent={
-        <div className="flex justify-end gap-3 p-4 border-t">
+        <>
           <Button variant="outline" onClick={handleClose} disabled={isSaving}>
             Cancelar
           </Button>
@@ -228,7 +228,7 @@ export function ModalCreateQuestion({
               </>
             )}
           </Button>
-        </div>
+        </>
       }
     />
   );

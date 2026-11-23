@@ -1,5 +1,13 @@
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { X } from "lucide-react";
+import { useState } from "react";
 
 export interface TabModal {
   id: string;
@@ -17,6 +25,7 @@ interface ModalTabTemplateQuestionProps {
   tabs: TabModal[];
   isOpen: boolean;
   className?: string;
+  /** Botões do rodapé fixo (vão dentro do `DialogFooter`). */
   footerContent?: React.ReactNode;
   /**
    * Na barra do topo, à esquerda do fechar — a trilha da linhagem (card 34A).
@@ -30,7 +39,10 @@ interface ModalTabTemplateQuestionProps {
    */
   abaAtiva?: string;
   onAbaChange?: (id: string) => void;
-  /** Faixa logo abaixo da barra do topo, igual em todas as abas e fixa ao rolar. */
+  /**
+   * `banner` do Dialog (D21): fica sob o cabeçalho, igual em todas as abas e
+   * fixo ao rolar. Hoje leva o `ErrorSummary` e o aviso de alterações não salvas.
+   */
   aviso?: React.ReactNode;
 }
 
@@ -45,128 +57,82 @@ function ModalTabTemplateQuestion({
   onAbaChange,
   aviso,
 }: ModalTabTemplateQuestionProps) {
-  if (!isOpen) return null;
-
-  // Garante que sempre há um defaultValue válido
+  // Garante que sempre há uma aba válida selecionada
   const defaultTabId =
     abaInicial && tabs.some((t) => t.id === abaInicial)
       ? abaInicial
       : tabs.length > 0
         ? tabs[0].id
         : undefined;
+  const controlada = abaAtiva !== undefined;
+  const [interna, setInterna] = useState(defaultTabId);
+  const ativa = controlada
+    ? abaAtiva
+    : interna && tabs.some((t) => t.id === interna)
+      ? interna
+      : defaultTabId;
+  const trocar = (id: string) => {
+    if (!controlada) setInterna(id);
+    onAbaChange?.(id);
+  };
+  // O X e o Esc fecham pelo `handleClose` da aba em foco (cada aba decide, como antes).
+  const fechar = () =>
+    (tabs.find((t) => t.id === ativa) ?? tabs[0])?.handleClose?.();
 
   return (
-    <div className="fixed top-0 left-0 z-overlay bg-black/50 w-screen h-screen flex justify-center items-center overflow-y-auto scrollbar-hide">
-      <div className="w-full h-full flex justify-center items-center p-2 sm:p-4">
-        {/* Key força re-montagem quando as tabs mudam (ex: de loading para tabs reais) */}
-        <Tabs
-          key={defaultTabId}
-          defaultValue={defaultTabId}
-          {...(abaAtiva !== undefined
-            ? { value: abaAtiva, onValueChange: onAbaChange }
-            : {})}
-          className="w-full max-w-6xl"
+    <Dialog
+      open={isOpen}
+      onOpenChange={(aberto) => {
+        if (!aberto) fechar();
+      }}
+      size="full"
+    >
+      {/* Key força re-montagem quando as tabs mudam (ex: de loading para tabs reais) */}
+      <Tabs key={defaultTabId} value={ativa} onValueChange={trocar}>
+        <DialogContent
+          aria-describedby={undefined}
+          // Dados digitados: clique fora não fecha (R32).
+          onInteractOutside={(e) => e.preventDefault()}
+          banner={
+            aviso ? (
+              <div className="max-h-40 overflow-y-auto sm:max-h-none">{aviso}</div>
+            ) : undefined
+          }
+          className="gap-3 p-4 sm:max-w-6xl sm:p-6"
         >
-          {/* Colunas geradas dinamicamente: sempre 1 coluna por aba, todas
-              com a mesma largura (minmax(0,1fr) permite encolher). Assim as
-              abas ficam sempre em uma única linha horizontal, diminuindo de
-              tamanho conforme mais abas são adicionadas. */}
-          {/*
-            ⚠️ No celular, rolagem horizontal com os rótulos inteiros: seis abas
-            em ~335px davam ~40px a cada uma e cortavam todos os nomes.
-          */}
-          <TabsList
-            className="flex w-full justify-start overflow-x-auto scrollbar-hide sm:grid"
-            style={{
-              gridTemplateColumns: `repeat(${tabs.length}, minmax(0, 1fr))`,
-            }}
-          >
-            {tabs.map((tab) => (
-              <TabsTrigger
-                key={tab.id}
-                value={tab.id}
-                className="shrink-0 px-3 sm:shrink sm:min-w-0 sm:px-2 sm:overflow-hidden sm:text-ellipsis"
-              >
-                {tab.label}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          {/* Container com altura fixa para todas as tabs */}
-          {/*
-            `dvh` desconta a barra do navegador no celular (sem suporte, vh).
-            No celular sobra menos margem em volta, então a caixa é mais alta.
-          */}
-          <div className="relative h-[calc(100vh-200px)] supports-[height:100dvh]:h-[calc(100dvh-110px)] sm:supports-[height:100dvh]:h-[calc(100dvh-200px)]">
+          <DialogHeader>
+            <DialogTitle className="sr-only">Questão</DialogTitle>
+            {/* ⚠️ `pr-10`: a trilha da linhagem não passa por baixo do fechar. */}
+            {cabecalho && <div className="min-w-0 pr-10">{cabecalho}</div>}
+            {/*
+              No celular, rolagem horizontal com os rótulos inteiros: seis abas
+              em ~335px davam ~40px a cada uma e cortavam todos os nomes.
+            */}
+            <TabsList className="flex w-full justify-start overflow-x-auto scrollbar-hide">
+              {tabs.map((tab) => (
+                <TabsTrigger key={tab.id} value={tab.id} className="shrink-0 px-3">
+                  {tab.label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </DialogHeader>
+          <DialogBody>
             {tabs.map((tab) => (
               <TabsContent
-                className={`bg-white rounded-md absolute inset-0 data-[state=inactive]:hidden ${className}`}
                 key={tab.id}
                 value={tab.id}
+                className={`mt-0 flex flex-col gap-4 data-[state=inactive]:hidden ${className ?? ""}`}
                 forceMount={tab.manterMontada || undefined}
               >
-                <ModalContent
-                  onClose={tab.handleClose}
-                  footer={footerContent}
-                  cabecalho={cabecalho}
-                  aviso={aviso}
-                >
-                  {tab.children}
-                </ModalContent>
+                {tab.children}
               </TabsContent>
             ))}
-          </div>
-        </Tabs>
-      </div>
-    </div>
-  );
-}
-
-function ModalContent({
-  children,
-  onClose,
-  footer,
-  cabecalho,
-  aviso,
-}: {
-  children: React.ReactNode;
-  onClose?: () => void;
-  footer?: React.ReactNode;
-  cabecalho?: React.ReactNode;
-  aviso?: React.ReactNode;
-}) {
-  return (
-    <div className="bg-white h-full overflow-y-auto scrollbar-hide rounded-sm flex flex-col relative">
-      {/* Botão de fechar fixado no topo */}
-      {onClose && (
-        <div className="sticky top-0 bg-white z-sticky">
-          <div className="flex items-center justify-end gap-2 p-2">
-            {/* ⚠️ `mr-auto`: a trilha à esquerda, o fechar no canto de sempre. */}
-            {cabecalho && <div className="mr-auto min-w-0">{cabecalho}</div>}
-            <button
-              type="button"
-              aria-label="Fechar"
-              onClick={onClose}
-              className="shrink-0 rounded-sm text-muted-foreground hover:text-foreground transition"
-            >
-              <X className="w-6 h-6" />
-            </button>
-          </div>
-          {aviso && <div className="px-2 pb-2">{aviso}</div>}
-        </div>
-      )}
-
-      {/* Conteúdo principal */}
-      <div className="flex flex-col gap-4 flex-1">{children}</div>
-
-      {/* Footer fixado no final */}
-      {footer && (
-        <div className="sticky bottom-0 bg-white z-sticky border-t">
-          {footer}
-        </div>
-      )}
-    </div>
+          </DialogBody>
+          {footerContent ? <DialogFooter>{footerContent}</DialogFooter> : null}
+        </DialogContent>
+      </Tabs>
+    </Dialog>
   );
 }
 
 export default ModalTabTemplateQuestion;
-
