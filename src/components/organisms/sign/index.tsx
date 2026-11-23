@@ -22,7 +22,7 @@ function Sign({ solid, className, userNavigation }: SingProps) {
                 <UserIcon className="mr-3 ml-0" />
                 {userNavigation[1].Home_Menu_Item_id.name}
             </BLink>
-            <DropdwonMenu userNavigation={userNavigation} className="md:hidden">
+            <DropdwonMenu userNavigation={userNavigation} className="md:hidden" triggerLabel="Menu do usuário">
                 <Avatar />
             </DropdwonMenu>
         </div>

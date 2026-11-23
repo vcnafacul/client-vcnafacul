@@ -1,63 +1,54 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { Link } from "react-router-dom"
-import { Menu, Transition } from '@headlessui/react'
-import { classNames } from '../../../utils/className'
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 import { ItemMenuProps } from '../../molecules/menuItems';
 
 interface DropdwonMenuProps {
     userNavigation: ItemMenuProps[];
     children: React.ReactNode;
     className?: string;
+    /** Nome do gatilho quando o conteúdo é só um ícone ou um avatar. */
+    triggerLabel?: string;
 }
 
-function DropdwonMenu({ userNavigation, children, className }: DropdwonMenuProps) {
+function DropdwonMenu({ userNavigation, children, className, triggerLabel }: DropdwonMenuProps) {
     return (
         <div className={className}>
-            <Menu as="div" className="relative">
-                <Menu.Button>
-                    {children}
-                </Menu.Button>
-                <Transition
-                    as={Fragment}
-                    enter="transition ease-out duration-200"
-                    enterFrom="transform opacity-0 scale-95"
-                    enterTo="transform opacity-100 scale-100"
-                    leave="transition ease-in duration-75"
-                    leaveFrom="transform opacity-100 scale-100"
-                    leaveTo="transform opacity-0 scale-95"
+            <DropdownMenu>
+                <DropdownMenuTrigger
+                    aria-label={triggerLabel}
+                    className="rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
-                    <Menu.Items className="absolute right-0 z-raised mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        {userNavigation.map((item, index) => (
-                            <Menu.Item key={index}>
-                                {({ active }) => item.Home_Menu_Item_id.onClick ? (
-                                    // tickets/029: item de AÇÃO (ex.: "Instalar app"), não link.
-                                    <button
-                                        type="button"
-                                        onClick={item.Home_Menu_Item_id.onClick}
-                                        className={classNames(
-                                            active ? 'bg-muted' : '',
-                                            'block w-full px-4 py-2 text-left text-body text-foreground'
-                                        )}
-                                    >
-                                        {item.Home_Menu_Item_id.name}
-                                    </button>
-                                ) : (
-                                    <Link
-                                        to={item.Home_Menu_Item_id.link}
-                                        className={classNames(
-                                            active ? 'bg-muted' : '',
-                                            'block px-4 py-2 text-body text-foreground'
-                                        )}
-                                        target={item.Home_Menu_Item_id.target}
-                                    >
-                                        {item.Home_Menu_Item_id.name}
-                                    </Link>
-                                )}
-                            </Menu.Item>
-                        ))}
-                    </Menu.Items>
-                </Transition>
-            </Menu>
+                    {children}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                    {userNavigation.map((item, index) => (
+                        item.Home_Menu_Item_id.onClick ? (
+                            // tickets/029: item de AÇÃO (ex.: "Instalar app"), não link.
+                            <DropdownMenuItem
+                                key={index}
+                                onSelect={item.Home_Menu_Item_id.onClick}
+                            >
+                                {item.Home_Menu_Item_id.name}
+                            </DropdownMenuItem>
+                        ) : (
+                            <DropdownMenuItem key={index} asChild>
+                                <Link
+                                    to={item.Home_Menu_Item_id.link}
+                                    target={item.Home_Menu_Item_id.target}
+                                >
+                                    {item.Home_Menu_Item_id.name}
+                                </Link>
+                            </DropdownMenuItem>
+                        )
+                    ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
         </div>
     )
 }

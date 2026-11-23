@@ -19,7 +19,7 @@ vi.mock("@/services/push/plataforma", async (orig) => {
 });
 vi.mock("../avatar", () => ({ default: () => <span>avatar</span> }));
 
-// O Menu do Headless UI usa ResizeObserver, que o jsdom não tem.
+// O menu do Radix usa ResizeObserver, que o jsdom não tem.
 globalThis.ResizeObserver ??= class {
   observe() {}
   unobserve() {}
@@ -36,7 +36,8 @@ const abrirMenu = () => {
       <Logged userName="Ana" userNavigation={userNavigationLogged} />
     </MemoryRouter>,
   );
-  fireEvent.click(screen.getByRole("button", { name: /Ana/ }));
+  // O Radix abre o menu no pointerdown ou no teclado, não no click
+  fireEvent.keyDown(screen.getByRole("button", { name: /Ana/ }), { key: "Enter" });
 };
 
 describe("'Instalar app' no menu do usuário (029 · 04)", () => {
@@ -49,6 +50,13 @@ describe("'Instalar app' no menu do usuário (029 · 04)", () => {
     abrirMenu();
     expect(screen.queryByRole("menuitem", { name: "Instalar app" })).toBeNull();
     expect(screen.getByRole("menuitem", { name: "Sair" })).toBeInTheDocument();
+  });
+
+  it("itens de navegação são links de verdade", () => {
+    abrirMenu();
+    const perfil = screen.getByRole("menuitem", { name: "Meu Perfil" });
+    expect(perfil.tagName).toBe("A");
+    expect(perfil).toHaveAttribute("href");
   });
 
   it("com convite (também no desktop): 'Instalar app' antes de 'Sair', e abre o prompt nativo", async () => {

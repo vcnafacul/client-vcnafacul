@@ -114,7 +114,7 @@ function Header({ solid, className }: HeaderProps) {
             </div>
           )}
         </div>
-        <DropdwonMenu userNavigation={report}>
+        <DropdwonMenu userNavigation={report} triggerLabel="Reportar um problema ou ideia">
           <Reporticon className="hidden sm:block w-8 h-8" />
         </DropdwonMenu>
         {headerAction}
