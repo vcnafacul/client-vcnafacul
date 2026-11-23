@@ -90,7 +90,11 @@ export function CollaboratorFrentes({
           onValueChange={handleSelect}
           placeholder="Buscar por nome da frente ou da matéria..."
           searchPlaceholder="Buscar por nome da frente ou da matéria..."
-          emptyText="Nenhuma frente encontrada"
+          emptyText={(busca) =>
+            busca.trim()
+              ? `Nenhuma frente encontrada com "${busca}"`
+              : "Nenhuma frente encontrada"
+          }
         />
       </div>
 

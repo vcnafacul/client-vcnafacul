@@ -22,7 +22,8 @@ export interface ComboboxProps
   onValueChange: (value: string) => void
   placeholder?: string
   searchPlaceholder?: string
-  emptyText?: string
+  /** Texto, ou função do que foi digitado na busca ("Nenhuma frente com “x”"). */
+  emptyText?: React.ReactNode | ((busca: string) => React.ReactNode)
   /** Só para o catálogo: abre a lista de saída. */
   defaultOpen?: boolean
 }
@@ -50,10 +51,17 @@ const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
   ) => {
     const [aberto, setAberto] = React.useState(defaultOpen ?? false)
     const idLista = React.useId()
+    const [busca, setBusca] = React.useState("")
     const escolhida = options.find((o) => o.value === value)
 
     return (
-      <Popover open={aberto} onOpenChange={setAberto}>
+      <Popover
+        open={aberto}
+        onOpenChange={(a) => {
+          setAberto(a)
+          if (!a) setBusca("")
+        }}
+      >
         <PopoverTrigger asChild>
           <button
             ref={ref}
@@ -84,12 +92,14 @@ const Combobox = React.forwardRef<HTMLButtonElement, ComboboxProps>(
               <Search aria-hidden="true" className="size-4 shrink-0 text-muted-foreground" />
               <Command.Input
                 placeholder={searchPlaceholder}
+                value={busca}
+                onValueChange={setBusca}
                 className="h-11 w-full bg-transparent text-body outline-none placeholder:text-muted-foreground sm:h-9"
               />
             </div>
             <Command.List id={idLista} className="max-h-64 overflow-y-auto p-1">
               <Command.Empty className="px-2 py-6 text-center text-body-sm text-muted-foreground">
-                {emptyText}
+                {typeof emptyText === "function" ? emptyText(busca) : emptyText}
               </Command.Empty>
               {options.map((o) => (
                 <Command.Item

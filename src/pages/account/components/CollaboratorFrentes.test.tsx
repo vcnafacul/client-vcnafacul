@@ -24,6 +24,15 @@ vi.mock("@/services/content/getMaterias", () => ({
 }));
 
 describe("CollaboratorFrentes", () => {
+  it("sem resultado, o aviso repete o termo buscado", async () => {
+    render(<CollaboratorFrentes token="t" />);
+    fireEvent.click(screen.getByRole("combobox", { name: "Frentes de Afinidade" }));
+    fireEvent.change(await screen.findByPlaceholderText(/Buscar por nome/, { selector: "input" }), {
+      target: { value: "zzz" },
+    });
+    expect(await screen.findByText('Nenhuma frente encontrada com "zzz"')).toBeInTheDocument();
+  });
+
   it("escolhe uma frente pelo Combobox, sem camadas transparentes soltas", async () => {
     const { container } = render(<CollaboratorFrentes token="t" />);
     const campo = screen.getByRole("combobox", { name: "Frentes de Afinidade" });
