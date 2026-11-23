@@ -90,4 +90,20 @@ describe("DashListFooter", () => {
       "polite",
     );
   });
+
+  it("nas pontas, Anterior e Próxima ficam desabilitados de verdade (não só opacos)", () => {
+    const onPageChange = montar(1, 128);
+    const anterior = screen.getByRole("button", { name: "Página anterior" });
+    expect(anterior).toBeDisabled();
+    fireEvent.click(anterior);
+    expect(onPageChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Próxima página" })).toBeEnabled();
+  });
+
+  it("na última página, Próxima fica desabilitada e Anterior volta uma", () => {
+    const onPageChange = montar(6, 128);
+    expect(screen.getByRole("button", { name: "Próxima página" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Página anterior" }));
+    expect(onPageChange).toHaveBeenCalledWith(5);
+  });
 });

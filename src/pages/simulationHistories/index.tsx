@@ -3,7 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/lib/toast";
-import { PaginationWrapper } from "../../components/organisms/paginationWrapper";
+import { PaginationControls } from "@/components/ui/pagination";
 import { AproveitamentoHitoriesDTO } from "../../dtos/historico/getPerformanceDTO";
 import { HistoricoDTO } from "../../dtos/historico/historicoDTO";
 import { DASH, SIMULADO, SIMULATE_METRICS } from "../../routes/path";
@@ -122,11 +122,13 @@ export function SimulationHistories() {
 
       {/* Paginação Superior */}
       {!isLoading && (
-        <PaginationWrapper
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <div className="my-6 flex justify-center">
+          <PaginationControls
+            page={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       )}
 
       {/* Cards de Histórico */}
@@ -156,11 +158,13 @@ export function SimulationHistories() {
 
       {/* Paginação Inferior */}
       {!isLoading && (
-        <PaginationWrapper
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
+        <div className="my-6 flex justify-center">
+          <PaginationControls
+            page={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
+        </div>
       )}
     </div>
   );

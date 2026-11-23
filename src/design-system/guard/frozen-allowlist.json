@@ -161,7 +161,6 @@
   "src/components/organisms/menuMobile/menuMobile.test.tsx",
   "src/components/organisms/newsCarousel/index.tsx",
   "src/components/organisms/newsSelector/index.tsx",
-  "src/components/organisms/paginationWrapper/index.tsx",
   "src/components/organisms/permissionHierarchyPanel/PermissionHierarchyPanel.tsx",
   "src/components/organisms/registerForm/index.test.tsx",
   "src/components/organisms/registerForm/index.tsx",
