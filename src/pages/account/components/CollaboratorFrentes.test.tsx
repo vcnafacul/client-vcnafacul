@@ -27,7 +27,7 @@ describe("CollaboratorFrentes", () => {
   it("sem resultado, o aviso repete o termo buscado", async () => {
     render(<CollaboratorFrentes token="t" />);
     fireEvent.click(screen.getByRole("combobox", { name: "Frentes de Afinidade" }));
-    fireEvent.change(await screen.findByPlaceholderText(/Buscar por nome/, { selector: "input" }), {
+    fireEvent.change((await screen.findAllByPlaceholderText(/Buscar por nome/)).find((e) => e.tagName === "INPUT")!, {
       target: { value: "zzz" },
     });
     expect(await screen.findByText('Nenhuma frente encontrada com "zzz"')).toBeInTheDocument();
