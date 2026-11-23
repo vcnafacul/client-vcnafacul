@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { VARIANTE_POR_TONE } from "@/components/dashV2";
+import { COR_DO_ICONE } from "./modals/simuladoStatus";
 import {
   STATUS_COMPLETA,
   STATUS_EM_CADASTRO,
@@ -136,5 +137,23 @@ describe("categoria livre — sem alvo (tickets-documentacao, 34)", () => {
 
   it("nenhuma cadastrada é Sem questões", () => {
     expect(statusDaProva(livre(0, 0))).toEqual(STATUS_SEM_QUESTOES);
+  });
+});
+
+describe("cor do ícone de status (contraste sobre branco)", () => {
+  it("nenhum tom usa laranja: `running` sai em cinza e a forma do ícone carrega o estado", () => {
+    expect(COR_DO_ICONE.running).toBe("text-muted-foreground");
+    for (const classe of Object.values(COR_DO_ICONE)) {
+      expect(classe).not.toMatch(/orange|cta|warning/);
+    }
+  });
+
+  it("cobre todos os tons e nenhum tom de ícone repete o vermelho fora de `missing`", () => {
+    expect(Object.keys(COR_DO_ICONE).sort()).toEqual(
+      ["done", "info", "missing", "neutral", "running"],
+    );
+    for (const [tom, classe] of Object.entries(COR_DO_ICONE)) {
+      if (tom !== "missing") expect(classe).not.toContain("destructive");
+    }
   });
 });

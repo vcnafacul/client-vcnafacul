@@ -6,20 +6,8 @@ import {
 import { cn } from "@/lib/utils";
 import { CircleCheck, Clock, Lock, CircleX } from "lucide-react";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
-import type { StatusV2 } from "@/components/dashV2";
-import { statusVisual, type FormaDoIcone } from "./simuladoStatus";
+import { COR_DO_ICONE, statusVisual, type FormaDoIcone } from "./simuladoStatus";
 
-/**
- * Cor do ícone sobre branco (>= 3:1). `running` fica em cinza: nenhum laranja
- * da paleta alcança 3:1, e quem distingue o estado é a forma do ícone.
- */
-const COR_DO_ICONE: Record<StatusV2, string> = {
-  done: "text-success",
-  running: "text-muted-foreground",
-  missing: "text-destructive",
-  info: "text-info",
-  neutral: "text-muted-foreground",
-};
 
 const ICONES: Record<FormaDoIcone, typeof CircleCheck> = {
   cadeado: Lock,

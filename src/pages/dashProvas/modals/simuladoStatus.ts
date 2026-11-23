@@ -13,8 +13,8 @@ import { getStatus, isSemJanela } from "../../../utils/simuladoAvailability";
  * ~38s por causa disso e está fora do CI); testando a função, a regra inteira
  * fica coberta em milissegundos.
  *
- * ⚠️ **A forma do ícone é o portador do significado, não a cor.** Ver `COR_DO_ICONE` em
- * `SimuladoStatusIcon`: nenhum laranja da paleta alcança
+ * ⚠️ **A forma do ícone é o portador do significado, não a cor.** Ver `COR_DO_ICONE`
+ * (abaixo, neste arquivo): nenhum laranja da paleta alcança
  * 3:1 sobre branco, então "antes da janela" sai em cinza e quem o distingue de
  * "bloqueado" é o relógio contra o cadeado.
  */
@@ -127,3 +127,15 @@ export function proporcaoQuestoes(
     completo: quantidade >= total,
   };
 }
+
+/**
+ * Cor do ícone sobre branco (>= 3:1). `running` fica em cinza: nenhum laranja
+ * da paleta alcança 3:1, e quem distingue o estado é a forma do ícone.
+ */
+export const COR_DO_ICONE: Record<StatusV2, string> = {
+  done: "text-success",
+  running: "text-muted-foreground",
+  missing: "text-destructive",
+  info: "text-info",
+  neutral: "text-muted-foreground",
+};
