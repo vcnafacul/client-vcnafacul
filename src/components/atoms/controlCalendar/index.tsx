@@ -1,4 +1,5 @@
 import { DatePicker } from "@/components/ui/date-picker";
+import { paraDataValida } from "@/lib/datasBr";
 import { Field } from "@/components/ui/field";
 import {
   Control,
@@ -39,7 +40,7 @@ function ControlCalendar({
       render={({ field }) => (
         <Field label={label} error={errorMessage}>
           <DatePicker
-            value={field.value ? new Date(field.value) : undefined}
+            value={paraDataValida(field.value)}
             onChange={(d) => d && field.onChange(d)}
             captionLayout="dropdown"
             startMonth={new Date(1900, 0)}

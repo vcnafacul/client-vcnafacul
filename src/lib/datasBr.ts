@@ -24,3 +24,10 @@ export const paraIntervalo = (par?: ReadonlyArray<Date | null | undefined> | nul
 
 export const paraPar = (v?: DateRange): Date[] | undefined =>
   v?.from ? (v.to ? [v.from, v.to] : [v.from]) : undefined
+
+/** Uma Date válida, ou undefined para vazio, "" e data inválida (nunca lança). */
+export const paraDataValida = (v: unknown): Date | undefined => {
+  if (v === null || v === undefined || v === "") return undefined
+  const d = v instanceof Date ? v : new Date(v as string | number)
+  return Number.isNaN(d.getTime()) ? undefined : d
+}

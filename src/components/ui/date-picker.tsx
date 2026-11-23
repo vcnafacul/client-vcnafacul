@@ -2,7 +2,7 @@ import * as React from "react"
 import { CalendarDays } from "lucide-react"
 
 import { cn } from "@/lib/utils"
-import { doDiaDoCalendario, formatarData, paraDiaDoCalendario } from "@/lib/datasBr"
+import { doDiaDoCalendario, formatarData, paraDataValida, paraDiaDoCalendario } from "@/lib/datasBr"
 import { Calendar } from "./calendar"
 import { controlRing } from "./input"
 import { Popover, PopoverContent, PopoverTrigger } from "./popover"
@@ -52,6 +52,8 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
     ref
   ) => {
     void _required
+    // Data inválida (ex.: new Date("")) conta como vazio: mostra o placeholder
+    const valor = paraDataValida(value)
     const [aberto, setAberto] = React.useState(false)
     return (
       <Popover open={aberto} onOpenChange={setAberto}>
@@ -64,8 +66,8 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
             {...props}
           >
             <CalendarDays aria-hidden="true" />
-            <span className={cn(!value && "text-muted-foreground")}>
-              {value ? formatarData(value) : placeholder}
+            <span className={cn(!valor && "text-muted-foreground")}>
+              {valor ? formatarData(valor) : placeholder}
             </span>
           </button>
         </PopoverTrigger>
@@ -75,8 +77,8 @@ const DatePicker = React.forwardRef<HTMLButtonElement, DatePickerProps>(
             captionLayout={captionLayout}
             startMonth={startMonth}
             endMonth={endMonth}
-            selected={value ? paraDiaDoCalendario(value) : undefined}
-            defaultMonth={value ? paraDiaDoCalendario(value) : undefined}
+            selected={valor ? paraDiaDoCalendario(valor) : undefined}
+            defaultMonth={valor ? paraDiaDoCalendario(valor) : undefined}
             onSelect={(dia) => {
               onChange(dia ? doDiaDoCalendario(dia) : undefined)
               setAberto(false)

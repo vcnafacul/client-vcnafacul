@@ -2,7 +2,8 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
-import ControlCalendar from "@/components/atoms/controlCalendar";
+import { DatePicker } from "@/components/ui/date-picker";
+import { paraDataValida } from "@/lib/datasBr";
 import { OptionsSelect } from "@/components/ui/options-select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Field, FormLegend } from "@/components/ui/field";
@@ -12,7 +13,7 @@ import { optionsGender, stateOptions } from "@/pages/register/data";
 import { UserMe } from "@/types/user/userMe";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 
 interface AccountFormProps {
   update: (data: any, onSuccess?: () => void, onError?: () => void) => void;
@@ -234,10 +235,22 @@ export function AccountForm({
             />
           </Field>
         </div>
-        <ControlCalendar
+        <Controller
+          name="birthday"
           control={control}
-          label="Data de Nascimento"
-          value={new Date(userAccount?.birthday)}
+          defaultValue={paraDataValida(userAccount?.birthday) as unknown as string}
+          render={({ field }) => (
+            <Field label="Data de Nascimento" error={errors.birthday?.message}>
+              <DatePicker
+                value={paraDataValida(field.value)}
+                // o formulário guarda a Date, como o calendário do PrimeReact fazia
+                onChange={(d) => d && field.onChange(d as unknown as string)}
+                captionLayout="dropdown"
+                startMonth={new Date(1900, 0)}
+                endMonth={new Date()}
+              />
+            </Field>
+          )}
         />
         <Field label="Telefone" required error={errors.phone?.message}>
           <Input

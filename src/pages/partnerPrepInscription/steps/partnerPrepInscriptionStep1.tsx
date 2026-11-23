@@ -12,6 +12,7 @@ import {
 import { phoneMask } from "@/utils/phoneMask";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DatePicker } from "@/components/ui/date-picker";
+import { paraDataValida } from "@/lib/datasBr";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { validateCPF } from "validations-br";
@@ -278,7 +279,7 @@ export function PartnerPrepInscriptionStep1({
         render={({ field }) => (
           <Field label="Data de Nascimento" required error={errors.birthday?.message}>
             <DatePicker
-              value={field.value ? new Date(field.value) : undefined}
+              value={paraDataValida(field.value)}
               onChange={field.onChange}
               captionLayout="dropdown"
               startMonth={new Date(1900, 0)}

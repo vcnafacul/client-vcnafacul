@@ -14,6 +14,7 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
+import { paraDataValida } from "@/lib/datasBr";
 import { useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
@@ -165,7 +166,7 @@ export function CoursePeriodCreateEditModal({
                   error={errors.startDate?.message}
                 >
                   <DatePicker
-                    value={field.value ? new Date(field.value) : undefined}
+                    value={paraDataValida(field.value)}
                     onChange={(d) => d && field.onChange(d)}
                     placeholder="Selecione a data"
                   />
@@ -184,7 +185,7 @@ export function CoursePeriodCreateEditModal({
                   error={errors.endDate?.message}
                 >
                   <DatePicker
-                    value={field.value ? new Date(field.value) : undefined}
+                    value={paraDataValida(field.value)}
                     onChange={(d) => d && field.onChange(d)}
                     placeholder="Selecione a data"
                   />

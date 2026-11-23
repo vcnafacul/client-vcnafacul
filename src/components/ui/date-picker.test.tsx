@@ -21,6 +21,11 @@ describe("DatePicker", () => {
     expect(screen.getByRole("button", { name: "Data" }).textContent).toBe("12/11/2026");
   });
 
+  it("data inválida (new Date(\"\")) conta como vazio: placeholder, sem lançar", () => {
+    render(<DatePicker value={new Date("")} onChange={vi.fn()} aria-label="Data" />);
+    expect(screen.getByRole("button", { name: "Data" }).textContent).toBe("Selecionar data");
+  });
+
   it("escolher um dia chama onChange com a meia-noite de São Paulo e fecha", () => {
     const onChange = vi.fn();
     render(<DatePicker value={doze} onChange={onChange} aria-label="Data" />);

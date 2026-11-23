@@ -1,4 +1,5 @@
-import ControlCalendar from "@/components/atoms/controlCalendar";
+import { DatePicker } from "@/components/ui/date-picker";
+import { paraDataValida } from "@/lib/datasBr";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import {
   linkSocialName,
@@ -8,7 +9,7 @@ import {
 } from "@/pages/register/data";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import * as yup from "yup";
 import { StepProps } from "..";
 import { Gender } from "../../../../store/auth";
@@ -211,10 +212,22 @@ function Step2({
           onValueChange={(valor) => setValue("gender", valor)}
         />
       </Field>
-      <ControlCalendar
+      <Controller
+        name="birthday"
         control={control}
-        label="Data de Nascimento"
-        error={errors.birthday}
+        defaultValue={new Date() as unknown as string}
+        render={({ field }) => (
+          <Field label="Data de Nascimento" error={errors.birthday?.message}>
+            <DatePicker
+              value={paraDataValida(field.value)}
+              // o formulário guarda a Date, como o calendário do PrimeReact fazia
+                onChange={(d) => d && field.onChange(d as unknown as string)}
+              captionLayout="dropdown"
+              startMonth={new Date(1900, 0)}
+              endMonth={new Date()}
+            />
+          </Field>
+        )}
       />
       <Field label="Telefone" required error={errors.phone?.message}>
         <Input
