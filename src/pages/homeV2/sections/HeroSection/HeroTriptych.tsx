@@ -38,17 +38,17 @@ export function HeroTriptych({ personas }: { personas: HeroPersona[] }) {
           ].join(" ")}
         >
           <div>
-            <p className="text-[11px] tracking-[0.18em] opacity-80">{p.eyebrow}</p>
-            <h3 className="mt-2 text-xl md:text-2xl font-extrabold leading-tight">
+            <p className="text-overline">{p.eyebrow}</p>
+            <h3 className="mt-2 text-h2 font-extrabold">
               {p.title}
             </h3>
             {p.microcopy && (
-              <p className="mt-2 text-xs md:text-sm opacity-85 max-w-[28ch]">
+              <p className="mt-2 text-caption opacity-85 max-w-[28ch]">
                 {p.microcopy}
               </p>
             )}
           </div>
-          <span className="mt-4 text-sm font-semibold">{p.ctaLabel}</span>
+          <span className="mt-4 text-body font-semibold">{p.ctaLabel}</span>
         </motion.a>
       ))}
     </div>

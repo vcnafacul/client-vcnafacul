@@ -13,11 +13,11 @@ export const NewsSection: SectionComponent<NewsItem[]> = ({ data }) => {
       <div className="container mx-auto px-4 mb-10 flex items-end justify-between">
         <div>
           <p className="home-section__eyebrow mb-2">ATUALIZAÇÕES</p>
-          <h2 className="text-3xl md:text-5xl font-extrabold leading-tight">
+          <h2 className="text-display">
             Novidades vcnafacul
           </h2>
         </div>
-        <a href={NEWS} className="text-highlight font-semibold text-sm">
+        <a href={NEWS} className="text-highlight font-semibold text-body">
           Ver todas →
         </a>
       </div>

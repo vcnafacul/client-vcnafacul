@@ -97,7 +97,7 @@ export const MapSection: SectionComponent<null> = () => {
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
         "
       >
-        <span className="text-foreground font-bold text-2xl">Localiza Cursinho</span>
+        <span className="text-foreground font-bold text-h1">Localiza Cursinho</span>
         <ArrowRight
           aria-hidden
           className="h-6 w-6 text-foreground transition-transform group-hover:translate-x-1"

@@ -31,7 +31,7 @@ export function AboutVideoModal({ videoId, open, onOpenChange, trigger }: Props)
               />
             )}
           </div>
-          <Dialog.Close className="absolute top-4 right-4 text-white text-2xl">
+          <Dialog.Close className="absolute top-4 right-4 text-white text-h1">
             ✕
           </Dialog.Close>
         </Dialog.Content>

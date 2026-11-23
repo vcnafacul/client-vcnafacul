@@ -12,14 +12,14 @@ export function NewsSideCard({ item, index }: { item: NewsItem; index: number })
       transition={{ duration: 0.4, delay: 0.07 * index }}
       className="rounded-xl p-4 flex-1 block bg-card text-card-foreground shadow-md hover:shadow-lg transition-shadow"
     >
-      <span className="text-[10px] tracking-widest font-bold uppercase text-highlight">
+      <span className="text-caption tracking-widest font-bold uppercase text-highlight">
         {item.category}
       </span>
-      <h4 className="mt-1 text-lg md:text-xl font-bold leading-snug line-clamp-2">
+      <h4 className="mt-1 text-h3 font-bold line-clamp-2">
         {item.title}
       </h4>
       {item.publishedAt && (
-        <p className="text-xs opacity-60 mt-1">{item.publishedAt}</p>
+        <p className="text-caption opacity-60 mt-1">{item.publishedAt}</p>
       )}
     </motion.a>
   );

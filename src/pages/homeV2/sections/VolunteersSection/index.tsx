@@ -37,7 +37,7 @@ export const VolunteersSection: React.FC<
     <>
       <div className="container mx-auto px-4 mb-10 text-center">
         <p className="home-section__eyebrow mb-3">{eyebrow}</p>
-        <h2 className="text-3xl md:text-5xl font-extrabold leading-tight [text-wrap:balance]">
+        <h2 className="text-display [text-wrap:balance]">
           {title}
         </h2>
       </div>

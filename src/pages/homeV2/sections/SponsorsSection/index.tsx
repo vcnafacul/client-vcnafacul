@@ -82,7 +82,7 @@ export const SponsorsSection: SectionComponent<Sponsor[]> = ({ data }) => {
     <>
       <div className="container mx-auto px-4 mb-10 text-center">
         <p className="home-section__eyebrow mb-3">QUEM ACREDITA</p>
-        <h2 className="text-3xl md:text-5xl font-extrabold leading-tight [text-wrap:balance]">
+        <h2 className="text-display [text-wrap:balance]">
           Empresas que apoiam a causa
         </h2>
       </div>
@@ -108,7 +108,7 @@ export const SponsorsSection: SectionComponent<Sponsor[]> = ({ data }) => {
         </div>
       </div>
 
-      <p className="container mx-auto px-4 mt-10 text-center text-sm">
+      <p className="container mx-auto px-4 mt-10 text-center text-body">
         Sua empresa também pode apoiar →{" "}
         <a href="mailto:contato@vcnafacul.com.br" className="underline font-semibold">
           contato@vcnafacul.com.br

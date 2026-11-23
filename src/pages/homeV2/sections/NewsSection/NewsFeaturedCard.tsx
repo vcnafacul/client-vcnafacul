@@ -19,19 +19,19 @@ export function NewsFeaturedCard({ item }: { item: NewsItem }) {
       className="relative rounded-2xl overflow-hidden block h-[320px] md:h-full"
     >
       <div className="absolute inset-0 p-6 md:p-8 flex flex-col justify-end text-primary-foreground">
-        <span className="self-start mb-3 text-[10px] tracking-widest font-bold uppercase bg-primary-foreground/20 backdrop-blur px-3 py-1 rounded-full">
+        <span className="self-start mb-3 text-caption tracking-widest font-bold uppercase bg-primary-foreground/20 backdrop-blur px-3 py-1 rounded-full">
           {item.category}
         </span>
-        <h3 className="text-3xl md:text-4xl font-extrabold leading-tight line-clamp-3">
+        <h3 className="text-h1 line-clamp-3">
           {item.title}
         </h3>
         {item.description && (
-          <p className="mt-3 text-base md:text-lg opacity-90 line-clamp-3">
+          <p className="mt-3 text-prose line-clamp-3">
             {item.description}
           </p>
         )}
         {item.publishedAt && (
-          <p className="mt-3 text-sm opacity-80">{item.publishedAt}</p>
+          <p className="mt-3 text-body opacity-80">{item.publishedAt}</p>
         )}
       </div>
     </motion.a>

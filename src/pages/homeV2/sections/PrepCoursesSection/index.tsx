@@ -21,10 +21,10 @@ export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({
     <>
       <div className="container mx-auto px-4 mb-10 text-center">
         <p className="home-section__eyebrow mb-3">REDE DE PARCEIROS</p>
-        <h2 className="text-3xl md:text-5xl font-extrabold leading-tight [text-wrap:balance]">
+        <h2 className="text-display [text-wrap:balance]">
           Cursinhos populares que estão na frente
         </h2>
-        <p className="mt-3 text-base md:text-lg opacity-80 max-w-2xl mx-auto">
+        <p className="mt-3 text-prose text-muted-foreground max-w-2xl mx-auto">
           Educação gratuita acontecendo em cidades do Brasil inteiro.
         </p>
       </div>
@@ -49,7 +49,7 @@ export const PrepCoursesSection: SectionComponent<PrepCourse[]> = ({
       )}
 
       <div className="container mx-auto px-4 mt-12 flex flex-col items-center gap-3 text-center">
-        <p className="text-base md:text-lg font-medium">
+        <p className="text-prose font-medium">
           Conhece um cursinho popular?
         </p>
         <Button asChild variant="primary" size="lg">

@@ -84,7 +84,7 @@ export default function QuemSomosPage() {
         <div className="max-w-3xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl mx-auto px-6 pt-16">
           <Text size="secondary">Quem Somos?</Text>
           <div className="prose prose-xl max-w-none text-justify">
-            <RichTextRenderer content={data.description} contentFormat="markdown" className="text-foreground text-base text-justify" />
+            <RichTextRenderer content={data.description} contentFormat="markdown" className="text-foreground text-prose text-justify" />
           </div>
         </div>
 
@@ -98,7 +98,7 @@ export default function QuemSomosPage() {
               <Text size="secondary" className="text-left mb-4">
                 História do Projeto
               </Text>
-              <p className="text-foreground text-base leading-relaxed whitespace-pre-line">
+              <p className="text-foreground text-prose whitespace-pre-line">
                 {HISTORIA_TEXT}
               </p>
             </div>

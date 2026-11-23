@@ -23,7 +23,7 @@ export const HeroSection: SectionComponent<HeroData> = ({ data }) => {
             hidden: {},
             visible: { transition: { staggerChildren: 0.06 } },
           }}
-          className="text-5xl md:text-7xl xl:text-8xl font-extrabold leading-[1.05] [text-wrap:balance] max-w-5xl"
+          className="text-hero max-w-5xl"
         >
           {data.title.split(" ").map((word, i) => (
             <motion.span
@@ -49,7 +49,7 @@ export const HeroSection: SectionComponent<HeroData> = ({ data }) => {
             {data.titleAccent}
           </motion.span>
         </motion.h1>
-        <p className="mt-6 text-base md:text-lg max-w-2xl opacity-85">
+        <p className="mt-6 text-prose text-muted-foreground max-w-2xl">
           {data.subtitle}
         </p>
         <div className="mt-10 md:mt-14">

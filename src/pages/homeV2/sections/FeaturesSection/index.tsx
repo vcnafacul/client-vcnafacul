@@ -20,7 +20,7 @@ export const FeaturesSection: SectionComponent<FeaturesSectionData> = ({ data })
     <>
       <div className="container mx-auto px-4 mb-12 md:mb-16 text-center">
         <p className="home-section__eyebrow mb-3">O QUE A PLATAFORMA OFERECE</p>
-        <h2 className="text-3xl md:text-5xl font-extrabold leading-tight [text-wrap:balance]">
+        <h2 className="text-display [text-wrap:balance]">
           {data.sectionTitle}
         </h2>
         {data.sectionDescription && (

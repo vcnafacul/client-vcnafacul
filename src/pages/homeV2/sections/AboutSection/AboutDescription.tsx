@@ -7,7 +7,7 @@ import { QUEM_SOMOS_PATH } from "../../../../routes/path";
 export function AboutDescription({ description }: { description: string }) {
   return (
     <div className="flex flex-col">
-      <div className="opacity-85 text-base md:text-lg leading-relaxed line-clamp-4">
+      <div className="text-prose text-muted-foreground line-clamp-4">
         <RichTextRenderer
           content={description}
           contentFormat="markdown"

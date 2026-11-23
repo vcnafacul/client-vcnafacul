@@ -45,7 +45,7 @@ function ValorCard({
         >
           {icon}
         </div>
-        <h3 className="text-xl font-bold text-foreground mb-3">{title}</h3>
+        <h3 className="text-h2 font-bold text-foreground mb-3">{title}</h3>
         {children}
       </div>
     </div>
@@ -103,7 +103,7 @@ export function NossosValores() {
         <p className="text-overline text-highlight mb-3">
           O QUE NOS GUIA
         </p>
-        <h2 className="text-3xl md:text-4xl font-extrabold text-foreground leading-tight">
+        <h2 className="text-display text-foreground">
           Nossos Valores
         </h2>
       </div>
@@ -114,7 +114,7 @@ export function NossosValores() {
         imgAlt="Visão do projeto"
         card={
           <ValorCard icon={<Eye size={26} color="white" strokeWidth={2} />} title="Visão" accent={PINK}>
-            <p className="text-muted-foreground text-base leading-relaxed">{VISAO_TEXT}</p>
+            <p className="text-muted-foreground text-prose">{VISAO_TEXT}</p>
           </ValorCard>
         }
       />
@@ -126,7 +126,7 @@ export function NossosValores() {
         reverse
         card={
           <ValorCard icon={<Target size={26} color="white" strokeWidth={2} />} title="Missão" accent={TEAL}>
-            <p className="text-muted-foreground text-base leading-relaxed">{MISSAO_TEXT}</p>
+            <p className="text-muted-foreground text-prose">{MISSAO_TEXT}</p>
           </ValorCard>
         }
       />
@@ -137,10 +137,10 @@ export function NossosValores() {
         imgAlt="Valores do projeto"
         card={
           <ValorCard icon={<Gem size={26} color="white" strokeWidth={2} />} title="Valores" accent={LIME}>
-            <ul className="text-muted-foreground text-base space-y-1">
+            <ul className="text-muted-foreground text-prose space-y-1">
               {VALORES_LIST.map((v) => (
                 <li key={v} className="flex items-center gap-2">
-                  <span className="text-xs" style={{ color: LIME }}>•</span>
+                  <span className="text-caption" style={{ color: LIME }}>•</span>
                   {v}
                 </li>
               ))}

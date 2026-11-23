@@ -71,10 +71,10 @@ export function VolunteerTile({
       )}
       {!hasImage && (
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-3 text-foreground">
-          <p className="text-sm font-semibold leading-tight">
+          <p className="text-body font-semibold">
             {volunteer.name}
           </p>
-          <p className="text-xs opacity-80 mt-1">{volunteer.role}</p>
+          <p className="text-caption opacity-80 mt-1">{volunteer.role}</p>
         </div>
       )}
       {hasImage && (
@@ -86,8 +86,8 @@ export function VolunteerTile({
               : "translate-y-full group-hover:translate-y-0 transition-transform duration-300",
           ].join(" ")}
         >
-          <p className="text-sm font-semibold">{volunteer.name}</p>
-          <p className="text-xs opacity-85">{volunteer.role}</p>
+          <p className="text-body font-semibold">{volunteer.name}</p>
+          <p className="text-caption opacity-85">{volunteer.role}</p>
         </div>
       )}
     </motion.div>

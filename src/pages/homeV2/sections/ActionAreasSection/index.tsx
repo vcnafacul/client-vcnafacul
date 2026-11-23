@@ -16,7 +16,7 @@ export const ActionAreasSection: SectionComponent<AreaGroup[]> = ({ data }) => {
         <p className="home-section__eyebrow mb-3">
           ÁREAS DE AÇÃO
         </p>
-        <h2 className="text-3xl md:text-5xl font-extrabold leading-tight [text-wrap:balance]">
+        <h2 className="text-display [text-wrap:balance]">
           Disciplinas do ENEM
         </h2>
         <p className="mt-3 opacity-80 max-w-2xl mx-auto">

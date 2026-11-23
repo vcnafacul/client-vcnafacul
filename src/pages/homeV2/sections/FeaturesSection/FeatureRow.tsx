@@ -97,19 +97,19 @@ export function FeatureRow({
         <span
           aria-hidden="true"
           data-feature-text
-          className="absolute -top-10 -left-2 md:-left-6 text-[6rem] md:text-[8rem] font-extrabold opacity-10 leading-none select-none pointer-events-none"
-          style={{ color: palette.pink[600] }}
+          className="absolute -top-10 -left-2 md:-left-6 font-extrabold opacity-10 leading-none select-none pointer-events-none"
+          style={{ color: palette.pink[600], fontSize: "clamp(6rem, 12vw, 8rem)" }}
         >
           {String(index + 1).padStart(2, "0")}
         </span>
         <p data-feature-text className="home-section__eyebrow mb-2">
           {item.category}
         </p>
-        <h3 data-feature-text className="text-2xl md:text-3xl font-extrabold leading-tight">
+        <h3 data-feature-text className="text-h1">
           {item.title}
         </h3>
         {item.description && (
-          <p data-feature-text className="mt-3 text-base opacity-80 max-w-md">
+          <p data-feature-text className="mt-3 text-prose text-muted-foreground max-w-md">
             {item.description}
           </p>
         )}

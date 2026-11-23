@@ -20,7 +20,7 @@ export const AboutSection: SectionComponent<AboutSectionData> = ({ data }) => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-10%" }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="text-4xl md:text-5xl font-extrabold leading-tight [text-wrap:balance] mb-6"
+            className="text-display [text-wrap:balance] mb-6"
           >
             {data.title}
           </motion.h2>
