@@ -62,6 +62,19 @@ describe("PrepCourseInfo — copiar contatos", () => {
     );
   });
 
+  it("na visualização o campo é somente leitura (não desabilitado) e o botão de copiar fica ativo", () => {
+    renderInfo(false);
+    const campo = screen.getByLabelText("Email");
+    expect(campo).toHaveAttribute("readonly");
+    expect(campo).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: "Copiar Email" })).toBeEnabled();
+  });
+
+  it("na edição, o campo de contato é editável", () => {
+    renderInfo(true);
+    expect(screen.getByLabelText("Email")).not.toHaveAttribute("readonly");
+  });
+
   it("na edição, não mostra copiar", () => {
     renderInfo(true);
     expect(screen.queryByRole("button", { name: /Copiar/ })).toBeNull();

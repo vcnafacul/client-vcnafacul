@@ -139,7 +139,10 @@ function ContactField({
         id={label}
         type="text"
         inputMode={modoDeEntrada(campo)}
-        disabled={!edit}
+        // Somente leitura, não `disabled`: o botão de copiar serve justamente à
+        // visualização e não pode ficar esmaecido junto com o campo.
+        readOnly={!edit}
+        className={edit ? undefined : "bg-muted"}
         defaultValue={defaultValue}
         onChange={(e) => {
           setValue(e.target.value);
