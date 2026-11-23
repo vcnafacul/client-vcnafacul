@@ -1,10 +1,9 @@
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import type { StatusVariant } from "@/components/ui/status-badge";
+import { Timeline, TimelineItem } from "@/components/ui/timeline";
 import type {
   EventoDaTimeline,
   TipoDeEvento,
 } from "@/dtos/content/timelineDto";
-import { formatDateTime } from "@/utils/date";
 import {
   CheckCircle2,
   CircleHelp,
@@ -17,10 +16,10 @@ import {
   ThumbsUp,
   Upload,
 } from "lucide-react";
-import type { ComponentType } from "react";
+import type { LucideIcon } from "lucide-react";
 import { fraseDoEvento } from "./helpers";
 
-const ICONE: Record<TipoDeEvento, ComponentType<{ className?: string }>> = {
+const ICONE: Record<TipoDeEvento, LucideIcon> = {
   criada: FilePlus2,
   enviada: Upload,
   aprovada: CheckCircle2,
@@ -33,12 +32,12 @@ const ICONE: Record<TipoDeEvento, ComponentType<{ className?: string }>> = {
   outro: CircleHelp,
 };
 
-const COR: Partial<Record<TipoDeEvento, string>> = {
-  aprovada: "bg-success-muted text-success",
-  proposta_aprovada: "bg-success-muted text-success",
-  rejeitada: "bg-destructive-muted text-destructive",
-  proposta_recusada: "bg-destructive-muted text-destructive",
-  resetada: "bg-warning-muted text-warning",
+const VARIANTE: Partial<Record<TipoDeEvento, StatusVariant>> = {
+  aprovada: "success",
+  proposta_aprovada: "success",
+  rejeitada: "destructive",
+  proposta_recusada: "destructive",
+  resetada: "warning",
 };
 
 interface Props {
@@ -59,98 +58,61 @@ export function AbaHistorico({
   onTentarDeNovo,
   onVerMaterial,
 }: Props) {
-  if (erro) {
-    return (
-      <div
-        role="alert"
-        className="flex flex-col items-start gap-3 rounded-lg border p-4"
-      >
-        <p className="text-body">Não foi possível carregar o histórico. {erro}</p>
-        <Button variant="outline" size="sm" onClick={onTentarDeNovo}>
-          Tentar de novo
-        </Button>
-      </div>
-    );
-  }
-  if (!eventos) {
-    return (
-      <div className="flex flex-col gap-4" aria-busy>
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="flex gap-3">
-            <Skeleton className="h-8 w-8 rounded-full shrink-0" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-2/3" />
-              <Skeleton className="h-3 w-1/3" />
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-  }
-  if (!eventos.length) {
-    return (
-      <p className="text-body text-muted-foreground">Nada registrado ainda.</p>
-    );
-  }
+  const estado = erro
+    ? "error"
+    : !eventos
+      ? "loading"
+      : eventos.length === 0
+        ? "empty"
+        : "ready";
   return (
-    <ol
-      className="relative flex flex-col gap-5 pl-1"
+    <Timeline
       aria-label="Histórico da demanda"
+      state={estado}
+      onRetry={onTentarDeNovo}
+      error={{
+        title: "Não foi possível carregar o histórico.",
+        message: erro ?? undefined,
+      }}
+      empty={{ title: "Nada registrado ainda." }}
     >
-      {eventos.map((e, i) => {
-        const Icone = ICONE[e.tipo] ?? CircleHelp;
-        const ultimo = i === eventos.length - 1;
+      {(eventos ?? []).map((e, i) => {
         const semUsuario = !e.por || e.por === e.porId;
+        const material = e.material;
         return (
-          <li key={`${e.tipo}-${e.em}-${i}`} className="relative flex gap-3">
-            {!ultimo && (
-              <span
-                aria-hidden
-                className="absolute left-4 top-8 bottom-[-20px] w-px bg-border"
-              />
-            )}
-            <span
-              aria-hidden
-              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${COR[e.tipo] ?? "bg-primary/10 text-foreground"}`}
-            >
-              <Icone className="h-4 w-4" />
-            </span>
-            <div className="min-w-0 flex-1 flex flex-col gap-1">
-              <p className="text-body">
-                <span
-                  className={
-                    semUsuario
-                      ? "italic text-muted-foreground"
-                      : "font-semibold"
-                  }
-                >
-                  {semUsuario ? "usuário removido" : e.por}
-                </span>{" "}
-                {fraseDoEvento(e)}
-              </p>
-              <p className="text-caption text-muted-foreground">
-                {formatDateTime(e.em)}
-              </p>
-              {e.detalhe && (
-                <p className="text-body rounded-md bg-muted/60 px-3 py-2 whitespace-pre-wrap break-words">
+          <TimelineItem
+            key={`${e.tipo}-${e.em}-${i}`}
+            icon={ICONE[e.tipo] ?? CircleHelp}
+            variant={VARIANTE[e.tipo] ?? "neutral"}
+            who={
+              semUsuario ? (
+                <span className="font-normal italic text-muted-foreground">
+                  usuário removido
+                </span>
+              ) : (
+                e.por
+              )
+            }
+            what={fraseDoEvento(e)}
+            when={new Date(e.em)}
+            detail={
+              e.detalhe ? (
+                <span className="whitespace-pre-wrap break-words">
                   {e.detalhe}
-                </p>
-              )}
-              {e.material && (
-                <div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => onVerMaterial(e.material!)}
-                  >
-                    Ver {e.material.tipo === "video" ? "vídeo" : "documento"}
-                  </Button>
-                </div>
-              )}
-            </div>
-          </li>
+                </span>
+              ) : undefined
+            }
+            action={
+              material
+                ? {
+                    label: `Ver ${material.tipo === "video" ? "vídeo" : "documento"}`,
+                    onClick: () => onVerMaterial(material),
+                  }
+                : undefined
+            }
+          />
         );
       })}
-    </ol>
+    </Timeline>
   );
 }

@@ -139,9 +139,9 @@ describe("AbaHistorico", () => {
         onVerMaterial={vi.fn()}
       />,
     );
-    expect(screen.getByRole("alert")).toHaveTextContent(
-      "Não foi possível carregar o histórico. ms fora",
-    );
+    const alerta = screen.getByRole("alert");
+    expect(alerta).toHaveTextContent("Não foi possível carregar o histórico.");
+    expect(alerta).toHaveTextContent("ms fora");
     fireEvent.click(screen.getByRole("button", { name: "Tentar de novo" }));
     expect(onTentarDeNovo).toHaveBeenCalledTimes(1);
   });
