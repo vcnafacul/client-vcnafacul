@@ -267,6 +267,39 @@ describe("TabelaDeQuestoes — exportar CSV", () => {
     expect(exportAnalyticsCsv.mock.calls[0][1]).toHaveLength(30);
   });
 
+  it("⚠️ no celular (< 768) o botão segue à mostra, mesmo com o filtro recolhido", () => {
+    // O D22 recolhe os filtros atrás de "Mais filtros"; exportar não é filtro.
+    Object.defineProperty(window, "matchMedia", {
+      writable: true,
+      configurable: true,
+      value: (query: string) => ({
+        media: query,
+        matches: query !== "(min-width: 768px)",
+        onchange: null,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        addListener: () => {},
+        removeListener: () => {},
+        dispatchEvent: () => false,
+      }),
+    });
+    try {
+      render(
+        <TabelaDeQuestoes
+          questoes={muitas(3)}
+          estado="idle"
+          nomeArquivo="questoes-x"
+        />,
+      );
+      expect(screen.getByRole("button", { name: "Mais filtros" })).toBeInTheDocument();
+      expect(screen.getByTestId("toggle-so-com-sinal")).not.toBeVisible();
+      expect(screen.getByTestId("exportar-csv")).toBeVisible();
+    } finally {
+      // @ts-expect-error volta ao jsdom, que não tem matchMedia
+      delete window.matchMedia;
+    }
+  });
+
   it("⚠️ sem `nomeArquivo` o botão nem aparece", () => {
     // É o que mantém válidos os testes que só exercitam a tabela.
     render(<TabelaDeQuestoes questoes={muitas(3)} estado="idle" />);

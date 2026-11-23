@@ -152,15 +152,15 @@ describe("DashFilterBar — D22: filtros recolhidos abaixo de 768", () => {
     );
 
     expect(screen.getByRole("searchbox")).toBeInTheDocument();
-    expect(screen.queryByLabelText("Ano")).toBeNull();
-    expect(screen.queryByLabelText("Status")).toBeNull();
+    expect(screen.getByLabelText("Ano")).not.toBeVisible();
+    expect(screen.getByLabelText("Status")).not.toBeVisible();
 
     const botao = screen.getByRole("button", { name: "Mais filtros (2)" });
     expect(botao).toHaveAttribute("aria-expanded", "false");
     fireEvent.click(botao);
 
-    expect(screen.getByLabelText("Ano")).toBeInTheDocument();
-    expect(screen.getByLabelText("Status")).toBeInTheDocument();
+    expect(screen.getByLabelText("Ano")).toBeVisible();
+    expect(screen.getByLabelText("Status")).toBeVisible();
     expect(screen.getByRole("button", { name: "Menos filtros (2)" })).toHaveAttribute(
       "aria-expanded",
       "true",
@@ -200,6 +200,50 @@ describe("DashFilterBar — D22: filtros recolhidos abaixo de 768", () => {
     );
     expect(screen.getByLabelText("Ano")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Mais filtros/ })).toBeNull();
+  });
+
+  it("`actions` nunca recolhe: o botão de exportar segue à mostra no celular", () => {
+    larguraDeTela(false);
+    render(
+      <DashFilterBar
+        search={{ value: "", onChange: vi.fn() }}
+        activeCount={1}
+        actions={<button type="button">Exportar CSV</button>}
+      >
+        {filtros}
+      </DashFilterBar>,
+    );
+    expect(screen.getByRole("button", { name: "Exportar CSV" })).toBeVisible();
+    expect(screen.getByLabelText("Ano")).not.toBeVisible();
+  });
+
+  it("`actions` também aparece a partir de 768", () => {
+    render(
+      <DashFilterBar actions={<button type="button">Exportar CSV</button>}>{filtros}</DashFilterBar>,
+    );
+    expect(screen.getByRole("button", { name: "Exportar CSV" })).toBeInTheDocument();
+  });
+
+  it("recolher esconde sem desmontar: o que foi digitado e o debounce em curso sobrevivem", () => {
+    larguraDeTela(false);
+    const onChange = vi.fn();
+    render(
+      <DashFilterBar search={{ value: "", onChange: vi.fn() }} activeCount={0}>
+        <input aria-label="Cidade" onChange={(e) => onChange(e.target.value)} />
+      </DashFilterBar>,
+    );
+    const botao = screen.getByRole("button", { name: "Mais filtros" });
+    // O alvo do aria-controls existe mesmo recolhido.
+    const alvo = document.getElementById(botao.getAttribute("aria-controls")!);
+    expect(alvo).not.toBeNull();
+    expect(alvo).toHaveAttribute("hidden");
+
+    fireEvent.click(botao);
+    fireEvent.change(screen.getByLabelText("Cidade"), { target: { value: "Campinas" } });
+    fireEvent.click(screen.getByRole("button", { name: "Menos filtros" }));
+    fireEvent.click(screen.getByRole("button", { name: "Mais filtros" }));
+
+    expect((screen.getByLabelText("Cidade") as HTMLInputElement).value).toBe("Campinas");
   });
 
   it("'Limpar filtros' continua à mostra com os filtros recolhidos", () => {

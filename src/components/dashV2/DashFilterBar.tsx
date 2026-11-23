@@ -2,7 +2,6 @@ import { Children, useEffect, useId, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { useAcimaDeSm } from "./useAcimaDeSm";
 import type { DashFilterBarProps } from "./types";
 
@@ -22,6 +21,7 @@ export const DEBOUNCE_BUSCA_MS = 400;
 export function DashFilterBar({
   search,
   children,
+  actions,
   activeCount = 0,
   onClear,
 }: DashFilterBarProps) {
@@ -50,8 +50,9 @@ export function DashFilterBar({
   const mostrarLimpar = activeCount > 0 && !!onClear;
 
   // D22: abaixo de 768 só a busca fica à mostra; o resto fica atrás de "Mais
-  // filtros (N)". Em JS e não em CSS: com CSS os campos existiriam duas vezes
-  // no DOM (ver `useAcimaDeSm`).
+  // filtros (N)". O hook decide só se o botão existe; os campos continuam
+  // montados (`hidden`), para o que foi digitado e o debounce em curso
+  // sobreviverem a recolher, e para o `aria-controls` apontar para um id real.
   const acimaDeSm = useAcimaDeSm();
   const [aberto, setAberto] = useState(false);
   const idDosFiltros = useId();
@@ -101,11 +102,13 @@ export function DashFilterBar({
       ) : null}
 
       {recolhido ? (
-        aberto ? (
-          <div id={idDosFiltros} className="flex basis-full flex-col gap-3">
-            {children}
-          </div>
-        ) : null
+        <div
+          id={idDosFiltros}
+          hidden={!aberto}
+          className="flex basis-full flex-col gap-3 [&[hidden]]:hidden"
+        >
+          {children}
+        </div>
       ) : (
         children
       )}
@@ -114,15 +117,20 @@ export function DashFilterBar({
         ⚠️ Some quando não há filtro — não fica desabilitado. Desabilitado ocupa
         o espaço, pede uma leitura e não serve para nada.
       */}
-      {mostrarLimpar ? (
-        <Button
-          type="button"
-          variant="ghost"
-          onClick={onClear}
-          className={cn("ml-auto shrink-0 text-foreground hover:underline")}
-        >
-          Limpar filtros ({activeCount})
-        </Button>
+      {mostrarLimpar || actions ? (
+        <div className="ml-auto flex shrink-0 items-center gap-3">
+          {actions}
+          {mostrarLimpar ? (
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClear}
+              className="shrink-0 text-foreground hover:underline"
+            >
+              Limpar filtros ({activeCount})
+            </Button>
+          ) : null}
+        </div>
       ) : null}
     </div>
   );

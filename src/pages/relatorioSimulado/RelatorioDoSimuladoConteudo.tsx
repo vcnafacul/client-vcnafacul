@@ -704,6 +704,16 @@ export function RelatorioDoSimuladoConteudo({
                 }}
                 activeCount={filtrosAtivos}
                 onClear={limparFiltros}
+                // ⚠️ Na faixa de filtros, e não numa barra própria: o que ele
+                // baixa depende do filtro ao lado. Em `actions` para não
+                // recolher atrás de "Mais filtros" no celular.
+                actions={
+                  <BotaoExportar
+                    planilha={planilhaEstudantes}
+                    nomeArquivo={nomeDoArquivo("estudantes", idFonte, turmaId)}
+                    rotulo="Exportar CSV"
+                  />
+                }
               >
                 <label
                   className={cn(
@@ -726,20 +736,6 @@ export function RelatorioDoSimuladoConteudo({
                   Mostrar quem não enviou
                   {quantosNaoEnviaram > 0 && ` (${quantosNaoEnviaram})`}
                 </label>
-                {/*
-                  ⚠️ Dentro da faixa de filtros, e não numa barra própria: o
-                  que ele baixa depende do filtro ao lado, e pôr os dois juntos
-                  é o que torna essa relação visível.
-                */}
-                <BotaoExportar
-                  planilha={planilhaEstudantes}
-                  nomeArquivo={nomeDoArquivo(
-                    "estudantes",
-                    idFonte,
-                    turmaId,
-                  )}
-                  rotulo="Exportar CSV"
-                />
               </DashFilterBar>
             </div>
             {/*

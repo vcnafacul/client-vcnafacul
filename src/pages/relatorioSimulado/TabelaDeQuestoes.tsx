@@ -497,6 +497,11 @@ export function TabelaDeQuestoes({
         <DashFilterBar
           activeCount={soComSinal ? 1 : 0}
           onClear={() => setSoComSinal(false)}
+          actions={
+            nomeArquivo !== undefined ? (
+              <BotaoExportar planilha={planilha} nomeArquivo={nomeArquivo} />
+            ) : undefined
+          }
         >
           <label
             className={cn(
@@ -519,11 +524,6 @@ export function TabelaDeQuestoes({
             Só questões com sinal
             {comSinal > 0 && ` (${comSinal})`}
           </label>
-          {nomeArquivo !== undefined && (
-            <span className="ml-auto">
-              <BotaoExportar planilha={planilha} nomeArquivo={nomeArquivo} />
-            </span>
-          )}
         </DashFilterBar>
       </div>
       {/*

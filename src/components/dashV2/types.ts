@@ -54,9 +54,19 @@ export interface DashFilterBarProps {
      */
     onSubmit?: (v: string) => void;
   };
-  /** Selects, checkboxes, o que a tela precisar. */
+  /**
+   * Selects, checkboxes: só **filtros**. Abaixo de 768 ficam recolhidos atrás de
+   * "Mais filtros (N)" (D22) — ação que precisa ficar sempre à mostra (exportar,
+   * por exemplo) vai em `actions`.
+   */
   children?: React.ReactNode;
-  /** Nº de filtros ativos. Sem isso, "Limpar filtros" não aparece. */
+  /** Ações que nunca recolhem, na ponta direita da faixa, antes de "Limpar filtros". */
+  actions?: React.ReactNode;
+  /**
+   * Nº de filtros ativos, **incluindo a busca** quando ela estiver preenchida (o
+   * botão "Mais filtros" desconta a busca, que já está na tela). Sem isso,
+   * "Limpar filtros" não aparece.
+   */
   activeCount?: number;
   onClear?: () => void;
 }
