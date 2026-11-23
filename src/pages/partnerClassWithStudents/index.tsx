@@ -14,7 +14,12 @@ import { downloadPDF } from "@/utils/get-pdf";
 import { getBase64FromImageUrl } from "@/utils/getBase64FromImageUrl";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   DataTable,
   type DataTableColumn,
@@ -204,7 +209,7 @@ export function PartnerClassWithStudents() {
   */
   const renderAcoes = (aluno: ClassStudent) => (
     <div className="flex gap-2 justify-center">
-      <ShadcnTooltip content="Ver carteirinha">
+      <TooltipProvider><Tooltip><TooltipTrigger asChild>
         <Button
           size="icon"
           variant="ghost"
@@ -216,8 +221,8 @@ export function PartnerClassWithStudents() {
         >
           <Eye className="h-6 w-6 text-muted-foreground hover:text-primary opacity-60 hover:opacity-100" />
         </Button>
-      </ShadcnTooltip>
-      <ShadcnTooltip content="Registro de presença">
+      </TooltipTrigger><TooltipContent>Ver carteirinha</TooltipContent></Tooltip></TooltipProvider>
+      <TooltipProvider><Tooltip><TooltipTrigger asChild>
         <Button
           size="icon"
           variant="ghost"
@@ -229,7 +234,7 @@ export function PartnerClassWithStudents() {
         >
           <ListChecks className="h-5 w-5 text-muted-foreground hover:text-primary opacity-60 hover:opacity-100" />
         </Button>
-      </ShadcnTooltip>
+      </TooltipTrigger><TooltipContent>Registro de presença</TooltipContent></Tooltip></TooltipProvider>
     </div>
   );
 

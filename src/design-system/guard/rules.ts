@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { posix } from "node:path";
-import baseline from "./baseline.json";
+import allowList from "./frozen-allowlist.json";
 
 export type GuardRule = {
   id: string;
@@ -41,12 +41,18 @@ function especificadores(source: string): string[] {
   return [...source.matchAll(re)].map((m) => m[1]);
 }
 
-function ehKitV1(spec: string, file: string): boolean {
-  if (spec.startsWith(".")) {
-    const resolvido = posix.join(posix.dirname(file), spec);
-    return /^src\/components\/(atoms|molecules|organisms|templates)(\/|$)/.test(resolvido);
-  }
-  return /^@\/components\/(atoms|molecules|organisms|templates)(\/|$)/.test(spec);
+const KIT_V1 = /^src\/components\/(atoms|molecules|organisms|templates)(\/|$)/;
+const EXTENSOES = ["", ".ts", ".tsx", ".css", "/index.ts", "/index.tsx"];
+
+/** Import de um caminho do kit V1 que já foi apagado (o que sobrou na allow-list ainda existe). */
+function ehKitV1Apagado(spec: string, file: string): boolean {
+  const resolvido = spec.startsWith(".")
+    ? posix.join(posix.dirname(file), spec)
+    : spec.startsWith("@/")
+      ? "src/" + spec.slice(2)
+      : "";
+  if (!KIT_V1.test(resolvido)) return false;
+  return !EXTENSOES.some((e) => (allowList as string[]).includes(resolvido + e));
 }
 
 const PASTAS_CONGELADAS = /^src\/components\/(atoms|molecules|organisms|templates)\//;
@@ -86,7 +92,7 @@ export const rules: GuardRule[] = [
   },
   {
     id: "banned-import",
-    description: "import de biblioteca banida ou do kit V1 (MUI só em arquivo de gráfico)",
+    description: "import de biblioteca banida ou de caminho do kit V1 já apagado (MUI só em arquivo de gráfico)",
     match: (s, file) => {
       const specs = especificadores(s);
       const ehGrafico = specs.some((x) => x.startsWith("@mui/x-charts"));
@@ -94,7 +100,7 @@ export const rules: GuardRule[] = [
         if (x.startsWith("@mui/x-data-grid")) return true;
         if (x === "@mui/material" || x.startsWith("@mui/material/")) return !ehGrafico;
         if (IMPORTS_PROIBIDOS.some((b) => x === b || x.startsWith(b + "/"))) return true;
-        return ehKitV1(x, file);
+        return ehKitV1Apagado(x, file);
       }).length;
     },
   },
@@ -103,7 +109,7 @@ export const rules: GuardRule[] = [
     description: "arquivo novo em components/{atoms,molecules,organisms,templates}",
     // Varrida pela listagem completa das pastas (qualquer extensão), não só por ts/tsx: ver scan.ts.
     match: (_s, file) =>
-      PASTAS_CONGELADAS.test(file) && !(baseline.frozenFolderAllowList as string[]).includes(file) ? 1 : 0,
+      PASTAS_CONGELADAS.test(file) && !(allowList as string[]).includes(file) ? 1 : 0,
   },
   {
     id: "missing-stories",
@@ -117,6 +123,14 @@ export const rules: GuardRule[] = [
     id: "ds-review-marker",
     description: "marcador /* ds-review */ deixado pelos codemods",
     match: (s) => contar(/\/\* ds-review/g, s),
+  },
+  {
+    id: "toast-import",
+    description: "react-toastify só em lib/toast.ts e components/ui/toast.tsx",
+    match: (s, file) =>
+      dentro(file, "src/lib/toast.ts", "src/components/ui/toast.tsx")
+        ? 0
+        : especificadores(s).filter((x) => x === "react-toastify" || x.startsWith("react-toastify/")).length,
   },
   {
     id: "ui-semantic-only",

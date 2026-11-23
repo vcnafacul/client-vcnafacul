@@ -32,7 +32,12 @@ import {
   InscriptionOutput,
 } from "./InscriptionInfoCreateEditModal";
 
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Link } from "react-router-dom";
 import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -349,7 +354,7 @@ export function InscriptionInfoModal({
           */}
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
             <div className="order-2 sm:order-1">
-              <ShadcnTooltip content="Download Lista de Alunos">
+              <TooltipProvider><Tooltip><TooltipTrigger asChild>
                 <Button
                   variant="cta"
                   aria-label="Baixar lista de alunos"
@@ -359,7 +364,7 @@ export function InscriptionInfoModal({
                   <Download className="w-6 h-6" />
                   <span className="sm:hidden">Baixar lista de alunos</span>
                 </Button>
-              </ShadcnTooltip>
+              </TooltipTrigger><TooltipContent>Download Lista de Alunos</TooltipContent></Tooltip></TooltipProvider>
             </div>
             <div className="order-1 sm:order-2 w-full sm:w-36">
               <Button asChild className="h-10 sm:h-8 w-full">

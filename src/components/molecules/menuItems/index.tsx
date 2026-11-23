@@ -1,8 +1,10 @@
-import { VariantProps, tv } from "tailwind-variants";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 import { Link } from "react-router-dom";
 
-const menuItem = tv({
-    base: 'flex justify-center items-center',
+const menuItem = cva(
+  'flex justify-center items-center',
+  {
     variants: {
         align: {
             horizontal: 'flex-row md:mx-6',
@@ -17,7 +19,8 @@ const menuItem = tv({
         align: 'horizontal',
         solid: false
     }
-})
+  }
+)
 
 interface ItemMenu {
     id: number;
@@ -42,7 +45,7 @@ type MenuItemProps = VariantProps<typeof menuItem> & {
 
 function MenuItem({ align, itemsMenu, className, solid } : MenuItemProps) {
     return (
-        <div className={menuItem({ align, solid, className })}>
+        <div className={cn(menuItem({ align, solid }), className)}>
             {itemsMenu?.map(link => {
                 if(link.Home_Menu_Item_id.link.includes('#') ) {
                     return (

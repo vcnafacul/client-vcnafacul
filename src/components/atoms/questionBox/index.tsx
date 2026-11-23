@@ -1,9 +1,11 @@
-import { VariantProps, tv } from "tailwind-variants";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { QuestionBoxStatus } from "../../../enums/simulado/questionBoxStatus";
 
-const questionBox = tv({
-    base: 'w-8 h-8 rounded-sm m-1 cursor-pointer flex justify-center items-center pb-1 text-body border relative',
+const questionBox = cva(
+  'w-8 h-8 rounded-sm m-1 cursor-pointer flex justify-center items-center pb-1 text-body border relative',
+  {
     variants: {
         status: {
             unsolved : 'bg-warning-muted border-primary',
@@ -19,7 +21,8 @@ const questionBox = tv({
     defaultVariants: {
         status: 'unsolved'
     }
-})
+  }
+)
 
 export type QuestionBoxProps = React.ComponentProps<"div"> & VariantProps<typeof questionBox> & {
     number: number;
@@ -46,7 +49,7 @@ function QuestionBox({ number, status, onClick, abreQuandoAnulada = false, ...pr
     };
     return (
         <div
-            className={questionBox({ status, class: anulada && abreQuandoAnulada ? "cursor-pointer" : undefined })}
+            className={cn(questionBox({ status }), anulada && abreQuandoAnulada && "cursor-pointer")}
             {...(anulada
                 ? {
                     role: abreQuandoAnulada ? "button" : "img",

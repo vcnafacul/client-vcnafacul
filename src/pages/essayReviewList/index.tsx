@@ -3,7 +3,12 @@ import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Eye, Edit3 } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { EssayListItem, EssayTheme } from "@/dtos/essay";
@@ -200,7 +205,7 @@ export default function EssayReviewList({ mode }: Props) {
                     </td>
                     <td className="p-3">
                       <div className="flex gap-1">
-                        <ShadcnTooltip content="Ver redação">
+                        <TooltipProvider><Tooltip><TooltipTrigger asChild>
                           <Button
                             size="icon"
                             variant="ghost"
@@ -210,9 +215,9 @@ export default function EssayReviewList({ mode }: Props) {
                           >
                             <Eye className="h-4 w-4" />
                           </Button>
-                        </ShadcnTooltip>
+                        </TooltipTrigger><TooltipContent>Ver redação</TooltipContent></Tooltip></TooltipProvider>
                         {podeRevisar(e) && (
-                          <ShadcnTooltip content="Revisar">
+                          <TooltipProvider><Tooltip><TooltipTrigger asChild>
                             <Button
                               size="icon"
                               variant="ghost"
@@ -222,7 +227,7 @@ export default function EssayReviewList({ mode }: Props) {
                             >
                               <Edit3 className="h-4 w-4" />
                             </Button>
-                          </ShadcnTooltip>
+                          </TooltipTrigger><TooltipContent>Revisar</TooltipContent></Tooltip></TooltipProvider>
                         )}
                       </div>
                     </td>

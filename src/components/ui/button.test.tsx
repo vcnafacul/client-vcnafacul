@@ -30,12 +30,8 @@ describe("Button", () => {
     expect(screen.queryByLabelText("Carregando")).toBeNull();
   });
 
-  it("variant=default e size=default continuam valendo como apelidos", () => {
-    render(
-      <Button variant="default" size="default">
-        Ok
-      </Button>,
-    );
+  it("sem variant e sem size, usa primary e md", () => {
+    render(<Button>Ok</Button>);
     const botao = screen.getByRole("button", { name: "Ok" });
     expect(botao.className).toContain("bg-primary");
     expect(botao.className).toContain("sm:h-9");

@@ -1,12 +1,14 @@
-import { VariantProps, tv } from "tailwind-variants";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 import { OptionsSelect } from "@/components/ui/options-select"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import './styles.css'
 
 // D17: as seções trocam o conteúdo da página, então no desktop são abas (`Tabs`).
 // O conteúdo mora no pai; aqui só as abas e o valor ativo.
-const selector = tv({
-    base: 'justify-center',
+const selector = cva(
+  'justify-center',
+  {
     variants: {
         align: {
             horizontal: 'flex-wrap',
@@ -16,7 +18,8 @@ const selector = tv({
     defaultVariants: {
         align: 'horizontal'
     }
-})
+  }
+)
 
 export type SelectorProps = VariantProps<typeof selector> & {
     tabItems: string[];
@@ -34,7 +37,7 @@ function Selector({tabItems, changeItem, align, className, activeTab} : Selector
                 onValueChange={(index) => changeItem(Number(index))}
                 orientation={align === 'vertial' ? 'vertical' : 'horizontal'}
             >
-                <TabsList aria-label="Seção" className={selector({ align, className })}>
+                <TabsList aria-label="Seção" className={cn(selector({ align }), className)}>
                     {tabItems.map((item, index) => (
                         <TabsTrigger key={index} value={String(index)}>
                             {item}

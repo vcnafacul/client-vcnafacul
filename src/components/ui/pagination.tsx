@@ -40,7 +40,7 @@ PaginationItem.displayName = "PaginationItem"
  */
 type PaginationLinkProps = {
   isActive?: boolean
-  size?: "sm" | "md" | "default" | "icon"
+  size?: "sm" | "md" | "icon"
   href?: string
 } & Omit<React.ComponentProps<"button">, "ref"> &
   Pick<React.ComponentProps<"a">, "target" | "rel">
@@ -90,7 +90,7 @@ const PaginationPrevious = ({
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Página anterior"
-    size="default"
+    size="md"
     className={cn("gap-1 pl-2.5", className)}
     {...props}
   >
@@ -107,7 +107,7 @@ const PaginationNext = ({
 }: React.ComponentProps<typeof PaginationLink>) => (
   <PaginationLink
     aria-label="Próxima página"
-    size="default"
+    size="md"
     className={cn("gap-1 pr-2.5", className)}
     {...props}
   >

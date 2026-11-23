@@ -13,9 +13,8 @@ export function iniciais(nome?: string): string {
 }
 
 /*
-  ⚠️ amber/emerald/rose, não yellow/green/red: o `tailwind.config` redefine
-  `red`, `yellow` e `green` como cor única, então `bg-red-100` não existe e
-  o chip saía transparente (era assim no ValidatedDemand também).
+  ⚠️ Só tokens semânticos (muted, warning, success, destructive): nada de
+  família padrão do Tailwind com tom, que o guard do design system barra.
 */
 const STATUS: Record<number, { rotulo: string; classe: string }> = {
   [StatusContent.Pending_Upload]: {

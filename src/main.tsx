@@ -1,4 +1,3 @@
-import { PrimeReactProvider } from "primereact/api";
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
@@ -6,7 +5,6 @@ import { registrarPwa } from "./pwa/registerSW";
 import { iniciarCapturaDaInstalacao } from "./pwa/instalacao";
 import { iniciarRecargaAoFalharChunk } from "./pwa/recarregarAoFalharChunk";
 import "./index.css";
-import "primereact/resources/themes/md-light-indigo/theme.css";
 
 const PRESERVE_KEYS = ["lgpd_status", "lgpd_updated_at"];
 
@@ -28,9 +26,7 @@ iniciarCapturaDaInstalacao();
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <div className="font-raleway">
-      <PrimeReactProvider>
-        <App />
-      </PrimeReactProvider>
+      <App />
     </div>
   </React.StrictMode>
 );

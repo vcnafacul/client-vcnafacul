@@ -168,7 +168,7 @@ const colunasDoDetalhe = (
     header: ROTULO_DA_DIFICULDADE[recorte],
     /*
       ⚠️ 11rem cabe o maior dos dois rótulos ("Acertos no cursinho", ~145px em
-      `text-sm`) depois do `px-3` e do ícone de ordenação do `<th>`. O
+      corpo de 14px) depois do `px-3` e do ícone de ordenação do `<th>`. O
       `DashTable` trunca o título, e foi esse aperto que produziu o cabeçalho
       cortado consertado no card 04.
     */

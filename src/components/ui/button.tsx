@@ -14,8 +14,6 @@ const buttonVariants = cva(
       variant: {
         cta: "bg-cta text-cta-foreground hover:brightness-[0.88]",
         primary: "bg-primary text-primary-foreground hover:brightness-110",
-        // Apelido de `primary` até a limpeza (R14).
-        default: "bg-primary text-primary-foreground hover:brightness-110",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-accent hover:text-accent-foreground",
         outline:
@@ -28,8 +26,6 @@ const buttonVariants = cva(
       size: {
         sm: "h-8 px-3 text-label",
         md: "h-11 px-4 sm:h-9",
-        // Apelido de `md` até a limpeza (R14).
-        default: "h-11 px-4 sm:h-9",
         lg: "h-11 px-6",
         icon: "h-11 w-11 sm:h-9 sm:w-9",
       },
@@ -51,7 +47,7 @@ type ButtonBaseProps = Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "size
 // Botão só de ícone não tem texto: o nome acessível é obrigatório no tipo.
 export type ButtonProps = ButtonBaseProps &
   (
-    | { size?: "sm" | "md" | "default" | "lg" }
+    | { size?: "sm" | "md" | "lg" }
     | { size: "icon"; "aria-label": string }
   )
 

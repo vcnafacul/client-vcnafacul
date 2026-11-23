@@ -11,11 +11,6 @@
  * contrato — em especial `entities` ser leitura.
  */
 
-export {
-  DashDateRangeFilter,
-  TEXTO_INTERVALO_INVERTIDO,
-  type DashDateRangeFilterProps,
-} from "./DashDateRangeFilter";
 export { DashFilterBar, DEBOUNCE_BUSCA_MS } from "./DashFilterBar";
 export { DashListFooter, type DashListFooterProps } from "./DashListFooter";
 export {

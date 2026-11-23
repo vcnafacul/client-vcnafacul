@@ -21,7 +21,12 @@ import { SimpleStudentAttendance } from "@/types/partnerPrepCourse/attendanceRec
 import { formatDateTime } from "@/utils/date";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   DataTable,
   type DataTableColumn,
@@ -133,7 +138,7 @@ export function AttendanceRecordModal({
   );
 
   const acaoEditar = (s: SimpleStudentAttendance) => (
-    <ShadcnTooltip content="Editar Presença">
+    <TooltipProvider><Tooltip><TooltipTrigger asChild>
       <Button
         size="icon"
         variant="ghost"
@@ -142,7 +147,7 @@ export function AttendanceRecordModal({
       >
         <Pencil className="h-6 w-6 text-primary opacity-70 hover:opacity-100" />
       </Button>
-    </ShadcnTooltip>
+    </TooltipTrigger><TooltipContent>Editar Presença</TooltipContent></Tooltip></TooltipProvider>
   );
 
   const observacao = (s: SimpleStudentAttendance) => {
@@ -154,9 +159,9 @@ export function AttendanceRecordModal({
       .join(" em ");
     if (!quem) return <span className="truncate">{o.text}</span>;
     return (
-      <ShadcnTooltip content={`Alterado por ${quem}`}>
+      <TooltipProvider><Tooltip><TooltipTrigger asChild>
         <span className="truncate">{o.text}</span>
-      </ShadcnTooltip>
+      </TooltipTrigger><TooltipContent>{`Alterado por ${quem}`}</TooltipContent></Tooltip></TooltipProvider>
     );
   };
 

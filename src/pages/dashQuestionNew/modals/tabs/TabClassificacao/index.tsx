@@ -444,7 +444,7 @@ export function TabClassificacao({
                   onClick={handleApprove}
                   disabled={isUpdatingStatus}
                   className="bg-success/5 border border-success hover:bg-success/10 text-success w-full"
-                  variant="default"
+                  variant="primary"
                 >
                   {isUpdatingStatus ? (
                     <Spinner size="button" decorative className="mr-2" />
@@ -460,7 +460,7 @@ export function TabClassificacao({
                   onClick={handleReject}
                   disabled={isUpdatingStatus}
                   className="bg-destructive/5 hover:bg-destructive/10 text-destructive border-destructive border w-full"
-                  variant="default"
+                  variant="primary"
                 >
                   {isUpdatingStatus ? (
                     <Spinner size="button" decorative className="mr-2" />
@@ -1149,7 +1149,7 @@ export function TabClassificacao({
                 <Button
                   onClick={handleSave}
                   disabled={isSaving || !isDirty || !isValid}
-                  variant="default"
+                  variant="primary"
                   size="sm"
                   className="bg-primary"
                 >

@@ -260,7 +260,7 @@ export function TabConteudo({
                 <Button
                   onClick={onSave}
                   disabled={isSaving || !isDirty || !isValid || pendencias.length > 0}
-                  variant="default"
+                  variant="primary"
                   size="sm"
                   className="bg-primary"
                 >

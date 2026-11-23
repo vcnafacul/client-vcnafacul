@@ -1,10 +1,11 @@
 import React, { ComponentProps } from "react";
-import { VariantProps, tv } from "tailwind-variants";
+import { cva, type VariantProps } from "class-variance-authority";
 import Footer from "../../organisms/footer";
 import Header from "../../organisms/header";
 
-const baseTemplate = tv({
-    base: "w-full z-header  text-white h-[76px]",
+const baseTemplate = cva(
+  "w-full z-header  text-white h-[76px]",
+  {
     variants: {
         position: {
             fixed: 'fixed top-0 left-0',
@@ -19,7 +20,8 @@ const baseTemplate = tv({
         position: 'relative',
         headerShadow: true
     }
-})
+  }
+)
 
 export type BaseTemplateProps = VariantProps<typeof baseTemplate> & ComponentProps<'div'> & {
     children: React.ReactNode;

@@ -9,7 +9,7 @@ function regra(id: string) {
 }
 
 describe("regras do guard", () => {
-  it("expõe os 10 ids da §5.2", () => {
+  it("expõe os ids da §5.2 e o do toast", () => {
     expect(rules.map((r) => r.id)).toEqual([
       "legacy-color",
       "legacy-size",
@@ -20,6 +20,7 @@ describe("regras do guard", () => {
       "frozen-folder",
       "missing-stories",
       "ds-review-marker",
+      "toast-import",
       "ui-semantic-only",
     ]);
   });
@@ -71,6 +72,16 @@ describe("regras do guard", () => {
     expect(r.match('import A from "@/components/atoms/a";', "src/x.tsx")).toBe(1);
     expect(r.match('import A from "../molecules/a";', "src/components/ui/x.tsx")).toBe(1);
     expect(r.match('import { cn } from "@/lib/utils";', "src/x.tsx")).toBe(0);
+    expect(r.match('import { Header } from "@/components/organisms/header";', "src/x.tsx")).toBe(0);
+    expect(r.match('import { tv } from "tailwind-variants";', "src/x.tsx")).toBe(1);
+  });
+
+  it("toast-import", () => {
+    const r = regra("toast-import");
+    expect(r.match('import { toast } from "react-toastify";', "src/pages/x.tsx")).toBe(1);
+    expect(r.match('import { toast } from "react-toastify";', "src/lib/toast.ts")).toBe(0);
+    expect(r.match('import "react-toastify/dist/ReactToastify.css";', "src/components/ui/toast.tsx")).toBe(0);
+    expect(r.match('import { toast } from "@/lib/toast";', "src/pages/x.tsx")).toBe(0);
   });
 
   it("frozen-folder", () => {

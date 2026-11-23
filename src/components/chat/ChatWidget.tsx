@@ -240,7 +240,7 @@ export function ChatWidget() {
 
   const button = (
     <Button
-      variant="default"
+      variant="primary"
       className={buttonClassName}
       onClick={handleClick}
       aria-label={hasPending ? "Mensagem do suporte pendente" : "Precisa de ajuda?"}

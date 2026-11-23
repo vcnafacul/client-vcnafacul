@@ -354,7 +354,7 @@ export default function DemandaModal({
         {/* 3 colunas também no celular: rótulos curtos cabem, e o meio ganha ~90px. */}
         <footer className="shrink-0 border-t px-4 sm:px-6 py-3 grid grid-cols-3 gap-2">
           <Button
-            variant="default"
+            variant="primary"
             className="bg-success hover:bg-success/80"
             onClick={() => handleUpdateStatus(StatusEnum.Approved)}
             disabled={!canReview || demand.status === StatusEnum.Approved}

@@ -10,7 +10,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { ReactNode } from "react";
 
 interface ActionButtonProps {
@@ -28,13 +33,13 @@ interface ActionButtonProps {
 export function ActionButton(props: ActionButtonProps) {
   return (
     <AlertDialog>
-      <ShadcnTooltip content={props.tooltipTitle}>
+      <TooltipProvider><Tooltip><TooltipTrigger asChild>
         <AlertDialogTrigger asChild>
           <Button size="icon" variant="ghost" aria-label={props.tooltipTitle}>
             {props.children}
           </Button>
         </AlertDialogTrigger>
-      </ShadcnTooltip>
+      </TooltipTrigger><TooltipContent>{props.tooltipTitle}</TooltipContent></Tooltip></TooltipProvider>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>{props.titleAlert}</AlertDialogTitle>

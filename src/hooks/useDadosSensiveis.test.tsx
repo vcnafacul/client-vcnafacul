@@ -1,4 +1,4 @@
-import { ToggleDadosSensiveis } from "@/components/molecules/toggleDadosSensiveis";
+import { Switch } from "@/components/ui/switch";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import { useDadosSensiveis } from "./useDadosSensiveis";
@@ -9,7 +9,11 @@ function Tela({ podeVerCompleto }: { podeVerCompleto: boolean }) {
   return (
     <>
       {mostrarToggle && (
-        <ToggleDadosSensiveis ocultar={ocultar} onChange={setOcultar} />
+        <Switch
+          checked={ocultar}
+          onCheckedChange={setOcultar}
+          label="Ocultar dados sensíveis"
+        />
       )}
       <p>{mascarar.cpf("123.456.789-01")}</p>
       <p>{mascarar.email("fernando@gmail.com")}</p>

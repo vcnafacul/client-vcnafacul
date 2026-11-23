@@ -18,7 +18,6 @@ import { Controller, useForm } from "react-hook-form";
 import { validateCPF } from "validations-br";
 import * as yup from "yup";
 import { EachStepProps } from "..";
-import "./styles.css";
 
 interface PartnerPrepInscriptionStep1Props extends EachStepProps {
   updateData?: (data: Partial<StudentInscriptionDTO>) => void;

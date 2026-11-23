@@ -12,16 +12,43 @@ vi.mock("@tailwindcss/typography", () => ({ default: () => {} }));
 const theme = resolveConfig(config as any).theme as any;
 
 describe("tailwind.config.js", () => {
-  it.each([
-    ["red", "#F43535"],
-    ["orange", "#FF7600"],
-    ["yellow", "#FFE53C"],
-    ["green", "#37D6B5"],
-    ["pink", "#DA005A"],
-    ["purple", "#8A2BE2"],
-  ])("mantém a escala padrão de %s e o DEFAULT da marca", (hue, hex) => {
-    expect(theme.colors[hue][500]).toBeDefined();
-    expect(theme.colors[hue].DEFAULT).toBe(hex);
+  it("mantém as escalas padrão de cor, sem o DEFAULT da marca antiga", () => {
+    for (const hue of ["red", "orange", "yellow", "green", "pink", "purple"]) {
+      expect(theme.colors[hue][500]).toBeDefined();
+      expect(theme.colors[hue].DEFAULT).toBeUndefined();
+    }
+  });
+
+  it("não tem mais os nomes de cor legados", () => {
+    for (const nome of [
+      "marine",
+      "grey",
+      "darkGrey",
+      "lightGray",
+      "gray2",
+      "backgroundGrey",
+      "backgroundMarine",
+      "darkOrange",
+      "lightYellow",
+      "lightGreen",
+      "green2",
+      "green3",
+      "darkGreen",
+      "redError",
+      "blueGeo",
+      "logoCursinho",
+      "logoEstudos",
+    ]) {
+      expect(theme.colors[nome], nome).toBeUndefined();
+    }
+    expect(theme.colors.white).toBe("#FFFFFF");
+    expect(theme.colors.black).toBe("#000000");
+  });
+
+  it("não tem o fontSize padrão do Tailwind (só a escala text-*)", () => {
+    expect(theme.fontSize.sm).toBeUndefined();
+    expect(theme.fontSize.xs).toBeUndefined();
+    expect(theme.fontSize["2xl"]).toBeUndefined();
   });
 
   it("mantém animate-spin e animate-pulse", () => {

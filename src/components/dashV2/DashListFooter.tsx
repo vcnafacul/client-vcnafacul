@@ -1,4 +1,13 @@
-import { PaginationWrapper } from "@/components/organisms/paginationWrapper";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
+import { Fragment } from "react";
 import { cn } from "@/lib/utils";
 import { intervaloDaPagina, totalDePaginas } from "./paginacao";
 
@@ -9,6 +18,61 @@ export interface DashListFooterProps {
   /** Total de registros **do conjunto inteiro**, não da página. */
   total: number;
   onPageChange: (pagina: number) => void;
+}
+
+function Paginas({
+  atual,
+  total,
+  onPageChange,
+}: {
+  atual: number;
+  total: number;
+  onPageChange: (pagina: number) => void;
+}) {
+  if (total <= 1) return null;
+
+  const numeros = new Set([1, total]);
+  for (let i = Math.max(2, atual - 1); i <= Math.min(total - 1, atual + 1); i++) {
+    numeros.add(i);
+  }
+  const ordenados = [...numeros].sort((a, b) => a - b);
+
+  return (
+    <Pagination className="mx-0 w-auto">
+      <PaginationContent>
+        <PaginationItem>
+          <PaginationPrevious
+            onClick={() => atual > 1 && onPageChange(atual - 1)}
+            className={cn("cursor-pointer", atual === 1 && "pointer-events-none opacity-50")}
+          />
+        </PaginationItem>
+        {ordenados.map((n, i) => (
+          <Fragment key={n}>
+            {i > 0 && n - ordenados[i - 1] > 1 ? (
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : null}
+            <PaginationItem>
+              <PaginationLink
+                onClick={() => onPageChange(n)}
+                isActive={atual === n}
+                className="cursor-pointer"
+              >
+                {n}
+              </PaginationLink>
+            </PaginationItem>
+          </Fragment>
+        ))}
+        <PaginationItem>
+          <PaginationNext
+            onClick={() => atual < total && onPageChange(atual + 1)}
+            className={cn("cursor-pointer", atual === total && "pointer-events-none opacity-50")}
+          />
+        </PaginationItem>
+      </PaginationContent>
+    </Pagination>
+  );
 }
 
 /**
@@ -27,13 +91,9 @@ export interface DashListFooterProps {
  * estado vazio, "Mostrando 0–0 de 0" é ruído sobre uma informação que a
  * mensagem de vazio já deu.
  *
- * ⚠️ **Reusa o `PaginationWrapper`**, que já embrulha o `components/ui/
- * pagination` com elipse e prev/next — reimplementar aqui seria uma terceira
- * cópia da mesma lógica no projeto. Ele devolve `null` sozinho com uma página
- * só, então uma lista curta fica só com a contagem. Os `[&_nav]:` são
- * seletores de descendente (especificidade maior que a da classe do próprio
- * `nav`) e é assim que o `my-6`/`w-full` de lá são neutralizados **sem** tocar
- * num arquivo compartilhado por outras duas telas.
+ * ⚠️ Monta a paginação direto com os primitivos do `components/ui/pagination`
+ * (primeira, vizinhas da atual, última, com elipse e anterior/próxima). Com uma
+ * página só, a lista curta fica só com a contagem.
  */
 export function DashListFooter({
   pagina,
@@ -50,7 +110,6 @@ export function DashListFooter({
       data-testid="dash-list-footer"
       className={cn(
         "flex flex-wrap items-center justify-between gap-3 border-t px-4 py-2",
-        "[&_nav]:mx-0 [&_nav]:my-0 [&_nav]:w-auto",
         "border-border bg-card",
       )}
     >
@@ -66,9 +125,9 @@ export function DashListFooter({
         Mostrando {inicio}–{fim} de {total}
       </p>
 
-      <PaginationWrapper
-        currentPage={pagina}
-        totalPages={totalDePaginas(total, pageSize)}
+      <Paginas
+        atual={pagina}
+        total={totalDePaginas(total, pageSize)}
         onPageChange={onPageChange}
       />
     </div>

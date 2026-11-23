@@ -88,7 +88,7 @@ a primária e deixar o resto derivar.
 | ~~`dashContent`~~ | ✅ migrada | nível 3 — matéria e status filtram **só no servidor** (o V1 filtrava a matéria duas vezes); lista inteira página a página (`getTodoConteudo`); engrenagem sem rótulo virou a ação "Matérias e frentes"; criar demanda recarrega a lista (o V1 fazia `push` na mesma referência e só aparecia no F5) |
 | ~~`dashRoles`~~ | ✅ migrada | nível 2 — busca **sob demanda** no servidor: usa `textoVazio` (não carrega nada de início) e `onSearchSubmit` (Enter), as duas props que entraram por ela |
 | ~~`partnerPrepProvas`~~ | ✅ migrada | nível 3, feita — reusa `dashProvas/columns` inteiro |
-| ~~`partnerPrepInscriptionManager`~~ | ✅ migrada | nível 3 — o setter que mesclava por id era contorno do scroll do V1 e saiu; lista inteira carregada página a página (`getTodasAsInscricoes`); primeira tela com `DashDateRangeFilter` e `totalSemFiltro` — tickets/021 |
+| ~~`partnerPrepInscriptionManager`~~ | ✅ migrada | nível 3 — o setter que mesclava por id era contorno do scroll do V1 e saiu; lista inteira carregada página a página (`getTodasAsInscricoes`); primeira tela com o `DateRangeFields` (`ui/date-range-picker`) e `totalSemFiltro` — tickets/021 |
 
 ### Duas telas sobre a mesma tabela: o caso `dashProvas` × `partnerPrepProvas`
 

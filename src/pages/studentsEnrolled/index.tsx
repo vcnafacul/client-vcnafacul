@@ -3,7 +3,12 @@ import { Card } from "@/components/ui/card";
 import { Combobox } from "@/components/ui/combobox";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -504,7 +509,7 @@ export function StudentsEnrolled() {
   */
   const renderAcoes = (estudante: StudentsDtoOutput) => (
     <div className="flex gap-2 justify-center">
-      <ShadcnTooltip content="Visualizar">
+      <TooltipProvider><Tooltip><TooltipTrigger asChild>
         <Button
           size="icon"
           variant="ghost"
@@ -513,11 +518,11 @@ export function StudentsEnrolled() {
         >
           <Eye className="h-6 w-6 text-muted-foreground opacity-60 hover:opacity-100" />
         </Button>
-      </ShadcnTooltip>
+      </TooltipTrigger><TooltipContent>Visualizar</TooltipContent></Tooltip></TooltipProvider>
       {permissao[Roles.gerenciarEstudantes] &&
         estudante.applicationStatus === StatusApplication.Enrolled &&
         estudante.class?.id && (
-          <ShadcnTooltip content="Declaração de matrícula">
+          <TooltipProvider><Tooltip><TooltipTrigger asChild>
             <Button
               size="icon"
               variant="ghost"
@@ -528,11 +533,11 @@ export function StudentsEnrolled() {
             >
               <Download className="h-6 w-6 text-primary opacity-60 hover:opacity-100" />
             </Button>
-          </ShadcnTooltip>
+          </TooltipTrigger><TooltipContent>Declaração de matrícula</TooltipContent></Tooltip></TooltipProvider>
         )}
       {permissao[Roles.gerenciarEstudantes] &&
         acoesDeMatricula(estudante.applicationStatus).cancelar && (
-          <ShadcnTooltip content="Cancelar matrícula">
+          <TooltipProvider><Tooltip><TooltipTrigger asChild>
             <Button
               size="icon"
               variant="ghost"
@@ -551,11 +556,11 @@ export function StudentsEnrolled() {
             >
               <X className="h-6 w-6 text-destructive opacity-60 hover:opacity-100" />
             </Button>
-          </ShadcnTooltip>
+          </TooltipTrigger><TooltipContent>Cancelar matrícula</TooltipContent></Tooltip></TooltipProvider>
         )}
       {permissao[Roles.gerenciarEstudantes] &&
         acoesDeMatricula(estudante.applicationStatus).reativar && (
-          <ShadcnTooltip content="Reativar matrícula">
+          <TooltipProvider><Tooltip><TooltipTrigger asChild>
             <Button
               size="icon"
               variant="ghost"
@@ -574,11 +579,11 @@ export function StudentsEnrolled() {
             >
               <Check className="h-6 w-6 text-success opacity-60 hover:opacity-100" />
             </Button>
-          </ShadcnTooltip>
+          </TooltipTrigger><TooltipContent>Reativar matrícula</TooltipContent></Tooltip></TooltipProvider>
         )}
       {permissao[Roles.gerenciarTurmas] &&
         acoesDeMatricula(estudante.applicationStatus).alterarTurma && (
-        <ShadcnTooltip content="Alterar Turma">
+        <TooltipProvider><Tooltip><TooltipTrigger asChild>
           <Button
             size="icon"
             variant="ghost"
@@ -597,7 +602,7 @@ export function StudentsEnrolled() {
           >
             <Presentation className="h-6 w-6 text-primary opacity-60 hover:opacity-100" />
           </Button>
-        </ShadcnTooltip>
+        </TooltipTrigger><TooltipContent>Alterar Turma</TooltipContent></Tooltip></TooltipProvider>
       )}
     </div>
   );

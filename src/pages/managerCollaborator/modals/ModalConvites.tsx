@@ -16,7 +16,12 @@ import {
   type ConviteDoCursinho,
 } from "@/services/prepCourse/conviteColaborador";
 import { useAuthStore } from "@/store/auth";
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useCallback, useEffect, useState } from "react";
 import { Check, CircleX, Send, Undo2 } from "lucide-react";
 import { toast } from "@/lib/toast";
@@ -225,7 +230,7 @@ export function ModalConvites({
                       {c.situacao === "pendente" &&
                         (confirmarCancelar === c.id ? (
                           <>
-                            <ShadcnTooltip content="Confirmar cancelamento">
+                            <TooltipProvider><Tooltip><TooltipTrigger asChild>
                               <Button
                                 size="icon"
                                 variant="ghost"
@@ -242,8 +247,8 @@ export function ModalConvites({
                               >
                                 <Check size="1em" />
                               </Button>
-                            </ShadcnTooltip>
-                            <ShadcnTooltip content="Manter convite">
+                            </TooltipTrigger><TooltipContent>Confirmar cancelamento</TooltipContent></Tooltip></TooltipProvider>
+                            <TooltipProvider><Tooltip><TooltipTrigger asChild>
                               <Button
                                 size="icon"
                                 variant="ghost"
@@ -252,11 +257,11 @@ export function ModalConvites({
                               >
                                 <Undo2 size="1em" />
                               </Button>
-                            </ShadcnTooltip>
+                            </TooltipTrigger><TooltipContent>Manter convite</TooltipContent></Tooltip></TooltipProvider>
                           </>
                         ) : (
                           <>
-                            <ShadcnTooltip content={AVISO_REENVIAR}>
+                            <TooltipProvider><Tooltip><TooltipTrigger asChild>
                               <Button
                                 size="icon"
                                 variant="ghost"
@@ -271,8 +276,8 @@ export function ModalConvites({
                               >
                                 <Send size="1em" />
                               </Button>
-                            </ShadcnTooltip>
-                            <ShadcnTooltip content="Cancelar convite">
+                            </TooltipTrigger><TooltipContent>{AVISO_REENVIAR}</TooltipContent></Tooltip></TooltipProvider>
+                            <TooltipProvider><Tooltip><TooltipTrigger asChild>
                               <Button
                                 size="icon"
                                 variant="ghost"
@@ -282,7 +287,7 @@ export function ModalConvites({
                               >
                                 <CircleX size="1em" />
                               </Button>
-                            </ShadcnTooltip>
+                            </TooltipTrigger><TooltipContent>Cancelar convite</TooltipContent></Tooltip></TooltipProvider>
                           </>
                         ))}
                     </td>

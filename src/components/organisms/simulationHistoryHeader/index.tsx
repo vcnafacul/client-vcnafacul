@@ -364,7 +364,7 @@ export function SimulationHistoryHeader({
             {/* Toggle Button */}
             <div className="flex gap-2">
               <Button
-                variant={viewMode === "materias" ? "default" : "outline"}
+                variant={viewMode === "materias" ? "primary" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("materias")}
                 className="transition-all"
@@ -372,7 +372,7 @@ export function SimulationHistoryHeader({
                 📚 Matérias
               </Button>
               <Button
-                variant={viewMode === "frentes" ? "default" : "outline"}
+                variant={viewMode === "frentes" ? "primary" : "outline"}
                 size="sm"
                 onClick={() => setViewMode("frentes")}
                 className="transition-all"

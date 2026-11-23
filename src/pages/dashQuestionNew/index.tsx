@@ -348,7 +348,7 @@ function DashQuestionNew() {
         {/* Botão para mostrar/esconder filtros */}
         {infos && (
           <Button
-            variant={showFilters ? "default" : "outline"}
+            variant={showFilters ? "primary" : "outline"}
             onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2"
           >

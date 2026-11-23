@@ -1,14 +1,16 @@
 import { ComponentProps, useMemo } from "react";
 import { CircleChevronUp } from "lucide-react";
-import { VariantProps, tv } from "tailwind-variants";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 import SubMenuDash from "../../organisms/subMenuDash";
 import { SubDashCardInfo } from "../subDashCard";
 import { useAuthStore } from "../../../store/auth";
 
 const transition = "transition-all duration-300";
 
-const dashCard = tv({
-  base: `text-white font-bold text-body py-3 px-2 flex items-center relative ${transition}`,
+const dashCard = cva(
+  `text-white font-bold text-body py-3 px-2 flex items-center relative ${transition}`,
+  {
   variants: {
     size: {
       big: "flex-col justify-between h-32",
@@ -18,7 +20,8 @@ const dashCard = tv({
   defaultVariants: {
     size: "big",
   },
-});
+  }
+);
 
 export interface DashCardMenu {
   id: number;
@@ -58,7 +61,7 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
       <div>
         <div
           {...props}
-          className={`${dashCard({ size })} ${card.bg} ${size !== "small" && !opened ? "mt-4 rounded-md" : "mt-0"} cursor-pointer`}
+          className={`${cn(dashCard({ size }))} ${card.bg} ${size !== "small" && !opened ? "mt-4 rounded-md" : "mt-0"} cursor-pointer`}
         >
           <Icon
             className={`select-none fill-white text-white ${size !== "small" ? "w-16 h-16" : "w-7 h-7"} ${transition}`}

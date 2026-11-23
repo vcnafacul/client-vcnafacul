@@ -37,7 +37,7 @@ function pct(fracao: number | null): string {
  * (card 09 / `UX.md` §3.1).
  *
  * Dois dos três números antigos eram sobre o PROCESSO (quantos cartões
- * chegaram, quantos leram) e um sobre o RESULTADO. Com o mesmo `text-2xl`, o
+ * chegaram, quantos leram) e um sobre o RESULTADO. Com o mesmo tamanho de texto, o
  * olho não separava — e a pergunta que trouxe a pessoa até ali ficava com um
  * terço da atenção.
  *

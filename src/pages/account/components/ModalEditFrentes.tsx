@@ -74,7 +74,7 @@ export function ModalEditFrentes({
             Cancelar
           </Button>
           <Button
-            variant="default"
+            variant="primary"
             onClick={handleSave}
             disabled={isSaving}
           >

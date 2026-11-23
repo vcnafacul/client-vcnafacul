@@ -3,7 +3,6 @@
 
 import TailwindScrollbarHide from "tailwind-scrollbar-hide";
 import TailwindTypography from "@tailwindcss/typography";
-import colors from "tailwindcss/colors";
 import typeScale from "./tailwind/type-scale.js";
 
 const c = (v) => `hsl(var(--${v}) / <alpha-value>)`;
@@ -13,6 +12,8 @@ export default {
   darkMode: ["class"],
   content: ["./src/**/*.{js,jsx,ts,tsx,mdx}", "./.storybook/**/*.{ts,tsx}"],
   theme: {
+    // A escala de texto é o plugin type-scale (text-body, text-h1...); text-sm etc. não existem mais.
+    fontSize: {},
     extend: {
       fontFamily: {
         raleway: ["Raleway", "sans-serif"],
@@ -49,38 +50,9 @@ export default {
           border: c("sidebar-border"),
           ring: c("sidebar-ring"),
         },
-        // ---- legado: sai no commit de limpeza (059/01); componentes novos não usam ----
+        // Só o branco e o preto fora dos tokens; o resto da paleta é a padrão do Tailwind.
         white: "#FFFFFF",
-        backgroundGrey: "#F8F8F8",
-        lightGray: "#E0E0E0",
-        grey: "#707070",
-        darkGrey: "#545454",
         black: "#000000",
-        redError: "#ff0000",
-        red: { ...colors.red, DEFAULT: "#F43535" },
-        orange: { ...colors.orange, DEFAULT: "#FF7600" },
-        darkOrange: "#FC8621",
-        yellow: { ...colors.yellow, DEFAULT: "#FFE53C" },
-        lightYellow: "#fff4af",
-        backgroundMarine: "#001228",
-        marine: "#0B2747",
-        pink: { ...colors.pink, DEFAULT: "#DA005A" },
-        green: { ...colors.green, DEFAULT: "#37D6B5" },
-        lightGreen: "#8cc408",
-        darkGreen: "#0f9b2c",
-        green2: "#0F9B2C",
-        green3: "#19982B",
-        gray2: "#A6A6A6",
-        purple: { ...colors.purple, DEFAULT: "#8A2BE2" },
-        blueGeo: "#4D8CCB",
-        logoCursinho: "#E05C1A", // orange
-        logoProjeto: "#5B3F9E", // purple
-        logoAdmin: "#00A69C", // teal
-        logoLinguagens: "#D61F69", // magenta
-        logoNatureza: "#1B3A5C", // navy
-        logoHumanas: "#3BAD5A", // green
-        logoMatematica: "#7CB800", // lime
-        logoEstudos: "#F0B400", // yellow
       },
       borderRadius: {
         lg: "var(--radius)",

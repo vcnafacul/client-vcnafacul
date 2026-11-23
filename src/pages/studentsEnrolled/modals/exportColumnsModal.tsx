@@ -1,4 +1,9 @@
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -184,10 +189,7 @@ export default function ExportColumnsModal({
                             {column.label}
                           </label>
                           {column.masked && (
-                            <ShadcnTooltip
-                              content="Seu perfil não vê este campo em claro: virá mascarado na planilha."
-                              delayDuration={TOOLTIP_DELAY_MS}
-                            >
+                            <TooltipProvider delayDuration={TOOLTIP_DELAY_MS}><Tooltip><TooltipTrigger asChild>
                               <button
                                 type="button"
                                 aria-label={`${column.label} virá mascarado`}
@@ -195,7 +197,7 @@ export default function ExportColumnsModal({
                               >
                                 <EyeOff className="h-4 w-4" />
                               </button>
-                            </ShadcnTooltip>
+                            </TooltipTrigger><TooltipContent>Seu perfil não vê este campo em claro: virá mascarado na planilha.</TooltipContent></Tooltip></TooltipProvider>
                           )}
                         </div>
                       ))}

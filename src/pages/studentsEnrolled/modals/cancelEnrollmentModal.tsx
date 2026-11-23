@@ -1,4 +1,9 @@
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,7 +24,7 @@ import { useState } from "react";
 
 /**
  * O default do Radix (700ms) faz a nota demorar a aparecer, e como cada
- * ShadcnTooltip tem seu proprio Provider o atraso e pago de novo a cada icone.
+ * cada tooltip tem seu proprio Provider o atraso e pago de novo a cada icone.
  * 150ms mantem a leitura fluida sem disparar tooltip a toa ao atravessar a
  * lista com o mouse.
  */
@@ -84,7 +89,7 @@ export default function CancelEnrollmentModal({
                 <span className="text-body">{label}</span>
               </label>
               {note && (
-                <ShadcnTooltip content={note} delayDuration={NOTE_TOOLTIP_DELAY_MS}>
+                <TooltipProvider delayDuration={NOTE_TOOLTIP_DELAY_MS}><Tooltip><TooltipTrigger asChild>
                   {/* Botao (e nao um icone solto) para que a nota tambem seja
                       alcancavel pelo foco do teclado, e nao so pelo mouse. */}
                   <button
@@ -94,7 +99,7 @@ export default function CancelEnrollmentModal({
                   >
                     <Info className="h-4 w-4" />
                   </button>
-                </ShadcnTooltip>
+                </TooltipTrigger><TooltipContent>{note}</TooltipContent></Tooltip></TooltipProvider>
               )}
             </div>
           ))}

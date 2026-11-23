@@ -32,7 +32,12 @@ import { XLSXStudentCourseFull } from "@/types/partnerPrepCourse/studentCourseFu
 import { RankingItem } from "@/types/partnerPrepForm/ruleForm";
 import { capitalizeWords } from "@/utils/capitalizeWords";
 import { Card } from "@/components/ui/card";
-import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   DataTable,
   type DataTableColumn,
@@ -407,7 +412,7 @@ export function PartnerPrepInscritionStudentManager() {
   */
   const renderAcoes = (row: XLSXStudentCourseFull) => (
     <div className="flex justify-center items-center gap-2 h-8 flex-wrap">
-      <ShadcnTooltip content="Visualizar">
+      <TooltipProvider><Tooltip><TooltipTrigger asChild>
         <Button
           size="icon"
           variant="ghost"
@@ -416,7 +421,7 @@ export function PartnerPrepInscritionStudentManager() {
         >
           <Eye className="h-6 w-6 text-muted-foreground opacity-60 hover:opacity-100" />
         </Button>
-      </ShadcnTooltip>
+      </TooltipTrigger><TooltipContent>Visualizar</TooltipContent></Tooltip></TooltipProvider>
       {row.isento === "Sim" &&
         shouldProcessApplication(
           row.status,
@@ -519,7 +524,7 @@ export function PartnerPrepInscritionStudentManager() {
         </ActionButton>
       )}
       {row.status === StatusApplication.DeclaredInterest && (
-        <ShadcnTooltip content="Confirmação de Matrícula">
+        <TooltipProvider><Tooltip><TooltipTrigger asChild>
           <Button
             size="icon"
             variant="ghost"
@@ -528,12 +533,12 @@ export function PartnerPrepInscritionStudentManager() {
           >
             <Check className="h-6 w-6 text-success opacity-60 hover:opacity-100" />
           </Button>
-        </ShadcnTooltip>
+        </TooltipTrigger><TooltipContent>Confirmação de Matrícula</TooltipContent></Tooltip></TooltipProvider>
       )}
       {(row.status === StatusApplication.DeclaredInterest ||
         row.status === StatusApplication.MissedDeadline ||
         row.status === StatusApplication.UnderReview) && (
-        <ShadcnTooltip content="Indeferir">
+        <TooltipProvider><Tooltip><TooltipTrigger asChild>
           <Button
             size="icon"
             variant="ghost"
@@ -547,7 +552,7 @@ export function PartnerPrepInscritionStudentManager() {
           >
             <X className="h-6 w-6 text-destructive/60 hover:text-destructive" />
           </Button>
-        </ShadcnTooltip>
+        </TooltipTrigger><TooltipContent>Indeferir</TooltipContent></Tooltip></TooltipProvider>
       )}
       {shouldProcessApplication(
         row.status,

@@ -61,7 +61,7 @@ function VazioDeQuestoes() {
  * O `<th>` do `DashTable` envolve o título num `<span class="truncate">` e põe
  * o ícone de ordenação ao lado. Com `6rem` sobram ~54px úteis depois do
  * `px-3` (24px), do ícone (14px) e do `gap` (4px) — e "Questão" ocupa ~58px em
- * `text-sm`. O título saía com reticências, que foi o defeito relatado.
+ * corpo de 14px. O título saía com reticências, que foi o defeito relatado.
  *
  * Medida aqui, na tela, e **não** mexendo no `DashTable`: o truncamento é
  * correto como comportamento geral (protege coluna estreita de quebrar o
