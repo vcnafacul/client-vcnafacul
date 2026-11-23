@@ -1,3 +1,4 @@
+import { Spinner } from "@/components/ui/spinner";
 import { dashV2 } from "@/components/dashV2";
 import {
   Tooltip,
@@ -5,7 +6,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { RefreshCw } from "lucide-react";
 import type { ComponentType } from "react";
 import { toast } from "react-toastify";
 
@@ -82,7 +82,7 @@ export function AcaoIcone({
           )}
         >
           {carregando ? (
-            <RefreshCw className="h-5 w-5 animate-spin" />
+            <Spinner decorative className="size-5" />
           ) : (
             <Icone className="h-5 w-5" />
           )}
