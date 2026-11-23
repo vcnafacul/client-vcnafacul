@@ -11,9 +11,9 @@ const itemVariants = cva(
   {
     variants: {
       size: {
-        // 44px de alvo no celular (§6); h-7 a partir de 768.
+        // 44px de alvo no celular (§6), nos dois tamanhos; h-7 a partir de 768.
         sm: "h-11 sm:h-7",
-        md: "h-9 sm:h-7",
+        md: "h-11 sm:h-7",
       },
     },
     defaultVariants: { size: "md" },

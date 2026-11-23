@@ -41,6 +41,14 @@ describe("SegmentedControl", () => {
     expect(screen.getByRole("radio", { name: "Manhã" })).toBeChecked();
   });
 
+  it("no tamanho md o item tem alvo de 44px abaixo de 768 (h-11)", () => {
+    render(<Controlado />);
+    for (const r of screen.getAllByRole("radio")) {
+      expect(r.className).toContain("h-11");
+      expect(r.className).toContain("sm:h-7");
+    }
+  });
+
   it("seta para a direita marca a opção seguinte e avisa", async () => {
     const espiao = vi.fn();
     render(<Controlado onValueChange={espiao} />);
