@@ -105,6 +105,27 @@ describe("MenuMobile", () => {
     await waitFor(() => expect(hamburguer).toHaveFocus());
   });
 
+  it("trava a rolagem da página enquanto aberto", async () => {
+    const { rerender } = render(
+      <MemoryRouter>
+        <MenuMobile open onClose={() => {}} itens={itens} redes={[]} />
+      </MemoryRouter>,
+    );
+    // O react-remove-scroll do Radix marca o body enquanto o Sheet está aberto.
+    await waitFor(() =>
+      expect(document.body).toHaveAttribute("data-scroll-locked"),
+    );
+
+    rerender(
+      <MemoryRouter>
+        <MenuMobile open={false} onClose={() => {}} itens={itens} redes={[]} />
+      </MemoryRouter>,
+    );
+    await waitFor(() =>
+      expect(document.body).not.toHaveAttribute("data-scroll-locked"),
+    );
+  });
+
   it("sem login, oferece Entrar e Cadastrar; com login, saúda pelo nome", () => {
     abrir({
       entrar: item(2, "Login", "/login"),
