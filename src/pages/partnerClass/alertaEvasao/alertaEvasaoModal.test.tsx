@@ -44,6 +44,18 @@ describe("validarAlerta", () => {
 });
 
 describe("AlertaEvasaoModal (tickets/054, card 03)", () => {
+  it("clique fora não fecha (não perde o que foi digitado, R32)", async () => {
+    svc.get.mockResolvedValue({ percentual: 15, minimoDeAulas: 10 });
+    const fechar = vi.fn();
+    render(<AlertaEvasaoModal isOpen handleClose={fechar} />);
+    // O Radix liga o ouvinte de clique fora num timeout.
+    await new Promise((r) => setTimeout(r, 20));
+    fireEvent.pointerDown(document.body);
+    fireEvent.click(document.body);
+    expect(fechar).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
   beforeEach(() => vi.clearAllMocks());
 
   const percentual = () =>

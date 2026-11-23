@@ -39,7 +39,11 @@ export function ModalMotivoRejeicao({ isOpen, handleClose, onConfirm }: Props) {
       }}
       size="sm"
     >
-      <DialogContent aria-describedby={undefined}>
+      <DialogContent
+        aria-describedby={undefined}
+        // Dados digitados: clique fora não fecha (R32).
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Por que este cadastro está sendo rejeitado?</DialogTitle>
         </DialogHeader>

@@ -40,6 +40,16 @@ describe("ModalMotivoRejeicao", () => {
     );
   });
 
+  it("clique fora não fecha (R32)", async () => {
+    const handleClose = vi.fn();
+    render(<ModalMotivoRejeicao isOpen handleClose={handleClose} onConfirm={vi.fn()} />);
+    // O Radix liga o ouvinte de clique fora num timeout.
+    await new Promise((r) => setTimeout(r, 20));
+    fireEvent.pointerDown(document.body);
+    fireEvent.click(document.body);
+    expect(handleClose).not.toHaveBeenCalled();
+  });
+
   it("'Outro' exige o texto", () => {
     const { onConfirm, confirmar } = montar();
     fireEvent.click(screen.getByLabelText("Outro"));

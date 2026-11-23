@@ -102,7 +102,12 @@ export function AlertaEvasaoModal({ isOpen, handleClose }: Props) {
 
   return (
     <Dialog open={isOpen} onOpenChange={(o) => !o && handleClose()}>
-      <DialogContent size="sm" aria-describedby={undefined}>
+      <DialogContent
+        size="sm"
+        aria-describedby={undefined}
+        // Dados digitados: clique fora não fecha (R32).
+        onInteractOutside={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Alerta de risco de evasão</DialogTitle>
         </DialogHeader>
