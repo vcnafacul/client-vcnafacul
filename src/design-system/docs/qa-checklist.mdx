@@ -1,0 +1,58 @@
+import { Meta } from "@storybook/addon-docs/blocks";
+
+<Meta title="Guias/Checklist de homologação" />
+
+# Checklist de homologação
+
+Percorrido durante o congelamento de UI de 2 a 3 dias (tickets/059 §7.1), em **desktop e em 390 de largura**.
+Os itens com ★ também se fazem **só com o teclado**. Cada item vira marcado quando a tela está certa nos dois
+tamanhos; o que estiver errado vira issue, não correção solta (regra de escopo do 059).
+
+Antes de começar, rode `scripts/ds-screenshots.ts` (instruções no topo do arquivo) e revise cada par
+antes/depois do relatório. Na 390×640, a ação principal de cada Dialog tem de estar visível.
+
+## Público
+
+- [ ] Home: todas as seções, hero, CTA marinho e a faixa de marca
+- [ ] Quem somos
+- [ ] Mapa de cursinhos e a página pública de um cursinho
+- [ ] Cadastro de cursinho (`Geo`)
+- [ ] Login, cadastro e esqueci a senha ★
+- [ ] Página de confirmar matrícula
+
+## Estudante
+
+- [ ] Inscrição, passos 1 a 3 ★ (asteriscos, barra fixa, teclados do celular)
+- [ ] Fazer um simulado ★
+- [ ] Histórico de simulados e relatório
+- [ ] Conta e perfil
+- [ ] Chat
+
+## Administração
+
+- [ ] Lista de provas ★ (DataTable, selos com ponto, menu da linha, cards no celular)
+- [ ] Editor de questão (abas do `dashQuestionNew`, texto rico)
+- [ ] Conteúdo e frentes
+- [ ] Turma com estudantes e os modais de frequência (ex-DataGrid: seleção, paginação no servidor) ★
+- [ ] Estudantes matriculados (ordenação e paginação no servidor, exportação)
+- [ ] Gestão de estudantes inscritos
+- [ ] Análises (gráficos com `chartSeries`)
+- [ ] Notícias, push, permissões e colaboradores
+- [ ] Todo diálogo de confirmação (AlertDialog com o nome da ação) ★
+
+## Transversal
+
+- [ ] Toasts: erro fica até fechar, sucesso fecha em 5 s, no máximo 3
+- [ ] Anel de foco visível em todo lugar ★
+- [ ] Menu móvel em Sheet ★
+- [ ] Movimento reduzido na home
+
+## Acrescentado em 20/11/2026
+
+- [ ] Frequência ★ (período e presença em controle segmentado, rodapé visível em 390, selos de risco)
+- [ ] Histórico de frequência (vazio, erro, paginação)
+- [ ] Alerta de evasão
+- [ ] Filtros do `dashGeo` ("Mais filtros (N)" em 390), motivo de rejeição, copiar contatos
+- [ ] Chave de ocultar dados sensíveis
+- [ ] `ErrorSummary` do conteúdo da questão ("Ir até o campo" entre abas) ★
+- [ ] Linha do tempo do histórico de demanda
