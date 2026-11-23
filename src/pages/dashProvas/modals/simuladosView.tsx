@@ -6,7 +6,7 @@ import { ArrowLeft, BookOpen, CalendarDays, ChartColumn, ClipboardCheck, FileTex
 import { Button } from "@/components/ui/button";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { SimuladoResumo } from "../../../dtos/prova/prova";
 import {
   baixarCaderno,

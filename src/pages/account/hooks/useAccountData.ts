@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from "@/lib/toast";
 import { UserMe } from '@/types/user/userMe';
 import { me } from '@/services/auth/me';
 import { useAuthStore } from '@/store/auth';

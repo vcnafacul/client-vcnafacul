@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Id, toast } from "react-toastify";
+import { Id, toast } from "@/lib/toast";
 
 // Tipo base para opções comuns
 interface BaseToastAsyncOptions {

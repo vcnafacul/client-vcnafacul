@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, TriangleAlert } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { matchPath, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {

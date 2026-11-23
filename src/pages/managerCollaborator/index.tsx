@@ -17,7 +17,7 @@ import { atribuirFuncaoColaborador } from "@/services/prepCourse/atribuirFuncaoC
 import { useAuthStore } from "@/store/auth";
 import { Role } from "@/types/roles/role";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import type { CardDash } from "@/components/molecules/cardDash";
 import { DashCardContext } from "@/context/dashCardContext";

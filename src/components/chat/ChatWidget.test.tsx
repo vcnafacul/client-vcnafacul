@@ -6,7 +6,7 @@ import { useAuthStore } from "@/store/auth";
 import { useChatStore } from "@/store/chatStore";
 
 const toast = vi.hoisted(() => ({ info: vi.fn(), error: vi.fn() }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 const servicos = vi.hoisted(() => ({
   markRead: vi.fn(async () => undefined),
   openConversation: vi.fn(),

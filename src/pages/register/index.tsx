@@ -15,7 +15,7 @@ import RegisterForm from "../../components/organisms/registerForm";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import { registerForm } from "./data";
 import { UserRegister } from "@/types/user/userRegister";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 function Register() {
   const location = useLocation();

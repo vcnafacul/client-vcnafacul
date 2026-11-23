@@ -8,7 +8,7 @@ import { useAuthStore } from "@/store/auth";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { AnulacaoDaQuestao } from "@/dtos/question/anulacao";
 import { ErroDaAnulacao } from "@/services/anulacao/anularQuestao";
 import { EntradaDaAnulada } from "@/components/molecules/anulacao/ModalAvisoAnulada";

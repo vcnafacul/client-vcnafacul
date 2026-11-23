@@ -33,7 +33,7 @@ import {
 import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attendanceRecordHistory";
 import { useEffect, useState } from "react";
 import { Eye, ListPlus, ListTodo, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { AttendanceRecordModal } from "./attendanceRecordModal";
 import AttendanceRecordSummaryModal from "./attendanceRecordSummaryModal";
 import { NewAttendanceRecordModal } from "./newAttendanceRecordModal";

@@ -30,7 +30,7 @@ import {
 import { ordenarLinhas } from "@/lib/ordenarLinhas";
 import { useEffect, useMemo, useState } from "react";
 import { Pencil } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { EditStudentRecordModal } from "./editStudentRecordModal";
 import { useModals } from "@/hooks/useModal";
 

@@ -38,7 +38,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ExpandableSection } from "./components/expandableSection";
 import { SecoesMobile } from "./components/SecoesMobile";

@@ -14,7 +14,7 @@ import {
 } from "@/services/prepCourse/student/getExportColumns";
 import { EyeOff } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 /** Chave do localStorage. A seleção é conveniência, não configuração do time. */
 const STORAGE_KEY = "export-estudantes-colunas";

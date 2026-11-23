@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { podeCompor, seloDaProva, TEXTO_DO_SELO } from "./seloDaProva";
 import { ModalRecusaBloqueada } from "./ModalRecusaBloqueada";
 import {

@@ -2,11 +2,11 @@ import { prepCourseInfo } from "@/pages/dashGeo/data";
 import { Geolocation } from "@/types/geolocation/geolocation";
 import { TypeMarker } from "@/types/map/marker";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { PrepCourseInfo } from "./prepCourseInfo";
 
-vi.mock("react-toastify", () => ({
+vi.mock("@/lib/toast", () => ({
   toast: { info: vi.fn(), error: vi.fn() },
 }));
 

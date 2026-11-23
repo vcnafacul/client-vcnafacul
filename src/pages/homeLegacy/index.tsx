@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import AboutUs from "../../components/organisms/aboutUs";
 import ActionAreas from "../../components/organisms/actionAreas";
 import Features from "../../components/organisms/features";

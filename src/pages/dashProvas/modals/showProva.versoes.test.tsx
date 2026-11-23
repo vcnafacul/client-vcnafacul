@@ -15,7 +15,7 @@ vi.mock("../../../services/prova/alterarReceberNovasVersoes", () => ({
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
-vi.mock("react-toastify", () => ({ toast: svc.toast }));
+vi.mock("@/lib/toast", () => ({ toast: svc.toast }));
 vi.mock("./simuladosView", () => ({ default: () => null }));
 
 import ShowProva from "./showProva";

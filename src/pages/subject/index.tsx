@@ -4,7 +4,7 @@ import { getFile } from "@/services/content/getFile";
 import { ArrowLeft, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ContentDtoInput } from "../../dtos/content/contentDtoInput";
 import { StatusContent } from "../../enums/content/statusContent";
 import { StatusEnum } from "../../enums/generic/statusEnum";

@@ -28,7 +28,7 @@ import { useAuthStore } from "@/store/auth";
 import { Button } from "@/components/ui/button";
 import { useEffect, useRef, useState } from "react";
 import { CircleX, Mail, Search } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface ModalSendEmailProps extends ModalProps {
   isOpen: boolean;

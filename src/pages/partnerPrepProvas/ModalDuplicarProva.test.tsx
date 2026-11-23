@@ -4,7 +4,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const svc = vi.hoisted(() => ({ duplicarProvaCursinho: vi.fn() }));
 vi.mock("@/services/prova/duplicarProvaCursinho", () => svc);
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 import { ModalDuplicarProva } from "./ModalDuplicarProva";
 

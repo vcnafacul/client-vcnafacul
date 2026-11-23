@@ -11,7 +11,7 @@ const toastMock = vi.hoisted(() => ({
   info: vi.fn(),
   error: vi.fn(),
 }));
-vi.mock("react-toastify", () => ({ toast: toastMock }));
+vi.mock("@/lib/toast", () => ({ toast: toastMock }));
 vi.mock("@/services/prepCourse/class/listClassSimuladoMonths", () => ({
   listClassSimuladoMonths: svc.listar,
 }));

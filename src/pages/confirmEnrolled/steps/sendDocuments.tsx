@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useDropzone, type FileRejection } from "react-dropzone";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 import {
   Dialog,

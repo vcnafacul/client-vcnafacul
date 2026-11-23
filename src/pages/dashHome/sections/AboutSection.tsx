@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { RichTextEditor } from "@/components/molecules/richTextEditor/RichTextEditor";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "../../../store/auth";

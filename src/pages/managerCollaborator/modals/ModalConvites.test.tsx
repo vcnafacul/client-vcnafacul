@@ -15,7 +15,7 @@ vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tok" } }),
 }));
 const toast = vi.hoisted(() => ({ success: vi.fn(), error: vi.fn() }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 const FUNCOES = [
   { id: "r-prof", name: "Professor" },

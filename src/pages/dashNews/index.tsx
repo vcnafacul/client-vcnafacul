@@ -3,7 +3,7 @@
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { FilterProps } from "@/components/atoms/filter";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import type { FiltroSelectProps } from "@/components/dashV2/FiltroSelect";
 import { CardDash } from "../../components/molecules/cardDash";
 import { DashCardContext } from "../../context/dashCardContext";

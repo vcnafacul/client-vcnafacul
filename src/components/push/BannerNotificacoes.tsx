@@ -10,7 +10,7 @@ import { useAuthStore } from "@/store/auth";
 import { Bell, BellOff } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { CAMINHO_DAS_CONFIGURACOES, ondeConfigurar } from "./textosDoStatus";
 
 /**

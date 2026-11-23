@@ -38,7 +38,7 @@ import { StatusEnum } from "@/enums/generic/statusEnum";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { SocioeconomicAnswer } from "@/pages/partnerPrepInscription/data";
 import { DASH, PARTNER_PREP_INSCRIPTION } from "@/routes/path";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import * as XLSX from "xlsx";
 
 interface InscriptionInfoModalProps {

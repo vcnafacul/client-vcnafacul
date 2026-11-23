@@ -13,7 +13,7 @@ import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { excluirEnvioDoCartao } from "@/services/cartaoResposta/excluirEnvioDoCartao";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 export const TEXTO_EXCLUIR_ENVIO = "Excluir envio";
 export const TEXTO_ENVIO_EXCLUIDO =

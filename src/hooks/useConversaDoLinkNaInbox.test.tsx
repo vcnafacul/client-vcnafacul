@@ -5,7 +5,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { ConversationDoc } from "@/services/firebase/conversations";
 
 const toast = vi.hoisted(() => ({ info: vi.fn() }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 import { useConversaDoLinkNaInbox } from "./useConversaDoLinkNaInbox";
 

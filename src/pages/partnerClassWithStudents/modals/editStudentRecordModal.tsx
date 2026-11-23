@@ -13,7 +13,7 @@ import {
 import type { EdicaoDePresenca } from "@/services/prepCourse/attendanceRecord/updateRegisterStudent";
 
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface AttendanceRecordProps {
   isOpen: boolean;

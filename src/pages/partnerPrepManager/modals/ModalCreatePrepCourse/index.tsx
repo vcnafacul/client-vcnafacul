@@ -26,7 +26,7 @@ import { useAuthStore } from "@/store/auth";
 import { CreatePrepCoursePage } from "@/types/partnerPrepCourse/manager/createPrepCouse";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 export interface ModalCreateProps {
   handleClose?: () => void;

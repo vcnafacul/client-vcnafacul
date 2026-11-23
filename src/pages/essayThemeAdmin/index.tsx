@@ -1,6 +1,6 @@
 import { dataLocal, formatDate } from "@/utils/date";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Edit2, ToggleLeft, ToggleRight } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { EssayTheme } from "@/dtos/essay";

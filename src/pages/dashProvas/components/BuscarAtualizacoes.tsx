@@ -9,7 +9,7 @@ import {
 } from "@/services/prova/atualizacoes";
 import { getQuestionById } from "@/services/question/getQuestionById";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 /**
  * "Buscar atualizações" da prova (tickets/023, card 15, regra R6).

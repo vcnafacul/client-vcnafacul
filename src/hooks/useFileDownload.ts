@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface UseFileDownloadOptions {
   onSuccess?: (fileName: string) => void;

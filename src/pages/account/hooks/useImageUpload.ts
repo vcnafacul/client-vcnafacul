@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { toast } from 'react-toastify';
+import { toast } from "@/lib/toast";
 import { useToastAsync } from '@/hooks/useToastAsync';
 import { changeImageProfileCollaborator } from '@/services/auth/changeImageProfileCollaborator';
 import { removeImageProfileCollaborator } from '@/services/auth/removeImageProfileCollaborator';

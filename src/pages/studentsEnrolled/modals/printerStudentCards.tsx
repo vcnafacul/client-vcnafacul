@@ -15,7 +15,7 @@ import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
 import { useEffect, useState } from "react";
 import { FileText } from "lucide-react";
-import { Id, toast } from "react-toastify";
+import { Id, toast } from "@/lib/toast";
 
 interface PrinterStudentCardsProps {
   isOpen: boolean;

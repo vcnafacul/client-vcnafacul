@@ -8,7 +8,7 @@ import { createRole } from "@/services/roles/createRole";
 import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
 import { Role } from "@/types/roles/role";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import Filter from "../../../components/atoms/filter";
 import { Button } from "@/components/ui/button";
 import { ModalProps } from "@/types/modal";

@@ -20,7 +20,7 @@ import { UserRegister } from "@/types/user/userRegister";
 import { decoderUser } from "@/utils/decodedUser";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 const VENCEU = "O tempo para concluir o cadastro acabou.";
 

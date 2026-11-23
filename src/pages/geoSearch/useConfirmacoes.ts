@@ -6,7 +6,7 @@ import {
 import { useAuthStore } from "@/store/auth";
 import type { PublicGeolocation } from "@/types/geolocation/publicGeolocation";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 /**
  * "Informação correta" (card 09). Um estado só para a lista e o cartão do

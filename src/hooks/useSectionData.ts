@@ -1,6 +1,6 @@
 // client-vcnafacul/src/hooks/useSectionData.ts
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface State<T> {
   data: T;

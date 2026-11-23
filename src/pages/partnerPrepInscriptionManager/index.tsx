@@ -29,7 +29,7 @@ import { Inscription } from "@/types/partnerPrepCourse/inscription";
 import { formatDate } from "@/utils/date";
 import { Paginate } from "@/utils/paginate";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { colunasDeProcesso, ORDENACAO_PADRAO } from "./columns";
 import { dataInscription } from "./data";
 import {

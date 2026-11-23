@@ -17,7 +17,7 @@ import { nomeDoArquivo } from "../nomeDoArquivo";
 import { exportAnalyticsCsv } from "@/utils/exportAnalyticsCsv";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 function AnalyticsSimulado({
   period,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useAuthStore } from "@/store/auth";
 import { Essay, EssayReview } from "@/dtos/essay";
 import { getEssayById } from "@/services/essay";

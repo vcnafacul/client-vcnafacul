@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { getImagePreset } from "../../config/materiaPresets";
 import { CONTENT } from "../../routes/path";
 import { getFrentesWithContent } from "../../services/content/getFrentes";

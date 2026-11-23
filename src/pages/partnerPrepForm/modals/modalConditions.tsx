@@ -23,7 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { memo, useState } from "react";
 import { resumo, ROTULO_DO_TIPO } from "../textosDeCondicao";
 import { Plus, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface ModalConditionsProps extends ModalProps {
   isOpen: boolean;

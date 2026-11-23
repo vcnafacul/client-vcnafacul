@@ -1,7 +1,7 @@
 import { FilterProps } from "@/components/atoms/filter";
 import type { FiltroSelectProps } from "@/components/dashV2/FiltroSelect";
 import { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { CardDash } from "../../components/molecules/cardDash";
 import { DashListTemplate, type DashAction } from "@/components/dashV2";
 import { colunasComAtivo, colunasDeUsuario } from "./columns";

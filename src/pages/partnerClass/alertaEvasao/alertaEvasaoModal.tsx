@@ -18,7 +18,7 @@ import {
 import { useAuthStore } from "@/store/auth";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { validarAlerta } from "./validarAlerta";
 
 interface Props {

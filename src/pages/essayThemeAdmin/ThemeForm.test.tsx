@@ -9,7 +9,7 @@ vi.mock("@/services/essay/themeAssets", () => svc);
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tk" } }),
 }));
-vi.mock("react-toastify", () => ({ toast: { error: vi.fn() } }));
+vi.mock("@/lib/toast", () => ({ toast: { error: vi.fn() } }));
 
 /**
  * O editor real (TipTap) não roda bem no jsdom; este dublê expõe só o que o
@@ -112,7 +112,7 @@ describe("ThemeForm — imagens do texto motivador", () => {
     );
     fireEvent.submit(form);
 
-    const { toast } = await import("react-toastify");
+    const { toast } = await import("@/lib/toast");
     await waitFor(() =>
       expect(toast.error).toHaveBeenCalledWith("A imagem deve ter no máximo 5MB"),
     );

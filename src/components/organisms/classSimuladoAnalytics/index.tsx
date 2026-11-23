@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { ClassMonthAnalytics, ClassMonthsList } from "@/types/classAnalytics/classSimuladoAnalytics";
 import { listClassSimuladoMonths } from "@/services/prepCourse/class/listClassSimuladoMonths";

@@ -33,7 +33,7 @@ import {
 import { useAuthStore } from "@/store/auth";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { CabecalhoDoMonitoramento } from "./CabecalhoDoMonitoramento";
 import { cursinhoDaUrl } from "./recorte";
 import AnalyticsContent from "./content";

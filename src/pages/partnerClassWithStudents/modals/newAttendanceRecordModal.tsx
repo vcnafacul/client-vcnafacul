@@ -29,7 +29,7 @@ import { SimpleAttendanceRecordHistory } from "@/types/partnerPrepCourse/attenda
 import { StudentToAttendanceRecord } from "@/types/partnerPrepCourse/classToAttendanceRecord";
 import { useEffect, useMemo, useState } from "react";
 import { Search, TriangleAlert } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import {
   AlertaEvasaoDaTurma,
   justificadoNaData,

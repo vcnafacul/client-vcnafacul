@@ -18,7 +18,7 @@ import {
 } from "@/services/geolocation/reportMapHome";
 import { useAuthStore } from "@/store/auth";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface ModalProps {
   handleClose?: () => void;

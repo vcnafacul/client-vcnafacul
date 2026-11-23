@@ -35,7 +35,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useId, useState } from "react";
 import { Plus, Settings, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ModalConditions } from "./modalConditions";
 
 interface ModalCreateQuestionProps extends ModalProps {

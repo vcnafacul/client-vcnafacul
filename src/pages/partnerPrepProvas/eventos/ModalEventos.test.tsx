@@ -11,7 +11,7 @@ vi.mock("@/services/eventoSimulado", () => svc);
 const provasSvc = vi.hoisted(() => ({ getProvasCursinho: vi.fn() }));
 vi.mock("@/services/prova/getProvasCursinho", () => provasSvc);
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 import { ModalEventos } from "./ModalEventos";
 import { textoDaExclusao } from "./textoDaExclusao";

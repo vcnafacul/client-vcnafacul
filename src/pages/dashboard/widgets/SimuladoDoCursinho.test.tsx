@@ -11,7 +11,7 @@ vi.mock('@/store/auth', () => ({
   useAuthStore: (sel: (s: unknown) => unknown) => sel({ data: { token: 'tk' } }),
 }));
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
-vi.mock('react-toastify', () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 import { SimuladoDoCursinho } from './SimuladoDoCursinho';
 

@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ReactComponent as TriangleGreen } from "../../../assets/icons/triangle-green.svg";
 import { NEWS } from "../../../routes/path";
 import { getNews } from "../../../services/news/getNews";

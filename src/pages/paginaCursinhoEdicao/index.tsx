@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ExternalLink } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { RichTextEditor } from "@/components/molecules/richTextEditor/RichTextEditor";

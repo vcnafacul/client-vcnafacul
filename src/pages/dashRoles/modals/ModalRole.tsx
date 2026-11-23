@@ -16,7 +16,7 @@ import { getRoleNew } from "../../../services/roles/getRole";
 import { useAuthStore } from "../../../store/auth";
 import { Role } from "../../../types/roles/role";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { PermissionGroupResponse } from "@/dtos/roles/permission";
 
 interface ModalRoleProps {

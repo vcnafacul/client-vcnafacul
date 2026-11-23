@@ -9,7 +9,7 @@ import { useAuthStore } from "@/store/auth";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 export default function EnrollmentConfirmation() {
   const {

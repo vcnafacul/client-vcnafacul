@@ -17,7 +17,7 @@ import { mensagemDeErro } from "@/utils/mensagemDeErro";
 import { PeriodJustification } from "@/types/partnerPrepCourse/periodJustification";
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { textoDaExclusaoDePeriodo } from "./textoDaExclusaoDePeriodo";
 
 interface PeriodJustificationListProps {

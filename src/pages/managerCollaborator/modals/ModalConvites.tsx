@@ -19,7 +19,7 @@ import { useAuthStore } from "@/store/auth";
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import { useCallback, useEffect, useState } from "react";
 import { Check, CircleX, Send, Undo2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { AVISO_REENVIAR, dataCurta, textoDaSituacao } from "./textosDosConvites";
 
 const COR_DA_SITUACAO: Record<ConviteDoCursinho["situacao"], string> = {

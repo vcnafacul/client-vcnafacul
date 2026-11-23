@@ -14,7 +14,7 @@ import { getMaterias } from "@/services/content/getMaterias";
 import { useAuthStore } from "@/store/auth";
 import { Paginate } from "@/utils/paginate";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { colunasDeConteudo } from "./columns";
 import { cardTransformationContent, dashAllContent } from "./data";
 import NewDemand from "./modals/newDemand";

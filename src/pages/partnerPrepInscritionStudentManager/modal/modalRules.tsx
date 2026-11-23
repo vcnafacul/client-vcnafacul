@@ -46,7 +46,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useEffect, useMemo, useState } from "react";
 import { Download, Play, Plus, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ModalCreateRule } from "./modalCreateRule";
 import { palette } from "@/lib/palette";
 

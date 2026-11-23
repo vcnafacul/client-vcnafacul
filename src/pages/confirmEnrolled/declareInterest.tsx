@@ -16,7 +16,7 @@ import { submitPhoto } from "@/services/prepCourse/student/submitPhoto";
 import { submitSurvey } from "@/services/prepCourse/student/submitSurvey";
 import { useAuthStore } from "@/store/auth";
 import { useCallback, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import SendDocuments from "./steps/sendDocuments";
 import SendPhoto from "./steps/sendPhoto";
 import SendQuest from "./steps/sendQuest";

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Cpu, User } from "lucide-react";
 import { useAuthStore } from "@/store/auth";
 import { EssayReview } from "@/dtos/essay";

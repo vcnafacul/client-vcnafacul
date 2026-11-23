@@ -8,7 +8,7 @@ vi.mock("@/services/cartaoResposta/baixarFotoDoCartao", () => ({
   baixarFotoDoCartao,
 }));
 const toast = vi.hoisted(() => ({ error: vi.fn() }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 // ⚠️ jsdom não implementa `createObjectURL` nem download de verdade.
 const criado = vi.fn(() => "blob:fake");

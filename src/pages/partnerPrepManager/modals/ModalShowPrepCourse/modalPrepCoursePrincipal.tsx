@@ -24,7 +24,7 @@ import { useAuthStore } from "@/store/auth";
 import { PartnerPrepCourse } from "@/types/partnerPrepCourse/partnerPrepCourse";
 import { useEffect, useRef, useState } from "react";
 import { Cloud, Download, Pencil, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 export interface ModalPrincipalProps {
   handleClose?: () => void;

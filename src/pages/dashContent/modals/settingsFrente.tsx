@@ -32,7 +32,7 @@ import {
 import { getSubjects } from "@/services/content/getSubjects";
 import { arrayMove } from "@dnd-kit/sortable";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import {
   Dialog,
   DialogBody,

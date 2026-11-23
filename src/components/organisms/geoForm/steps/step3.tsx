@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { useForm } from "react-hook-form";
 import { Marker, useMap, useMapEvents } from "react-leaflet";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import * as yup from "yup";
 import { InferType } from "yup";
 import { EachStepProps } from "..";

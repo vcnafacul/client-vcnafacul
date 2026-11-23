@@ -27,7 +27,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { ExpandableSection } from "../partnerPrepForm/components/expandableSection";
 import { SecoesMobile } from "../partnerPrepForm/components/SecoesMobile";

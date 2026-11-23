@@ -12,7 +12,7 @@ import { Bool } from "@/enums/bool";
 import { StatusApplication } from "@/enums/prepCourse/statusApplication";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { getRuleSetByInscription } from "@/services/partnerPrepForm/getRuleSetByInscription";
 import { getInscription } from "@/services/prepCourse/getInscription";
 import { getHistoricoInscrito } from "@/services/prepCourse/inscription/getHistoricoInscrito";

@@ -1,7 +1,7 @@
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import { ShadcnTooltip } from "@/components/atoms/shadnTooltip";
 import { Eye, Edit3 } from "lucide-react";

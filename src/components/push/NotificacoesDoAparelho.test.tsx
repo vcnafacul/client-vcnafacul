@@ -19,7 +19,7 @@ const toast = vi.hoisted(() => ({
   warn: vi.fn(),
   error: vi.fn(),
 }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 import { NotificacoesDoAparelho } from "./NotificacoesDoAparelho";
 import { TEXTOS } from "./textosDoStatus";

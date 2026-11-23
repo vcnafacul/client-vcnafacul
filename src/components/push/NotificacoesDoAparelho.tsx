@@ -8,7 +8,7 @@ import {
 } from "./textosDoStatus";
 import { Bell, Share, SquarePlus } from "lucide-react";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 /**
  * Legenda fixa: quem liga e desliga é o aparelho, não o site.

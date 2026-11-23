@@ -11,7 +11,7 @@ vi.mock("@/services/cartaoResposta/excluirEnvioDoCartao", () => ({
   excluirEnvioDoCartao,
 }));
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 describe("ExcluirEnvioDoCartao (card 36)", () => {
   beforeEach(() => vi.clearAllMocks());

@@ -7,7 +7,7 @@ import { useToastAsync } from "@/hooks/useToastAsync";
 import { UserMe } from "@/types/user/userMe";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ReactComponent as LogoIcon } from "../../assets/images/home/logo.svg";
 import ImageProfile from "../../components/molecules/imageProfile";
 import {

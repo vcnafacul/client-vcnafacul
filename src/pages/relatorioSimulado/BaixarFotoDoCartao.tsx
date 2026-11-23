@@ -2,7 +2,7 @@ import { baixarFotoDoCartao } from "@/services/cartaoResposta/baixarFotoDoCartao
 import { dashV2 } from "@/components/dashV2";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { nomeDaFoto } from "./nomeDaFoto";
 
 /**

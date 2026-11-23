@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { ComponentType } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 export interface AcaoIconeProps {
   icone: ComponentType<{ className?: string }>;

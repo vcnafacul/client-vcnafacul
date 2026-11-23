@@ -12,7 +12,7 @@ import { useAuthStore } from "@/store/auth";
 import { ClassEntity } from "@/types/partnerPrepCourse/classEntity";
 import { formatDate } from "@/utils/date";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 // Hook para detectar mobile
 const useIsMobile = () => {

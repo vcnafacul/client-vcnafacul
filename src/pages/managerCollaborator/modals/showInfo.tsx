@@ -32,7 +32,7 @@ import { getColorFromName, getTextColorFromName } from "@/utils/getColorFromName
 import { formatDate } from "@/utils/date";
 import { phoneMask } from "@/utils/phoneMask";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { getCollaboratorFrentesEnriched } from "@/services/prepCourse/collaborator/get-collaborator-frentes";
 import { useAuthStore } from "@/store/auth";
 import { CollaboratorColumns } from "..";

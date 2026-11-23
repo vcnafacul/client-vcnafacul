@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Headset } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ChatLayout } from "@/components/chat/ChatLayout";
 import { ConfirmOpenDialog } from "@/components/chat/ConfirmOpenDialog";
 import { Button } from "@/components/ui/button";

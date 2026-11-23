@@ -28,7 +28,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Prova, ProvaDetalhada } from "../../../dtos/prova/prova";
 import { getProvaFile } from "../../../services/prova/getFile";
 import { useEffect, useState } from "react";

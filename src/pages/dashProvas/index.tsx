@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { FilterProps } from "../../components/atoms/filter";
 import type {
   FiltroSelectProps,

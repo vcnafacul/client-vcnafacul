@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { podeEditarQuestao } from "../permissoesDoBanco";
 import { Question } from "@/dtos/question/questionDTO";
 import { useToastAsync } from "@/hooks/useToastAsync";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { getQuestionById } from "@/services/question/getQuestionById";
 
 import { useAuthStore } from "@/store/auth";

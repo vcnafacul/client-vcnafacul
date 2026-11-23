@@ -2,7 +2,7 @@
 import { GraduationCap, CloudUpload, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import type { FormFieldInput } from "@/components/formulario/tipos";
 import type { SelectOption } from "@/components/ui/options-select";
 import UploadButton from "../../../components/molecules/uploadButton";

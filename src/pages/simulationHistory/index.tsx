@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import ModalImage from "../../components/atoms/modalImage";
 import { AlternativeHistorico } from "../../components/molecules/alternativeHistorico";
 import { SimulationHistoryHeader } from "../../components/organisms/simulationHistoryHeader";

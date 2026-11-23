@@ -21,7 +21,7 @@ import { AttendanceRecordByStudent } from "@/types/partnerPrepCourse/attendanceR
 import { Card } from "@/components/ui/card";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { PeriodJustificationList } from "./periodJustificationList";
 import { PeriodJustificationModal } from "./periodJustificationModal";
 

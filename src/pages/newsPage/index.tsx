@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import NewsSelector from "../../components/organisms/newsSelector";
 import BaseTemplate from "../../components/templates/baseTemplate";
 import { News } from "../../dtos/news/news";

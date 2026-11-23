@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { PaginationWrapper } from "../../components/organisms/paginationWrapper";
 import { AproveitamentoHitoriesDTO } from "../../dtos/historico/getPerformanceDTO";
 import { HistoricoDTO } from "../../dtos/historico/historicoDTO";

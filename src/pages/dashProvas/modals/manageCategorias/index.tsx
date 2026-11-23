@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Settings, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {

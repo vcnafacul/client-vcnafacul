@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/tooltip";
 import { useState } from "react";
 import { Info, Plus, Trash2 } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface ModalCreateRuleProps extends ModalProps {
   isOpen: boolean;

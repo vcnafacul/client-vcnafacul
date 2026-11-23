@@ -4,7 +4,7 @@ import "../../styles/graphism.css";
 import EntrarComGoogle from "@/components/molecules/entrarComGoogle";
 import { useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ReactComponent as TriangleGreen } from "../../assets/icons/triangle-green.svg";
 import { ReactComponent as TriangleYellow } from "../../assets/icons/triangle-yellow.svg";
 import LoginForm from "../../components/organisms/loginForm";

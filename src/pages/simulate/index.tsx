@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useModals } from "@/hooks/useModal";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ReactComponent as Report } from "../../assets/icons/warning.svg";
 import Alternative from "../../components/atoms/alternative";
 import ModalImage from "../../components/atoms/modalImage";

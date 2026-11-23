@@ -9,7 +9,7 @@ import { getRoles } from "@/services/prepCourse/getRoles";
 import { updateRole } from "@/services/prepCourse/updateRole";
 import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

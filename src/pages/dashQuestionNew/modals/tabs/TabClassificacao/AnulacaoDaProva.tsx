@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { AnulacaoInput, AnulacaoNaProva } from "@/dtos/question/anulacao";
 import { anularQuestao, desanularQuestao, ErroDaAnulacao } from "@/services/anulacao/anularQuestao";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 export const TEXTO_PROVA_APLICADA =
   "Esta prova já tem resultados. A anulação em prova aplicada chega com o recálculo do relatório.";

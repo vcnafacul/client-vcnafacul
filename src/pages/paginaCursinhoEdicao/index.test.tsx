@@ -10,7 +10,7 @@ vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({ data: { token: "tk" } }),
 }));
 const toast = vi.hoisted(() => ({ error: vi.fn(), success: vi.fn() }));
-vi.mock("react-toastify", () => ({ toast }));
+vi.mock("@/lib/toast", () => ({ toast }));
 
 /** Dublê do TipTap (não roda bem no jsdom): expõe o texto e o que recebe. */
 const editorProps = vi.hoisted(() => ({ ultimo: {} as Record<string, unknown> }));

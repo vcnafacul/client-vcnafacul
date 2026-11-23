@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useChatContext } from "@/context/ChatProvider";
 import { useTabTitleUnread } from "@/hooks/useTabTitleUnread";
 import { DASH, DASH_SUPPORT, DASH_PARTNER_SUPPORT } from "@/routes/path";

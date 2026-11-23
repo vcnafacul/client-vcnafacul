@@ -50,7 +50,7 @@ import heic2any from "heic2any";
 import debounce from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Check, Download, Eye, IdCard, Presentation, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { exportStudentsEnrolled } from "@/services/prepCourse/student/exportStudentsEnrolled";
 import ExportColumnsModal from "./modals/exportColumnsModal";
 import CancelEnrollmentModal from "./modals/cancelEnrollmentModal";

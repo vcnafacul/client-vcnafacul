@@ -10,7 +10,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useAuthStore } from "@/store/auth";
 import { useEssayStore } from "@/store/essay";
 import { EssayTheme } from "@/dtos/essay";

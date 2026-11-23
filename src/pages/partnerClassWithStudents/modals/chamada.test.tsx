@@ -20,7 +20,7 @@ const toastMock = vi.hoisted(() => ({
   update: vi.fn(),
   dismiss: vi.fn(),
 }));
-vi.mock("react-toastify", () => ({ toast: toastMock }));
+vi.mock("@/lib/toast", () => ({ toast: toastMock }));
 vi.mock("@/store/auth", () => ({
   useAuthStore: () => ({
     data: {

@@ -1,7 +1,7 @@
 import PhotoEditor from "@/components/atoms/photoEditor";
 import { useModals } from "@/hooks/useModal";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface Props {
   onSubmit: (file: File) => void;

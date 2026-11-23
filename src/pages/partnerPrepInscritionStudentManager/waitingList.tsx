@@ -23,7 +23,7 @@ import { useAuthStore } from "@/store/auth";
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { FileText, ListOrdered, Mail } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";

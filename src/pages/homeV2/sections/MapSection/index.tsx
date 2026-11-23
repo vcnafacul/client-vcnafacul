@@ -2,7 +2,7 @@
 import { RefObject, useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { TypeMarker } from "../../../../types/map/marker";
 import { TypeProblem } from "@/enums/audit/typeProblem";
 import getGeolocation from "../../../../services/geolocation/getGeolocation";

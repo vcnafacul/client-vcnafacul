@@ -1,6 +1,6 @@
 import { useModals } from "@/hooks/useModal";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import Ul from "../../components/atoms/ul";
 import CardSimulate from "../../components/molecules/cardSimulate";
 import CarouselRef from "../../components/organisms/carouselRef";

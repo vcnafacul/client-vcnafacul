@@ -11,7 +11,7 @@ import { jwtDecoded } from "@/utils/jwt";
 import queryString from "query-string";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { useAuthStore } from "../../store/auth";
 
 export function ConfirmEmailPage() {

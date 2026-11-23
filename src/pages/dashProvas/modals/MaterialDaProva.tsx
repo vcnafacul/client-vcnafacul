@@ -7,7 +7,7 @@ import { baixarCartaoDaProva } from "@/services/cartaoResposta/baixarCartaoDaPro
 import { BookOpen, ClipboardCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { ModalBaixarCartao } from "./ModalBaixarCartao";
 import {
   motivoMaterialDaProva,

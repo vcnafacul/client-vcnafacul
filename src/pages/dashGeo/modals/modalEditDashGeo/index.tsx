@@ -33,7 +33,7 @@ import { getStatusIcon } from "@/utils/getStatusIcon";
 import leaflet, { LatLngTuple } from "leaflet";
 import { Control, useController, useForm } from "react-hook-form";
 import { Marker, useMap, useMapEvents } from "react-leaflet";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { prepCourseInfo } from "../../data";
 import { PrepCourseInfo } from "./Fields/prepCourseInfo";
 

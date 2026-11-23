@@ -14,7 +14,7 @@ vi.mock("@/services/prova/atualizacoes", () => ({
 vi.mock("@/services/question/getQuestionById", () => ({
   getQuestionById: svc.getQuestionById,
 }));
-vi.mock("react-toastify", () => ({ toast: svc.toast }));
+vi.mock("@/lib/toast", () => ({ toast: svc.toast }));
 
 import {
   BuscarAtualizacoes,

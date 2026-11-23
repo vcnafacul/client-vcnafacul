@@ -9,7 +9,7 @@ import { getBaseRoles } from "@/services/prepCourse/getBaseRole";
 import { getPermissionsHierarchy } from "@/services/roles/getPermissionsHierarchy";
 import { Role } from "@/types/roles/role";
 import { useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import Filter from "../../../components/atoms/filter";
 import { Button } from "@/components/ui/button";
 import {

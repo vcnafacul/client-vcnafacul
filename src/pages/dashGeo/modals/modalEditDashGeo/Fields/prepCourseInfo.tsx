@@ -12,7 +12,7 @@ import { TypeMarker } from "@/types/map/marker";
 import { useState } from "react";
 import { Copy } from "lucide-react";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface Props {
   form: prepCourseInfoType;

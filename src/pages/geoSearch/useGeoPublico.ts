@@ -1,7 +1,7 @@
 import { buscarGeoPublico } from "@/services/geolocation/getGeolocation";
 import type { PublicGeolocation } from "@/types/geolocation/publicGeolocation";
 import { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 export type EstadoDaCarga = "carregando" | "erro" | "pronto";
 

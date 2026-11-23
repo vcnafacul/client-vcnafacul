@@ -30,7 +30,7 @@ import {
 import { yupResolver } from "@hookform/resolvers/yup";
 import leaflet from "leaflet";
 import { renderToStaticMarkup } from "react-dom/server";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import * as yup from "yup";
 import { socialLinksSchema } from "@/utils/socialLinks";
 import { ReactComponent as PointIcon } from "../../../assets/images/home/univ_public.svg";

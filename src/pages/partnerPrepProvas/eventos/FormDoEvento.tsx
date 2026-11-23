@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Search, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import {
   EventoDoCursinho,
   salvarEvento,

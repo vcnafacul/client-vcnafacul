@@ -13,7 +13,7 @@ import { TabClassificacaoCreate } from "./tabs/TabClassificacaoCreate";
 import { TabConteudoCreate } from "./tabs/TabConteudoCreate";
 import { TabAlternativasCreate } from "./tabs/TabAlternativasCreate";
 import { validarQuestaoNova } from "./validarQuestaoNova";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 
 interface ModalCreateQuestionProps {
   isOpen: boolean;

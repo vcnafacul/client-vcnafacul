@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast } from "@/lib/toast";
 import { OptionsSelect } from "@/components/ui/options-select";
 import Ul from "../../../components/atoms/ul";
 import { Button } from "@/components/ui/button";
