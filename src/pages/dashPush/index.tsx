@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Historico } from "./components/Historico";
 import { NovaNotificacao } from "./components/NovaNotificacao";
@@ -8,8 +9,8 @@ import { NovaNotificacao } from "./components/NovaNotificacao";
  */
 export default function DashPush() {
   return (
-    <div className="mx-auto max-w-5xl space-y-4 px-4 py-6 sm:px-6">
-      <h1 className="text-h1 font-bold text-foreground">Notificações</h1>
+    <PageShell className="max-w-5xl">
+      <PageHeader title="Notificações" />
       <Tabs defaultValue="nova">
         <TabsList>
           <TabsTrigger value="nova">Nova notificação</TabsTrigger>
@@ -22,6 +23,6 @@ export default function DashPush() {
           <Historico />
         </TabsContent>
       </Tabs>
-    </div>
+    </PageShell>
   );
 }

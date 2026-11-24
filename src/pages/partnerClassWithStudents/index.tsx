@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import logo from "@/assets/images/logo_carteirinha.png";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -488,63 +489,44 @@ export function PartnerClassWithStudents() {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center pt-4">
-      <div className="w-full px-4">
-        <h1 className="text-h1 font-bold text-center text-foreground">
-          {classEntity?.name}
-        </h1>
-        {classEntity?.coursePeriod && (
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 mt-2 text-body text-muted-foreground">
-            <span>
-              <strong>Período:</strong> {classEntity.coursePeriod.name} ({classEntity.coursePeriod.year})
-            </span>
-            <span>
-              <strong>Início:</strong>{" "}
-              {format(new Date(classEntity.coursePeriod.startDate), "dd/MM/yyyy")}
-            </span>
-            <span>
-              <strong>Término:</strong>{" "}
-              {format(new Date(classEntity.coursePeriod.endDate), "dd/MM/yyyy")}
-            </span>
-            <span>
-              {showCancelled ? (
-                <>
-                  <strong>Matrículas canceladas:</strong>{" "}
-                  {cancelledStudents.length}
-                </>
-              ) : (
-                <>
-                  <strong>Alunos:</strong> {students.length}
-                </>
-              )}
-            </span>
-            <span>
-              <strong>Registros:</strong> {classEntity.totalAttendanceRecords ?? 0}
-            </span>
-          </div>
-        )}
-        {turmaEncerrada(classEntity?.coursePeriod?.endDate) && (
-          <div
-            role="status"
-            className="mx-auto mt-3 flex max-w-2xl items-start gap-2 rounded-lg border border-warning bg-warning-muted px-4 py-2 text-body text-foreground"
-          >
-            <TriangleAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
-            <span>
-              <strong>Turma encerrada.</strong> O período letivo terminou em{" "}
-              {format(new Date(classEntity!.coursePeriod.endDate), "dd/MM/yyyy")}
-              . Os alunos aparecem com Matrícula Encerrada e as informações
-              seguem disponíveis para consulta.
-            </span>
-          </div>
-        )}
-      </div>
+    <PageShell>
+      <PageHeader
+        title={classEntity?.name ?? ""}
+        subtitle={
+          classEntity?.coursePeriod
+            ? [
+                `Período: ${classEntity.coursePeriod.name} (${classEntity.coursePeriod.year})`,
+                `Início: ${format(new Date(classEntity.coursePeriod.startDate), "dd/MM/yyyy")}`,
+                `Término: ${format(new Date(classEntity.coursePeriod.endDate), "dd/MM/yyyy")}`,
+                showCancelled
+                  ? `Matrículas canceladas: ${cancelledStudents.length}`
+                  : `Alunos: ${students.length}`,
+                `Registros: ${classEntity.totalAttendanceRecords ?? 0}`,
+              ].join(" · ")
+            : undefined
+        }
+      />
+      {turmaEncerrada(classEntity?.coursePeriod?.endDate) && (
+        <div
+          role="status"
+          className="flex items-start gap-2 rounded-lg border border-warning bg-warning-muted px-4 py-2 text-body text-foreground"
+        >
+          <TriangleAlert aria-hidden className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            <strong>Turma encerrada.</strong> O período letivo terminou em{" "}
+            {format(new Date(classEntity!.coursePeriod.endDate), "dd/MM/yyyy")}
+            . Os alunos aparecem com Matrícula Encerrada e as informações
+            seguem disponíveis para consulta.
+          </span>
+        </div>
+      )}
 
       <Tabs
         value={activeTab}
         onValueChange={setActiveTab}
-        className="w-full mt-4"
+        className="w-full"
       >
-        <div className="px-4 flex items-center justify-between gap-4 flex-wrap">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <TabsList className="max-w-full overflow-x-auto justify-start">
             <TabsTrigger value="alunos">Alunos</TabsTrigger>
             <TabsTrigger value="desempenho">Desempenho</TabsTrigger>
@@ -711,6 +693,6 @@ export function PartnerClassWithStudents() {
           partnerLogo={partnerLogo}
         />
       )}
-    </div>
+    </PageShell>
   );
 }

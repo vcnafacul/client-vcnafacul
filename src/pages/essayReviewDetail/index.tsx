@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -132,13 +133,13 @@ export default function EssayReviewDetail() {
     (essay.status === "SUBMITTED" || essay.status === "REVIEWED") && !alreadyReviewed;
 
   return (
-    <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
+    <PageShell className="max-w-5xl">
       {/* Essay content */}
+      <PageHeader
+        title={essay.title || "Sem título"}
+        subtitle={`Tema: ${essay.theme.title}`}
+      />
       <div>
-        <h1 className="text-h1 font-bold text-foreground">
-          {essay.title || "Sem título"}
-        </h1>
-        <p className="text-body text-muted-foreground mb-4">Tema: {essay.theme.title}</p>
         {essay.inputType === 'UPLOADED' ? (
           <div className="border rounded-lg p-6 bg-page text-center space-y-3">
             <p className="text-body text-muted-foreground">
@@ -267,6 +268,6 @@ export default function EssayReviewDetail() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </PageShell>
   );
 }

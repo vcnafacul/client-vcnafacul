@@ -1,3 +1,4 @@
+import { PageHeader } from "@/components/ui/page-header";
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -326,7 +327,7 @@ function Account() {
       hidden={s !== secao}
       className="space-y-4"
     >
-      <h1 className="text-h2 font-bold text-foreground">{ROTULO_DA_SECAO[s]}</h1>
+      <PageHeader title={ROTULO_DA_SECAO[s]} />
       {conteudo}
     </section>
   );

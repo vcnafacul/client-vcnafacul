@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "@/lib/toast";
@@ -30,29 +31,24 @@ export default function ReviewSingle() {
   if (!review) return <div className="p-6 text-center">Revisão não encontrada</div>;
 
   return (
-    <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="text-foreground">
-          {review.reviewType === "AI" ? (
-            <Cpu className="h-6 w-6" />
-          ) : (
-            <User className="h-6 w-6" />
-          )}
-        </div>
-        <div>
-          <h1 className="text-h2 font-bold text-foreground">
-            {review.reviewType === "AI"
-              ? "Correção por IA"
-              : `Revisão de ${review.reviewer?.firstName ?? ""} ${review.reviewer?.lastName ?? ""}`}
-          </h1>
-          <p className="text-body text-muted-foreground">
-            {review.reviewType === "AI" ? "Inteligência Artificial" : "Revisão Humana"}
-            {" · "}
-            {new Date(review.createdAt).toLocaleDateString("pt-BR")}
-          </p>
-        </div>
-      </div>
+    <PageShell className="max-w-4xl">
+      <PageHeader
+        backButton={
+          <span aria-hidden="true" className="text-foreground">
+            {review.reviewType === "AI" ? (
+              <Cpu className="h-6 w-6" />
+            ) : (
+              <User className="h-6 w-6" />
+            )}
+          </span>
+        }
+        title={
+          review.reviewType === "AI"
+            ? "Correção por IA"
+            : `Revisão de ${review.reviewer?.firstName ?? ""} ${review.reviewer?.lastName ?? ""}`
+        }
+        subtitle={`${review.reviewType === "AI" ? "Inteligência Artificial" : "Revisão Humana"} · ${new Date(review.createdAt).toLocaleDateString("pt-BR")}`}
+      />
 
       <ScoreOverview review={review} />
 
@@ -105,6 +101,6 @@ export default function ReviewSingle() {
           Voltar
         </button>
       </div>
-    </div>
+    </PageShell>
   );
 }

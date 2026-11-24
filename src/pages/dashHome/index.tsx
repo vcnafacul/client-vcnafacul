@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AboutSection from "./sections/AboutSection";
 import FeaturesSection from "./sections/FeaturesSection";
@@ -5,8 +6,8 @@ import SupportersSection from "./sections/SupportersSection";
 
 function DashHome() {
   return (
-    <div className="p-6 max-w-4xl mx-auto flex flex-col gap-6">
-      <h1 className="text-h1 font-bold">Conteúdo da Home</h1>
+    <PageShell className="max-w-4xl">
+      <PageHeader title="Conteúdo da Home" />
       <Tabs defaultValue="about" className="w-full">
         <TabsList className="w-full justify-start h-auto flex-wrap bg-muted p-1">
           <TabsTrigger value="about">Quem Somos</TabsTrigger>
@@ -23,7 +24,7 @@ function DashHome() {
           <SupportersSection />
         </TabsContent>
       </Tabs>
-    </div>
+    </PageShell>
   );
 }
 

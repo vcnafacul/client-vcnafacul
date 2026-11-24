@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { TableColumn } from "@/components/organisms/expandableTable";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
@@ -287,10 +289,68 @@ export default function GlobalFormPage() {
     ) : null;
   };
 
-  const PageHeader = () => (
-    <header className="flex flex-wrap items-center justify-between gap-2 py-2">
-      <h1 className="text-h1 text-foreground">Formulário Global</h1>
-      {!loading && entities.length > 0 && (
+  const totalDeQuestoes = entities.reduce(
+    (acc, section) => acc + section.questions.length,
+    0
+  );
+  const questoesAtivas = entities.reduce((acc, section) => {
+    if (section.active) {
+      return acc + section.questions.filter((q) => q.active).length;
+    }
+    return acc;
+  }, 0);
+
+  const cabecalho = (acao?: ReactNode) => (
+    <PageHeader
+      title="Formulário Global"
+      subtitle={
+        loading
+          ? undefined
+          : `${entities.length} ${entities.length === 1 ? "seção" : "seções"} · Total de questões: ${totalDeQuestoes} · Ativas: ${questoesAtivas}`
+      }
+      actions={acao}
+    />
+  );
+
+  const aviso = (
+    <Alert
+      variant="info"
+      title="Este formulário é incluído em todos os processos seletivos."
+    />
+  );
+
+  if (loading) {
+    return (
+      <PageShell>
+        {cabecalho()}
+        {aviso}
+        <section aria-label="Seções">{LoadingSkeleton()}</section>
+      </PageShell>
+    );
+  }
+
+  if (entities.length === 0) {
+    return (
+      <PageShell>
+        {cabecalho(
+          <Button
+            variant="cta"
+            className={!acimaDeSm ? "w-full" : undefined}
+            onClick={() => modals.modalCreateSection.open()}
+          >
+            Criar Seção
+          </Button>
+        )}
+        {aviso}
+        <Card>{EmptyState()}</Card>
+        {CreateSection()}
+      </PageShell>
+    );
+  }
+
+  return (
+    <PageShell>
+      {cabecalho(
         <Button
           variant="cta"
           onClick={handleCreateSection}
@@ -299,83 +359,9 @@ export default function GlobalFormPage() {
           Nova Seção
         </Button>
       )}
-    </header>
-  );
-
-  const aviso = (
-    <Alert
-          variant="info"
-          title="Este formulário é incluído em todos os processos seletivos."
-          className="mx-2 mb-4"
-        />
-  );
-
-  if (loading) {
-    return (
-      <>
-        {PageHeader()}
-        {aviso}
-        <section>
-          <h2 className="pl-5 text-h4 text-foreground">Seções</h2>
-          {LoadingSkeleton()}
-        </section>
-      </>
-    );
-  }
-
-  if (entities.length === 0) {
-    return (
-      <>
-        {PageHeader()}
-        {aviso}
-        <div className="flex w-full justify-end px-4">
-          <Button
-            variant="cta"
-            className={!acimaDeSm ? "w-full" : undefined}
-            onClick={() => modals.modalCreateSection.open()}
-          >
-            Criar Seção
-          </Button>
-        </div>
-        <section className="mt-4">
-          <h2 className="pl-5 text-h4 text-foreground">Seções</h2>
-          {EmptyState()}
-        </section>
-        {CreateSection()}
-      </>
-    );
-  }
-
-  return (
-    <>
-      {PageHeader()}
       {aviso}
 
-      <section>
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4 px-2">
-          <h2 className="text-h4 text-foreground">
-            Seções ({entities.length})
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            <p className="text-body text-muted-foreground">
-              Total de questões:{" "}
-              {entities.reduce(
-                (acc, section) => acc + section.questions.length,
-                0
-              )}
-            </p>
-            <p className="text-body text-success">
-              • Ativas:{" "}
-              {entities.reduce((acc, section) => {
-                if (section.active) {
-                  return acc + section.questions.filter((q) => q.active).length;
-                }
-                return acc;
-              }, 0)}
-            </p>
-          </div>
-        </div>
-
+      <section aria-label="Seções">
         {/* Abaixo de 768px, cards (mesmos do Formulário do cursinho, #811). */}
         {!acimaDeSm ? (
           <SecoesMobile
@@ -451,6 +437,6 @@ export default function GlobalFormPage() {
       {CreateSection()}
       {UpdateSection()}
       {DuplicateSection()}
-    </>
+    </PageShell>
   );
 }

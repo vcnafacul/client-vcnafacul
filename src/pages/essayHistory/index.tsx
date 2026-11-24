@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "@/lib/toast";
@@ -47,10 +48,8 @@ export default function EssayHistory() {
     navigate(`/dashboard/${ESSAY_WRITE}/${essay.id}`);
 
   return (
-    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
-      <h1 className="text-h1 font-bold text-foreground mb-6">
-        Minhas Redações
-      </h1>
+    <PageShell className="max-w-4xl">
+      <PageHeader title="Minhas Redações" />
 
       {stats && stats.timeline.filter((e) => e.aiReview || e.humanReview).length >= 2 ? (
         <div className="space-y-6 mb-8">
@@ -139,6 +138,6 @@ export default function EssayHistory() {
           </table>
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }

@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { toast } from "@/lib/toast";
@@ -40,21 +41,21 @@ export default function EssayViewDetail() {
   const basePath = location.pathname.replace(/\/$/, "");
 
   return (
-    <div className="p-4 sm:p-6 max-w-5xl mx-auto space-y-8">
+    <PageShell className="max-w-5xl">
       {/* Essay content */}
+      <PageHeader
+        title={essay.title || "Sem título"}
+        subtitle={[
+          `Tema: ${essay.theme.title}`,
+          `Status: ${STATUS_LABELS[essay.status] ?? essay.status}`,
+          essay.submittedAt
+            ? `Enviada em: ${new Date(essay.submittedAt).toLocaleDateString("pt-BR")}`
+            : null,
+        ]
+          .filter(Boolean)
+          .join(" · ")}
+      />
       <div>
-        <h1 className="text-h1 font-bold text-foreground">
-          {essay.title || "Sem título"}
-        </h1>
-        <div className="flex flex-wrap gap-x-4 gap-y-1 text-body text-muted-foreground mt-1 mb-4">
-          <span className="break-words">Tema: {essay.theme.title}</span>
-          <span>Status: {STATUS_LABELS[essay.status] ?? essay.status}</span>
-          {essay.submittedAt && (
-            <span>
-              Enviada em: {new Date(essay.submittedAt).toLocaleDateString("pt-BR")}
-            </span>
-          )}
-        </div>
         {essay.inputType === 'UPLOADED' ? (
           <div className="border rounded-lg p-6 bg-page text-center space-y-3">
             <p className="text-body text-muted-foreground">
@@ -131,6 +132,6 @@ export default function EssayViewDetail() {
           Voltar à lista
         </button>
       </div>
-    </div>
+    </PageShell>
   );
 }

@@ -1,3 +1,4 @@
+import { PageHeaderBar } from "@/components/ui/page-header";
 import type { ReactNode } from "react";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { MessageSquareDashed, Headset, Search } from "lucide-react";
@@ -60,24 +61,12 @@ export function SupportInboxView({
   return (
     // `dvh` desconta a barra do navegador no celular; sem suporte, cai no vh.
     <div className="flex flex-col h-[calc(100vh-theme(spacing.header))] supports-[height:100dvh]:h-[calc(100dvh-theme(spacing.header))]">
-      <header className="bg-primary text-primary-foreground px-4 sm:px-5 py-3 flex flex-wrap items-center justify-between gap-x-3 gap-y-1 shadow-sm">
-        <div className="flex items-center gap-2">
-          <Headset className="h-5 w-5 text-primary" />
-          <h1 className="font-raleway font-bold text-h3">
-            {title}
-          </h1>
-        </div>
-        <div className="flex items-center gap-2 text-caption">
-          {headerActions}
-          <span className="opacity-80">
-            {isArchived ? "Arquivadas" : "Conversas abertas"}
-          </span>
-          <span className="bg-cta text-cta-foreground font-bold rounded-full min-w-[24px] h-6 inline-flex items-center justify-center px-2">
-            {convs.length}
-          </span>
-        </div>
-      </header>
-      <div className="h-[3px] bg-brand-stripe" aria-hidden />
+      {/* O mesmo cabeçalho das outras páginas da dash (ui/page-header). */}
+      <PageHeaderBar
+        title={title}
+        subtitle={`${isArchived ? "Arquivadas" : "Conversas abertas"}: ${convs.length}`}
+        actions={headerActions || undefined}
+      />
       <div className="flex flex-1 min-h-0">
         {mostrarLista && (
         <aside className="w-full sm:w-auto sm:max-w-96 border-r flex flex-col bg-page">

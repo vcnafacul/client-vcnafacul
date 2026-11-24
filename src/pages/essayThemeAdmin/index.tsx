@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { dataLocal, formatDate } from "@/utils/date";
 import { useEffect, useState } from "react";
 import { toast } from "@/lib/toast";
@@ -152,10 +154,11 @@ export default function EssayThemeAdmin() {
   if (loading) return <div className="p-6 text-center">Carregando...</div>;
 
   return (
-    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
-      <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h1 className="text-h1 font-bold text-foreground">Temas de Redação</h1>
-        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+    <PageShell className="max-w-4xl">
+      <PageHeader
+        title="Temas de Redação"
+        actions={
+        <>
           <div className="flex items-center gap-2">
             <Switch
               label="Correção por IA"
@@ -169,14 +172,12 @@ export default function EssayThemeAdmin() {
               {aiEnabled ? "Ativo" : "Inativo"}
             </span>
           </div>
-          <button
-            onClick={() => setEditing(null)}
-            className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
-          >
+          <Button variant="cta" onClick={() => setEditing(null)}>
             Novo Tema
-          </button>
-        </div>
-      </div>
+          </Button>
+        </>
+        }
+      />
       <div className="space-y-3">
         {themes.map((theme) => {
           const status = getThemeStatus(theme);
@@ -264,6 +265,6 @@ export default function EssayThemeAdmin() {
           </AlertDialogContent>
         </AlertDialog>
       )}
-    </div>
+    </PageShell>
   );
 }

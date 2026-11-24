@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import {
   Pagination,
   PaginationContent,
@@ -39,12 +40,17 @@ import { CoursePeriodCreateEditModal } from "./modals/coursePeriodCreateEditModa
 import { useModals } from "@/hooks/useModal";
 
 // Um único h1 por tela; o cabeçalho é o mesmo nos três estados.
-function Cabecalho({ children }: { children?: ReactNode }) {
+function Cabecalho({ children, total }: { children?: ReactNode; total?: number }) {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-2 py-2">
-      <h1 className="text-h1 text-foreground">Períodos Letivos</h1>
-      {children}
-    </header>
+    <PageHeader
+      title="Períodos Letivos"
+      subtitle={
+        total === undefined
+          ? undefined
+          : `${total} ${total === 1 ? "período letivo" : "períodos letivos"}`
+      }
+      actions={children}
+    />
   );
 }
 
@@ -279,45 +285,40 @@ export function PartnerClass() {
 
   if (loading) {
     return (
-      <>
+      <PageShell>
         <Cabecalho />
-        <section>
-          <h2 className="pl-5 text-h4 text-foreground">Períodos Letivos</h2>
-          {LoadingSkeleton()}
-        </section>
-      </>
+        <section aria-label="Períodos Letivos">{LoadingSkeleton()}</section>
+      </PageShell>
     );
   }
 
   if (entities.length === 0) {
     return (
-      <>
-        <Cabecalho />
-        {podeGerenciar && (
-          <div className="flex w-full flex-col items-stretch justify-end gap-2 sm:flex-row sm:items-center">
-            <BotaoAlertaEvasao fullWidth={!acimaDeSm} />
-            <Button
-              variant="cta"
-              onClick={handleCreateCoursePeriod}
-              className={!acimaDeSm ? "w-full" : undefined}
-            >
-              Criar Período Letivo
-            </Button>
-          </div>
-        )}
-        <section className="mt-4">
-          <h2 className="pl-5 text-h4 text-foreground">Períodos Letivos</h2>
-          {EmptyState()}
-        </section>
+      <PageShell>
+        <Cabecalho total={0}>
+          {podeGerenciar && (
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+              <BotaoAlertaEvasao fullWidth={!acimaDeSm} />
+              <Button
+                variant="cta"
+                onClick={handleCreateCoursePeriod}
+                className={!acimaDeSm ? "w-full" : undefined}
+              >
+                Criar Período Letivo
+              </Button>
+            </div>
+          )}
+        </Cabecalho>
+        <Card>{EmptyState()}</Card>
         {ModalCreateCoursePeriod()}
         {ModalEditCoursePeriod()}
-      </>
+      </PageShell>
     );
   }
 
   return (
-    <>
-      <Cabecalho>
+    <PageShell>
+      <Cabecalho total={totalItems}>
         {podeGerenciar && (
           <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
             <BotaoAlertaEvasao fullWidth={!acimaDeSm} />
@@ -332,13 +333,7 @@ export function PartnerClass() {
         )}
       </Cabecalho>
 
-      <section>
-        <div className="mb-2 flex items-center justify-between px-2">
-          <h2 className="text-h4 text-foreground">
-            Períodos Letivos ({entities.length})
-          </h2>
-        </div>
-
+      <section aria-label="Períodos Letivos">
         {!acimaDeSm ? (
           <PeriodosMobile
             periodos={entities}
@@ -470,6 +465,6 @@ export function PartnerClass() {
       {ModalCreateCoursePeriod()}
       {ModalEditCoursePeriod()}
       {ModalCreateClass()}
-    </>
+    </PageShell>
   );
 }

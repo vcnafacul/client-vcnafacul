@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Combobox } from "@/components/ui/combobox";
@@ -754,15 +755,39 @@ export function StudentsEnrolled() {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center pt-4 gap-4">
-      <div className="w-full px-4">
-        <h1 className="text-h1 font-bold text-center text-foreground">{name}</h1>
-      </div>
+    <PageShell>
+      <PageHeader
+        title={name}
+        subtitle={`${totalItems} ${totalItems === 1 ? "estudante" : "estudantes"}`}
+        actions={
+          permissao[Roles.gerenciarEstudantes] ? (
+            <>
+        {/* exportar leva contato e documento para fora num arquivo, entao
+            exige mais que ver a tela — o endpoint tambem checa */}
+          <Button
+            onClick={() => modals.modalExportColumns.open()} variant="outline"
+            // durante a geracao, e o que evita o clique repetido antes de a
+            // requisicao voltar; com a lista vazia, nao ha o que exportar
+            disabled={exportando || totalItems === 0}
+          >
+            <Download aria-hidden="true" />
+            {exportando ? "Gerando..." : "Baixar lista"}
+          </Button>
+          <Button
+            onClick={() => modals.modalStudentCards.open()} variant="outline"
+            disabled={selectedRows.length === 0}
+          >
+            <IdCard aria-hidden="true" /> Carteirinhas
+          </Button>
+            </>
+          ) : undefined
+        }
+      >
       {/*
         No celular os filtros ficam compactos (size small) e em grade de 2:
         busca e processo na linha inteira, período e status lado a lado.
       */}
-      <div className="w-full px-4 grid grid-cols-2 gap-2 sm:flex sm:gap-4 sm:items-center sm:justify-between sm:flex-wrap">
+      <div className="grid grid-cols-2 gap-2 border-b border-border px-4 py-3 sm:flex sm:gap-4 sm:items-center sm:justify-between sm:flex-wrap">
         <Field label="Buscar" className="col-span-2 sm:min-w-[260px] sm:flex-1">
           <Input
             value={busca}
@@ -844,36 +869,10 @@ export function StudentsEnrolled() {
             }}
           />
         </Field>
-        {/* exportar leva contato e documento para fora num arquivo, entao
-            exige mais que ver a tela — o endpoint tambem checa */}
-        {permissao[Roles.gerenciarEstudantes] && (
-          <Button
-            onClick={() => modals.modalExportColumns.open()} variant="primary" size="sm"
-            className="flex gap-2 items-center w-full h-10 sm:w-fit sm:h-fit"
-            // durante a geracao, e o que evita o clique repetido antes de a
-            // requisicao voltar; com a lista vazia, nao ha o que exportar
-            disabled={exportando || totalItems === 0}
-          >
-            <div className="flex gap-2 items-center justify-center">
-              <Download className="w-5 h-5" />
-              {exportando ? "Gerando..." : "Baixar lista"}
-            </div>
-          </Button>
-        )}
-        {permissao[Roles.gerenciarEstudantes] && (
-          <Button
-            onClick={() => modals.modalStudentCards.open()} variant="primary" size="sm"
-            className="flex gap-2 items-center w-full h-10 sm:w-fit sm:h-fit"
-            disabled={selectedRows.length === 0}
-          >
-            <div className="flex gap-2 items-center justify-center">
-              <IdCard className="w-5 h-5" /> Carteirinhas
-            </div>
-          </Button>
-        )}
       </div>
+      </PageHeader>
       {mostrarToggle && (
-        <div className="w-full px-4 flex justify-end">
+        <div className="flex justify-end">
           <Switch
           checked={ocultar}
           onCheckedChange={setOcultar}
@@ -949,6 +948,6 @@ export function StudentsEnrolled() {
           token={token}
         />
       )}
-    </div>
+    </PageShell>
   );
 }

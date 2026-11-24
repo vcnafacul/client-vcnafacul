@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { SeletorDeCursinho } from "@/components/molecules/seletorDeCursinho";
@@ -166,18 +167,17 @@ export function TelaDosIndicadores({
 
   return (
     <CursinhoDosIndicadores.Provider value={cursinhoId}>
-      <div className="mx-auto w-full max-w-6xl space-y-6 px-4 py-6 sm:px-6">
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-h1 font-bold text-foreground">Indicadores</h1>
-            <p className="mt-1 text-body text-muted-foreground">
-              {outro
-                ? `Como estão os alunos de ${outro.name} ${recorte}.`
-                : semCursinho
-                  ? "Escolha um cursinho para ver os indicadores."
-                  : `Como estão os alunos do seu cursinho ${recorte}.`}
-            </p>
-          </div>
+      <PageShell>
+        <PageHeader
+          title="Indicadores"
+          subtitle={
+            outro
+              ? `Como estão os alunos de ${outro.name} ${recorte}.`
+              : semCursinho
+                ? "Escolha um cursinho para ver os indicadores."
+                : `Como estão os alunos do seu cursinho ${recorte}.`
+          }
+          actions={
           <div className="flex flex-col gap-2 sm:items-end">
             {podeVerOutros && (
               <SeletorDeCursinho
@@ -219,7 +219,8 @@ export function TelaDosIndicadores({
               </div>
             )}
           </div>
-        </header>
+          }
+        />
 
         {outro && (
           <p
@@ -265,7 +266,7 @@ export function TelaDosIndicadores({
         ) : (
           <SecoesDosIndicadores dados={dados} />
         )}
-      </div>
+      </PageShell>
     </CursinhoDosIndicadores.Provider>
   );
 }

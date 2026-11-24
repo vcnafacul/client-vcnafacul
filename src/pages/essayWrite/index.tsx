@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useEffect, useState } from "react";
 import {
   AlertDialog,
@@ -171,33 +173,28 @@ export default function EssayWrite() {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  // Voltar acima do título: na mesma linha que "Ver histórico" passava da tela
-  // no celular. "Ver histórico" fica embaixo do título até `xl`, onde o botão
-  // do menu lateral (fixo no canto superior direito) some — antes disso ele
-  // cobria o link. Chamada como `{cabecalho()}` (ver semComponenteNoRender.test.ts).
+  // O cabeçalho padrão da dash (ui/page-header): voltar ao lado do título e
+  // "Ver histórico" nas ações, que quebram para baixo no celular.
+  // Chamada como `{cabecalho()}` (ver semComponenteNoRender.test.ts).
   const cabecalho = (
     titulo: string,
     voltar?: { label: string; onClick: () => void },
   ) => (
-    <div className="space-y-1">
-      {voltar && (
-        <button
-          onClick={voltar.onClick}
-          className="text-foreground hover:underline text-body"
-        >
-          &larr; {voltar.label}
-        </button>
-      )}
-      <div className="flex flex-col items-start gap-1 xl:flex-row xl:justify-between xl:items-center xl:gap-4">
-        <h1 className="text-h1 font-bold text-foreground">{titulo}</h1>
-        <Link
-          to={`/dashboard/${ESSAY_HISTORY}`}
-          className="text-foreground hover:underline text-body"
-        >
-          Ver histórico
-        </Link>
-      </div>
-    </div>
+    <PageHeader
+      title={titulo}
+      backButton={
+        voltar ? (
+          <Button variant="ghost" size="sm" onClick={voltar.onClick}>
+            &larr; {voltar.label}
+          </Button>
+        ) : undefined
+      }
+      actions={
+        <Button variant="outline" asChild>
+          <Link to={`/dashboard/${ESSAY_HISTORY}`}>Ver histórico</Link>
+        </Button>
+      }
+    />
   );
 
   if (loading) {
@@ -207,17 +204,17 @@ export default function EssayWrite() {
   // Theme selection screen
   if (!selectedTheme) {
     return (
-      <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+      <PageShell className="max-w-4xl">
         {cabecalho("Escrever Redação")}
         <ThemeSelector themes={availableThemes} onSelect={handleSelectTheme} />
-      </div>
+      </PageShell>
     );
   }
 
   // Mode select screen
   if (mode === 'select') {
     return (
-      <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+      <PageShell className="max-w-4xl">
         {cabecalho("Escrever Redação", {
           label: "Trocar tema",
           onClick: handleBack,
@@ -241,14 +238,14 @@ export default function EssayWrite() {
             <p className="text-body text-muted-foreground mt-1">Envie uma foto ou PDF da sua redação manuscrita</p>
           </button>
         </div>
-      </div>
+      </PageShell>
     );
   }
 
   // Upload screen
   if (mode === 'upload') {
     return (
-      <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+      <PageShell className="max-w-4xl">
         {cabecalho("Enviar Redação", {
           label: "Voltar",
           onClick: () => {
@@ -321,13 +318,13 @@ export default function EssayWrite() {
             </AlertDialogContent>
           </AlertDialog>
         )}
-      </div>
+      </PageShell>
     );
   }
 
   // Editor screen (mode === 'type')
   return (
-    <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
+    <PageShell className="max-w-4xl">
       {cabecalho("Escrever Redação", {
         label: "Voltar",
         onClick: () => setMode('select'),
@@ -402,6 +399,6 @@ export default function EssayWrite() {
           </AlertDialogContent>
         </AlertDialog>
       )}
-    </div>
+    </PageShell>
   );
 }

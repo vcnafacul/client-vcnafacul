@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { CursinhoAccordion } from "@/components/atoms/cursinhoAccordin";
 import { getRegistrationMonitoring } from "@/services/prepCourse/student/getRegistrionMonitoring";
 import { useAuthStore } from "@/store/auth";
@@ -20,20 +21,16 @@ export default function RegistrationMonitor() {
   }, [token]);
 
   return (
-    <div className="p-4">
-      <div className="mb-10">
-        <div className="text-h1 font-extrabold text-foreground">
-          Acompanhamento de Inscrições
-        </div>
-        <div className="text-h2 font-normal text-foreground mb-6">
-          Acompanhe aqui suas inscrições realizadas.
-        </div>
-      </div>
+    <PageShell>
+      <PageHeader
+        title="Acompanhamento de Inscrições"
+        subtitle="Acompanhe aqui suas inscrições realizadas."
+      />
       <div className="flex flex-col gap-2">
         {registrationMonitoring.map((registration) => (
           <CursinhoAccordion key={registration.id} monitoring={registration} />
         ))}
       </div>
-    </div>
+    </PageShell>
   );
 }

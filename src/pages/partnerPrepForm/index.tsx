@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { motivoDoErro } from "./motivoDoErro";
 import { TableColumn } from "@/components/organisms/expandableTable";
 import { useModals } from "@/hooks/useModal";
@@ -122,12 +123,9 @@ export const TruncatedText = ({
 };
 
 // Um único h1 por tela; o cabeçalho é o mesmo nos três estados.
-function Cabecalho({ children }: { children?: ReactNode }) {
+function Cabecalho({ children, subtitle }: { children?: ReactNode; subtitle?: ReactNode }) {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-2 py-2">
-      <h1 className="text-h1 text-foreground">Formulários de Preparação</h1>
-      {children}
-    </header>
+    <PageHeader title="Formulários de Preparação" subtitle={subtitle} actions={children} />
   );
 }
 
@@ -415,21 +413,17 @@ export default function PartnerPrepForm() {
 
   if (loading) {
     return (
-      <>
+      <PageShell>
         <Cabecalho />
-        <section>
-          <h2 className="pl-5 text-h4 text-foreground">Seções</h2>
-          {LoadingSkeleton()}
-        </section>
-      </>
+        <section aria-label="Seções">{LoadingSkeleton()}</section>
+      </PageShell>
     );
   }
 
   if (entities.length === 0) {
     return (
-      <>
-        <Cabecalho />
-        <div className="flex w-full justify-end px-4">
+      <PageShell>
+        <Cabecalho subtitle="0 seções">
           <Button
             variant="cta"
             className={!acimaDeSm ? "w-full" : undefined}
@@ -437,19 +431,29 @@ export default function PartnerPrepForm() {
           >
             Criar Seção
           </Button>
-        </div>
-        <section className="mt-4">
-          <h2 className="pl-5 text-h4 text-foreground">Seções</h2>
-          {EmptyState()}
-        </section>
+        </Cabecalho>
+        <Card>{EmptyState()}</Card>
         {CreateSection()}
-      </>
+      </PageShell>
     );
   }
 
+  const totalDeQuestoes = entities.reduce(
+    (acc, section) => acc + section.questions.length,
+    0
+  );
+  const questoesAtivas = entities.reduce((acc, section) => {
+    if (section.active) {
+      return acc + section.questions.filter((q) => q.active).length;
+    }
+    return acc;
+  }, 0);
+
   return (
-    <>
-      <Cabecalho>
+    <PageShell>
+      <Cabecalho
+        subtitle={`${entities.length} ${entities.length === 1 ? "seção" : "seções"} · Total de questões: ${totalDeQuestoes} · Ativas: ${questoesAtivas}`}
+      >
         <Button
           variant="cta"
           onClick={handleCreateSection}
@@ -459,30 +463,7 @@ export default function PartnerPrepForm() {
         </Button>
       </Cabecalho>
 
-      <section>
-        <div className="mb-2 flex flex-wrap items-center justify-between gap-x-4 px-2">
-          <h2 className="text-h4 text-foreground">
-            Seções ({entities.length})
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            <p className="text-body text-muted-foreground">
-              Total de questões:{" "}
-              {entities.reduce(
-                (acc, section) => acc + section.questions.length,
-                0
-              )}
-            </p>
-            <p className="text-body text-success">
-              • Ativas:{" "}
-              {entities.reduce((acc, section) => {
-                if (section.active) {
-                  return acc + section.questions.filter((q) => q.active).length;
-                }
-                return acc;
-              }, 0)}
-            </p>
-          </div>
-        </div>
+      <section aria-label="Seções">
 
         {!acimaDeSm ? (
           <SecoesMobile
@@ -553,6 +534,6 @@ export default function PartnerPrepForm() {
       {CreateSection()}
       {UpdateSection()}
       {DuplicateSection()}
-    </>
+    </PageShell>
   );
 }

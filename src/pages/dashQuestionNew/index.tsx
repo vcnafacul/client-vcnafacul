@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import type { InfosDaQuestao } from "@/pages/dashQuestionNew/modals/tabs/TabClassificacao/types";
 import { podeEditarQuestao } from "./permissoesDoBanco";
@@ -320,54 +321,43 @@ function DashQuestionNew() {
   const hasActiveFilters = temFiltroAtivo(filters);
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 max-w-full">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
-          <div>
-            <h1 className="text-h1 font-bold text-primary">
-              Banco de Questões (Novo)
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Visualize e explore as questões cadastradas
-            </p>
-          </div>
-
-          {/* Botão de Criar Questão — só quem pode criar (023 · 08) */}
-          {podeEditarQuestao(permissao) && (
-            <Button
-              onClick={() => modals.modalCreateQuestion.open()}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg w-full sm:w-auto"
-              size="lg"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Nova Questão
-            </Button>
-          )}
-        </div>
-
-        {/* Botão para mostrar/esconder filtros */}
-        {infos && (
-          <Button
-            variant={showFilters ? "primary" : "outline"}
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center gap-2"
-          >
-            <Filter className="h-4 w-4" />
-            {showFilters ? "Esconder" : "Mostrar"} Filtros
-            {showFilters ? (
-              <ChevronUp className="h-4 w-4" />
-            ) : (
-              <ChevronDown className="h-4 w-4" />
+    <PageShell>
+      <PageHeader
+        title="Banco de Questões (Novo)"
+        subtitle="Visualize e explore as questões cadastradas"
+        actions={
+          <>
+            {/* Botão para mostrar/esconder filtros */}
+            {infos && (
+              <Button
+                variant="outline"
+                aria-pressed={showFilters}
+                onClick={() => setShowFilters(!showFilters)}
+              >
+                <Filter aria-hidden="true" />
+                {showFilters ? "Esconder" : "Mostrar"} Filtros
+                {showFilters ? (
+                  <ChevronUp aria-hidden="true" />
+                ) : (
+                  <ChevronDown aria-hidden="true" />
+                )}
+                {hasActiveFilters && !showFilters && (
+                  <span className="ml-1 rounded-full bg-primary px-2 py-0.5 text-caption text-primary-foreground">
+                    ✓
+                  </span>
+                )}
+              </Button>
             )}
-            {hasActiveFilters && !showFilters && (
-              <span className="ml-1 px-2 py-0.5 text-caption bg-primary text-primary-foreground rounded-full">
-                ✓
-              </span>
+            {/* Botão de Criar Questão — só quem pode criar (023 · 08) */}
+            {podeEditarQuestao(permissao) && (
+              <Button variant="cta" onClick={() => modals.modalCreateQuestion.open()}>
+                <Plus aria-hidden="true" />
+                Nova Questão
+              </Button>
             )}
-          </Button>
-        )}
-      </div>
+          </>
+        }
+      />
 
       {/*
         Filtros: esconder só oculta, não desmonta. Desmontado, o painel voltava
@@ -468,7 +458,7 @@ function DashQuestionNew() {
         infos={infos}
         onSuccess={() => getQuestions(currentPage)}
       />
-    </div>
+    </PageShell>
   );
 }
 

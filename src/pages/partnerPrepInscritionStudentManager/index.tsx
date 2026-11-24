@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -802,67 +803,47 @@ export function PartnerPrepInscritionStudentManager() {
   }, []);
 
   return (
-    <div className="flex flex-col justify-center items-center pt-4">
-      <div className="w-full px-4">
-        <div className="mb-2">
-          <h1 className="text-h1 font-bold text-center text-foreground break-words">
-            {inscriptionInfo?.name || "Gerenciamento de Inscritos"}
-          </h1>
-          {inscriptionInfo?.description && (
-            <p className="text-body text-muted-foreground text-center mt-1 break-words">
-              {inscriptionInfo.description}
-            </p>
-          )}
-          {inscriptionInfo && (
-            <p className="text-caption text-muted-foreground text-center mt-1">
-              Período:{" "}
-              {new Date(inscriptionInfo.startDate).toLocaleDateString("pt-BR")}{" "}
-              — {new Date(inscriptionInfo.endDate).toLocaleDateString("pt-BR")}{" "}
-              · {inscriptionInfo.expectedOpening} vagas · {students.length}{" "}
-              inscritos
-            </p>
-          )}
-        </div>
-        <div className="h-full w-full flex pb-2 flex-col md:flex-row gap-2 md:gap-0">
-          <TableInfo students={students} />
-          <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center md:gap-1 md:items-end md:justify-end md:flex-1">
+    <PageShell>
+      <PageHeader
+        title={inscriptionInfo?.name || "Gerenciamento de Inscritos"}
+        subtitle={
+          inscriptionInfo
+            ? `Período: ${new Date(inscriptionInfo.startDate).toLocaleDateString("pt-BR")} — ${new Date(inscriptionInfo.endDate).toLocaleDateString("pt-BR")} · ${inscriptionInfo.expectedOpening} vagas · ${students.length} inscritos`
+            : undefined
+        }
+        actions={
+          <>
+            <Button variant="outline" onClick={modals.statistic.open}>
+              Estatisticas
+            </Button>
+            <Button variant="outline" onClick={modals.waitingList.open}>
+              Lista de Espera
+            </Button>
+            <Button variant="outline" onClick={modals.scheduleEnrolled.open}>
+              Programar Convocação
+            </Button>
+            <Button variant="outline" onClick={modals.rules.open}>
+              Regras de Pontuação
+            </Button>
             <Button
-              className="w-full h-10 sm:w-fit sm:h-fit" variant="outline" size="sm"
-              onClick={modals.statistic.open}
-            >
-              <p className="text-body">Estatisticas</p>
-            </Button>
-            <Button variant="primary" size="sm"
-              className="w-full h-10 sm:w-fit sm:h-fit"
-              onClick={modals.waitingList.open}
-            >
-              <p className="text-body">Lista de Espera</p>
-            </Button>
-            <Button variant="primary" size="sm"
-              className="w-full h-10 sm:w-fit sm:h-fit"
-              onClick={modals.scheduleEnrolled.open}
-            >
-              <p className="text-body">Programar Convocação</p>
-            </Button>
-            <Button variant="primary" size="sm"
-              className="w-full h-10 sm:w-fit sm:h-fit"
-              onClick={modals.rules.open}
-            >
-              <p className="text-body">Regras de Pontuação</p>
-            </Button>
-            <button
-              type="button"
+              variant="outline"
+              size="icon"
               aria-label="Atualizar lista"
               onClick={() => subscribers()}
-              className="col-span-2 flex items-center justify-center gap-2 h-10 border border-border rounded-md text-body text-muted-foreground sm:h-auto sm:border-0 sm:col-span-1"
             >
-              <RefreshCw className="h-7 w-7 p-0.5 text-muted-foreground hover:text-primary hover:animate-rotate5" />
-              {!acimaDeSm && "Atualizar lista"}
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className="w-full px-4 flex justify-end">
+              <RefreshCw aria-hidden="true" />
+            </Button>
+          </>
+        }
+      >
+        {inscriptionInfo?.description && (
+          <p className="break-words border-b border-border px-4 py-3 text-body text-muted-foreground">
+            {inscriptionInfo.description}
+          </p>
+        )}
+      </PageHeader>
+      <TableInfo students={students} />
+      <div className="flex justify-end">
         <Switch
           checked={ocultar}
           onCheckedChange={setOcultar}
@@ -917,6 +898,6 @@ export function PartnerPrepInscritionStudentManager() {
           onRankingUpdate={setRanking}
         />
       )}
-    </div>
+    </PageShell>
   );
 }

@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "@/lib/toast";
@@ -29,13 +30,11 @@ export default function EssayResult() {
   const isWaiting = essay.status === "SUBMITTED";
 
   return (
-    <div className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
-      <h1 className="text-h1 font-bold text-foreground">
-        {essay.title || "Minha Redação"}
-      </h1>
-      <p className="text-body text-muted-foreground">
-        Tema: {essay.theme.title}
-      </p>
+    <PageShell className="max-w-4xl">
+      <PageHeader
+        title={essay.title || "Minha Redação"}
+        subtitle={`Tema: ${essay.theme.title}`}
+      />
 
       {isWaiting && (
         <div className="border rounded-lg p-6 bg-warning-muted text-center">
@@ -60,7 +59,7 @@ export default function EssayResult() {
           review={review}
         />
       ))}
-    </div>
+    </PageShell>
   );
 }
 

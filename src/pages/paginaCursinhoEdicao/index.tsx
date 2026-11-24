@@ -1,3 +1,6 @@
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useEffect, useState } from "react";
 import { toast } from "@/lib/toast";
 import { ExternalLink } from "lucide-react";
@@ -85,108 +88,114 @@ export default function PaginaCursinhoEdicao() {
     }
   };
 
-  if (erro) return <div className="p-6 text-center text-destructive">{erro}</div>;
+  if (erro)
+    return <div className="p-6 text-center text-destructive">{erro}</div>;
   if (!salva) return <div className="p-6 text-center">Carregando...</div>;
 
   return (
-    <form onSubmit={salvar} className="p-4 sm:p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex flex-wrap justify-between items-center gap-4">
-        <div>
-          <h1 className="text-h1 font-bold text-foreground">Página do cursinho</h1>
-          <p className="text-body text-muted-foreground">{salva.nomeDoCursinho}</p>
-        </div>
-        {salva.active && (
-          <a
-            href={enderecoPublico(salva.slug)}
-            target="_blank"
-            rel="noreferrer"
-            className="flex items-center gap-1 text-body text-foreground hover:underline"
-          >
-            Ver página pública <ExternalLink size="1em" />
-          </a>
-        )}
-      </div>
-
-      <div className="flex items-center gap-3 bg-white border rounded-lg p-4">
-        <Switch
-          aria-label="Página pública"
-          aria-describedby="pagina-ativa-rotulo"
-          checked={active}
-          onCheckedChange={setActive}
+    <PageShell className="max-w-4xl">
+      <form onSubmit={salvar} className="space-y-6">
+        <PageHeader
+          title="Página do cursinho"
+          subtitle={salva.nomeDoCursinho}
+          actions={
+            salva.active ? (
+              <a
+                href={enderecoPublico(salva.slug)}
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1 text-body text-foreground hover:underline"
+              >
+                Ver página pública <ExternalLink size="1em" />
+              </a>
+            ) : undefined
+          }
         />
-        <div>
-          <p id="pagina-ativa-rotulo" className="font-semibold text-body">
-            Página {active ? "ativa" : "desativada"}
-          </p>
-          <p className="text-caption text-muted-foreground">
-            Desativada, ninguém consegue abrir o endereço. Para ativar, o Quem somos é
-            obrigatório.
-          </p>
-        </div>
-      </div>
 
-      <div>
-        <label htmlFor="slug" className="block text-body font-semibold mb-1">
-          Endereço da página
-        </label>
-        <div className="flex items-center border rounded-lg overflow-hidden bg-white">
-          <span className="px-2 text-body text-muted-foreground bg-page border-r py-2 whitespace-nowrap">
-            …/{PARTNER_PREP}
-          </span>
-          <input
-            id="slug"
-            value={slug}
-            onChange={(e) => setSlug(normalizarEnquantoDigita(e.target.value))}
-            className="flex-1 min-w-0 p-2 outline-none"
+        <Card className="space-y-6 p-4 sm:p-6">
+          <div className="flex items-center gap-3 border rounded-lg p-4">
+            <Switch
+              aria-label="Página pública"
+              aria-describedby="pagina-ativa-rotulo"
+              checked={active}
+              onCheckedChange={setActive}
+            />
+            <div>
+              <p id="pagina-ativa-rotulo" className="font-semibold text-body">
+                Página {active ? "ativa" : "desativada"}
+              </p>
+              <p className="text-caption text-muted-foreground">
+                Desativada, ninguém consegue abrir o endereço. Para ativar, o
+                Quem somos é obrigatório.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <label
+              htmlFor="slug"
+              className="block text-body font-semibold mb-1"
+            >
+              Endereço da página
+            </label>
+            <div className="flex items-center border rounded-lg overflow-hidden bg-white">
+              <span className="px-2 text-body text-muted-foreground bg-page border-r py-2 whitespace-nowrap">
+                …/{PARTNER_PREP}
+              </span>
+              <input
+                id="slug"
+                value={slug}
+                onChange={(e) =>
+                  setSlug(normalizarEnquantoDigita(e.target.value))
+                }
+                className="flex-1 min-w-0 p-2 outline-none"
+              />
+            </div>
+            <p className="text-caption text-muted-foreground mt-1">
+              Se você trocar o endereço, o link antigo deixa de funcionar.
+            </p>
+          </div>
+
+          <div>
+            <span className="block text-body font-semibold mb-1">
+              Quem somos <span className="text-destructive">*</span>
+            </span>
+            {/* Sem `onImageUpload`: o editor não mostra o botão de imagem (R4). */}
+            <RichTextEditor
+              content={quemSomos}
+              onChange={setQuemSomos}
+              placeholder="Conte quem é o cursinho, sua história e como funciona."
+              minHeight="200px"
+              error={avisoAtivar}
+            />
+            {avisoAtivar && (
+              <p role="alert" className="text-caption text-destructive mt-1">
+                Para ativar a página, preencha o Quem somos.
+              </p>
+            )}
+          </div>
+
+          <ListaDeLinks
+            titulo="Links úteis"
+            ajuda="Visíveis para qualquer pessoa que acessar a página do cursinho."
+            links={linksPublicos}
+            onChange={setLinksPublicos}
           />
-        </div>
-        <p className="text-caption text-muted-foreground mt-1">
-          Se você trocar o endereço, o link antigo deixa de funcionar.
-        </p>
-      </div>
 
-      <div>
-        <span className="block text-body font-semibold mb-1">
-          Quem somos <span className="text-destructive">*</span>
-        </span>
-        {/* Sem `onImageUpload`: o editor não mostra o botão de imagem (R4). */}
-        <RichTextEditor
-          content={quemSomos}
-          onChange={setQuemSomos}
-          placeholder="Conte quem é o cursinho, sua história e como funciona."
-          minHeight="200px"
-          error={avisoAtivar}
-        />
-        {avisoAtivar && (
-          <p role="alert" className="text-caption text-destructive mt-1">
-            Para ativar a página, preencha o Quem somos.
-          </p>
-        )}
-      </div>
+          <ListaDeLinks
+            titulo="Links úteis internos"
+            ajuda="Não são públicos: só colaboradores e alunos matriculados deste cursinho, logados, conseguem ver."
+            links={linksInternos}
+            onChange={setLinksInternos}
+          />
 
-      <ListaDeLinks
-        titulo="Links úteis"
-        ajuda="Visíveis para qualquer pessoa que acessar a página do cursinho."
-        links={linksPublicos}
-        onChange={setLinksPublicos}
-      />
-
-      <ListaDeLinks
-        titulo="Links úteis internos"
-        ajuda="Não são públicos: só colaboradores e alunos matriculados deste cursinho, logados, conseguem ver."
-        links={linksInternos}
-        onChange={setLinksInternos}
-      />
-
-      <div className="flex justify-end">
-        <button
-          type="submit"
-          disabled={salvando}
-          className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-60"
-        >
-          {salvando ? "Salvando..." : "Salvar"}
-        </button>
-      </div>
-    </form>
+          <div className="flex justify-end">
+            <Button type="submit" variant="primary" disabled={salvando}>
+              {salvando ? "Salvando..." : "Salvar"}
+            </Button>
+          </div>
+        </Card>
+      </form>
+    </PageShell>
   );
 }

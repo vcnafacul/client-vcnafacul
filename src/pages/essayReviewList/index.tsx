@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useAcimaDeSm } from "@/components/dashV2/useAcimaDeSm";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -86,8 +87,8 @@ export default function EssayReviewList({ mode }: Props) {
       : "Redações do Cursinho";
 
   return (
-    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      <h1 className="text-h1 font-bold text-foreground mb-6">{title}</h1>
+    <PageShell className="max-w-6xl">
+      <PageHeader title={title} />
 
       {/* Filters */}
       <div className="flex gap-2 sm:gap-4 mb-4 flex-wrap">
@@ -262,6 +263,6 @@ export default function EssayReviewList({ mode }: Props) {
           )}
         </>
       )}
-    </div>
+    </PageShell>
   );
 }

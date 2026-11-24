@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCallback, useEffect, useState } from "react";
@@ -74,29 +75,16 @@ export function SimulationHistories() {
   const totalPages = Math.ceil(totalItems / limitCards);
 
   return (
-    <div className="container mx-auto p-4 sm:p-6 max-w-full">
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex flex-wrap justify-between items-center gap-3 mb-4">
-          <div className="min-w-0">
-            <h1 className="text-h1 font-bold text-primary">
-              Histórico de Simulados
-            </h1>
-            <p className="text-muted-foreground mt-1">
-              Visualize seu desempenho nos simulados realizados
-            </p>
-          </div>
-
-          {/* Botão de Voltar */}
-          <Button
-            onClick={() => navigate(`${DASH}/${SIMULADO}`)}
-            variant="outline"
-            className="w-24 h-10"
-          >
+    <PageShell>
+      <PageHeader
+        title="Histórico de Simulados"
+        subtitle="Visualize seu desempenho nos simulados realizados"
+        actions={
+          <Button onClick={() => navigate(`${DASH}/${SIMULADO}`)} variant="outline">
             Voltar
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Gráfico de Aproveitamento */}
       {aproveitamento && aproveitamento.historicos.length > 0 && (
@@ -166,6 +154,6 @@ export function SimulationHistories() {
           />
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }
