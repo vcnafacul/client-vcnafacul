@@ -1,5 +1,6 @@
 import { baixarFotoDoCartao } from "@/services/cartaoResposta/baixarFotoDoCartao";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 import { useState } from "react";
 import { toast } from "@/lib/toast";
 import { nomeDaFoto } from "./nomeDaFoto";
@@ -41,19 +42,17 @@ export function BaixarFotoDoCartao({
   };
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="sm"
       data-testid="baixar-foto-do-cartao"
       onClick={baixar}
       disabled={baixando}
-      className={cn(
-        "shrink-0 rounded-md border px-2 py-1 text-caption font-medium disabled:opacity-50",
-        "border-border",
-        "text-foreground",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      )}
+      className="shrink-0"
     >
+      <Download aria-hidden="true" />
       {baixando ? "Baixando…" : "Baixar cartão"}
-    </button>
+    </Button>
   );
 }

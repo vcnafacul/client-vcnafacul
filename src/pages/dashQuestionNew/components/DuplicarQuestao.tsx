@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { podeCriarAPartir } from "../permissoesDoBanco";
 import { duplicarQuestao } from "@/services/question/duplicarQuestao";
 import { useAuthStore } from "@/store/auth";
@@ -48,15 +49,16 @@ export function DuplicarQuestao({
   };
 
   return (
-    <button
+    <Button
       type="button"
+      variant="outline"
+      size="sm"
       data-duplicar
       disabled={duplicando}
       onClick={duplicar}
-      className="rounded-md border px-2 py-1 text-caption text-muted-foreground disabled:opacity-50"
       title={TITULO_DUPLICAR}
     >
       {duplicando ? "Duplicando…" : TEXTO_DUPLICAR}
-    </button>
+    </Button>
   );
 }

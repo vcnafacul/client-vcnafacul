@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { SegmentedControl } from "@/components/ui/segmented-control";
 import {
   FILTROS,
   ROTULO_DO_FILTRO,
@@ -6,7 +6,8 @@ import {
 } from "./filtroDoDetalhe";
 
 /**
- * Os três chips de filtro do modal.
+ * Os três filtros do modal, no SegmentedControl do design system (o mesmo das abas
+ * de listagem).
  *
  * O modal abre em 90 linhas, e a pergunta de quem abriu é **"o que ele errou"**
  * — respondida hoje rolando a lista procurando badges. Com o bloco de resumo do
@@ -31,44 +32,23 @@ export function ChipsDoDetalhe({
   ativo: FiltroDoDetalhe;
   aoTrocar: (f: FiltroDoDetalhe) => void;
 }) {
+  /*
+    ⚠️ O "Tudo" nunca desabilita, mesmo com zero: ele é o estado neutro, e
+    desabilitar o único chip ativo deixaria a pessoa presa num filtro.
+  */
   return (
-    <div
-      data-testid="chips-do-detalhe"
-      role="group"
-      aria-label="Filtrar respostas"
-      className="flex flex-wrap gap-2 print:hidden"
-    >
-      {FILTROS.map((f) => {
-        const n = contagens[f];
-        /*
-          ⚠️ O "Tudo" nunca desabilita, mesmo com zero: ele é o estado neutro, e
-          desabilitar o único chip ativo deixaria a pessoa presa num filtro.
-        */
-        const desabilitado = f !== "tudo" && n === 0;
-        const selecionado = ativo === f;
-
-        return (
-          <button
-            key={f}
-            type="button"
-            data-chip={f}
-            aria-pressed={selecionado}
-            disabled={desabilitado}
-            onClick={() => aoTrocar(f)}
-            className={cn(
-              "rounded-full border px-3 py-1 text-caption font-medium",
-              "disabled:cursor-not-allowed disabled:opacity-40",
-              "border-border",
-              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-              selecionado
-                ? cn("bg-cta text-cta-foreground", "border-transparent")
-                : cn("bg-card", "text-muted-foreground"),
-            )}
-          >
-            {ROTULO_DO_FILTRO[f]} ({n})
-          </button>
-        );
-      })}
+    <div data-testid="chips-do-detalhe" className="print:hidden">
+      <SegmentedControl
+        size="sm"
+        aria-label="Filtrar respostas"
+        value={ativo}
+        onValueChange={(v) => aoTrocar(v as FiltroDoDetalhe)}
+        options={FILTROS.map((f) => ({
+          value: f,
+          label: `${ROTULO_DO_FILTRO[f]} (${contagens[f]})`,
+          disabled: f !== "tudo" && contagens[f] === 0,
+        }))}
+      />
     </div>
   );
 }

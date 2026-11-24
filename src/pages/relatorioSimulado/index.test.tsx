@@ -1409,14 +1409,14 @@ describe("RelatorioSimulado — navegação entre alunos (card 20)", () => {
         .getByTestId("chips-do-detalhe")
         .parentElement!.querySelectorAll("tbody tr");
 
-    fireEvent.click(document.querySelector('[data-chip="errou"]')!);
+    fireEvent.click(screen.getByRole("radio", { name: /^Errou \(/ }));
     expect(linhasDoModal()).toHaveLength(1);
 
     fireEvent.click(screen.getByRole("button", { name: "Próximo estudante" }));
     await screen.findByRole("heading", { name: "Bruno" });
 
-    expect(document.querySelector('[data-chip="tudo"]')).toHaveAttribute(
-      "aria-pressed",
+    expect(screen.getByRole("radio", { name: /^Tudo \(/ })).toHaveAttribute(
+      "aria-checked",
       "true",
     );
     expect(linhasDoModal()).toHaveLength(2);

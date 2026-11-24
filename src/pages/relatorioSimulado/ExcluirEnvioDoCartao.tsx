@@ -9,7 +9,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import { excluirEnvioDoCartao } from "@/services/cartaoResposta/excluirEnvioDoCartao";
 import { useState } from "react";
 import { toast } from "@/lib/toast";
@@ -58,17 +59,17 @@ export function ExcluirEnvioDoCartao({
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           data-testid="excluir-envio-do-cartao"
           disabled={excluindo}
-          className={cn(
-            "shrink-0 rounded-md border border-destructive px-2 py-1 text-caption font-medium text-destructive disabled:opacity-50",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          )}
+          className="shrink-0 text-destructive hover:bg-destructive/10 hover:text-destructive"
         >
+          <Trash2 aria-hidden="true" />
           {excluindo ? "Excluindo…" : TEXTO_EXCLUIR_ENVIO}
-        </button>
+        </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>

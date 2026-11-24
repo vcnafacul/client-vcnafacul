@@ -652,8 +652,17 @@ describe("DetalheDoEstudante — navegação e filtro (card 20)", () => {
   });
 
   describe("chips", () => {
+    // Os filtros são um SegmentedControl (rádios); o rótulo identifica cada um.
+    const ROTULO: Record<string, string> = {
+      tudo: "Tudo",
+      errou: "Errou",
+      sem_leitura: "Sem leitura",
+      acertou: "Acertou",
+    };
     const chip = (c: HTMLElement, f: string) =>
-      c.querySelector(`[data-chip="${f}"]`) as HTMLElement;
+      (within(c.querySelector('[data-testid="chips-do-detalhe"]') as HTMLElement)
+        .queryAllByRole("radio")
+        .find((r) => r.textContent?.startsWith(`${ROTULO[f]} (`)) ?? null) as HTMLElement;
 
     it("⚠️ são três, com os contadores no rótulo", async () => {
       // Sem o número, uma tabela de 2 linhas num cartão de 4 fica sem
@@ -670,7 +679,9 @@ describe("DetalheDoEstudante — navegação e filtro (card 20)", () => {
       const { container } = montar();
       await screen.findByTestId("chips-do-detalhe");
 
-      expect(container.querySelectorAll("[data-chip]")).toHaveLength(3);
+      expect(
+        within(screen.getByTestId("chips-do-detalhe")).getAllByRole("radio"),
+      ).toHaveLength(3);
       expect(chip(container, "acertou")).toBeNull();
     });
 
@@ -678,7 +689,7 @@ describe("DetalheDoEstudante — navegação e filtro (card 20)", () => {
       const { container } = montar();
       await screen.findByTestId("chips-do-detalhe");
 
-      expect(chip(container, "tudo")).toHaveAttribute("aria-pressed", "true");
+      expect(chip(container, "tudo")).toHaveAttribute("aria-checked", "true");
       expect(container.querySelectorAll("tbody tr")).toHaveLength(4);
     });
 
