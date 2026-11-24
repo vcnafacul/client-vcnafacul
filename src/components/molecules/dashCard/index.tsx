@@ -8,8 +8,11 @@ import { useAuthStore } from "../../../store/auth";
 
 const transition = "transition-all duration-300";
 
+// Card inteiro na cor de identidade de antes do design system (`bg`, um `bg-identity-<card>`), com
+// texto `identity-foreground`. Exceção à R26 decidida em 2026-11-23: várias dessas cores não chegam
+// a 4,5:1 com o branco, e o contrast.test registra as razões medidas.
 const dashCard = cva(
-  `text-white font-bold text-body py-3 px-2 flex items-center relative ${transition}`,
+  `text-identity-foreground font-bold text-body py-3 px-2 flex items-center relative ${transition}`,
   {
   variants: {
     size: {
@@ -25,6 +28,7 @@ const dashCard = cva(
 
 export interface DashCardMenu {
   id: number;
+  /** Classe `bg-identity-<card>` do card. */
   bg: string;
   title: string;
   image: React.FunctionComponent<React.SVGProps<SVGSVGElement>>;
@@ -64,7 +68,8 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
           className={`${cn(dashCard({ size }))} ${card.bg} ${size !== "small" && !opened ? "mt-4 rounded-md" : "mt-0"} cursor-pointer`}
         >
           <Icon
-            className={`select-none fill-white text-white ${size !== "small" ? "w-16 h-16" : "w-7 h-7"} ${transition}`}
+            aria-hidden="true"
+            className={`select-none fill-identity-foreground text-identity-foreground ${size !== "small" ? "w-16 h-16" : "w-7 h-7"} ${transition}`}
           />
           <div
             className={`select-none ${size !== "small" ? "flex justify-center w-full" : "my-4"}`}
@@ -72,6 +77,7 @@ function DashCard({ card, size, opened, ...props }: DasCardProps) {
             {card.title}
           </div>
           <CircleChevronUp
+            aria-hidden="true"
             className={`h-5 w-5 ${size !== "small" ? "absolute right-4 bottom-4" : ""} ${opened ? "rotate-180" : ""} ${transition}`}
           />
         </div>

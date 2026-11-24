@@ -39,6 +39,14 @@ export default {
         input: c("input"),
         ring: c("ring"),
         chart: Object.fromEntries([1, 2, 3, 4, 5, 6].map((i) => [i, c(`chart-${i}`)])),
+        identity: {
+          foreground: c("identity-foreground"),
+          ...Object.fromEntries(
+            ["cursinho", "projeto", "admin", "linguagens", "natureza", "humanas", "matematica", "estudos"].map(
+              (n) => [n, c(`identity-${n}`)],
+            ),
+          ),
+        },
         sidebar: {
           DEFAULT: c("sidebar-background"),
           foreground: c("sidebar-foreground"),

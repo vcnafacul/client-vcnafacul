@@ -88,7 +88,7 @@ export const headerDash: HeaderData = {
 export const adminMenuItems: DashCardMenu[] = [
   {
     id: 6,
-    bg: "bg-cta",
+    bg: "bg-identity-cursinho",
     title: "Cursinho",
     image: AdminImg,
     alt: "Cursinho",
@@ -174,7 +174,7 @@ export const adminMenuItems: DashCardMenu[] = [
   },
   {
     id: 8,
-    bg: "bg-primary",
+    bg: "bg-identity-projeto",
     title: "Projeto",
     image: AdminImg,
     alt: "Projeto",
@@ -238,7 +238,7 @@ export const adminMenuItems: DashCardMenu[] = [
   },
   {
     id: 5,
-    bg: "bg-primary",
+    bg: "bg-identity-admin",
     title: "Admin",
     image: AdminImg,
     alt: "Admin",
@@ -298,7 +298,7 @@ export const adminMenuItems: DashCardMenu[] = [
 
 export const studentMenuItem: DashCardMenu = {
   id: 7,
-  bg: "bg-primary",
+  bg: "bg-identity-estudos",
   title: "Meus Estudos",
   image: GraduationCap,
   alt: "Meus Estudos",
@@ -338,25 +338,25 @@ const areaConfig: Record<
 > = {
   Linguagens: {
     id: 1,
-    bg: "bg-primary",
+    bg: "bg-identity-linguagens",
     image: LinguagensImg,
     title: "Linguagens",
   },
   "Ciências da Natureza": {
     id: 2,
-    bg: "bg-primary",
+    bg: "bg-identity-natureza",
     image: NaturezaImg,
     title: "Natureza",
   },
   "Ciências Humanas": {
     id: 3,
-    bg: "bg-primary",
+    bg: "bg-identity-humanas",
     image: HumanasImg,
     title: "Humanas",
   },
   Matemática: {
     id: 4,
-    bg: "bg-cta",
+    bg: "bg-identity-matematica",
     image: MatematicaImg,
     title: "Matemática",
   },
@@ -420,7 +420,7 @@ export function buildAcademicMenuItems(
 export const fallbackAcademicMenuItems: DashCardMenu[] = [
   {
     id: 1,
-    bg: "bg-primary",
+    bg: "bg-identity-linguagens",
     title: "Linguagens",
     image: LinguagensImg,
     alt: "Linguagens",
@@ -442,7 +442,7 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
   },
   {
     id: 2,
-    bg: "bg-primary",
+    bg: "bg-identity-natureza",
     title: "Natureza",
     image: NaturezaImg,
     alt: "Natureza",
@@ -469,7 +469,7 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
   },
   {
     id: 3,
-    bg: "bg-primary",
+    bg: "bg-identity-humanas",
     title: "Humanas",
     image: HumanasImg,
     alt: "Humanas",
@@ -508,7 +508,7 @@ export const fallbackAcademicMenuItems: DashCardMenu[] = [
   },
   {
     id: 4,
-    bg: "bg-cta",
+    bg: "bg-identity-matematica",
     title: "Matemática",
     image: MatematicaImg,
     alt: "Matemática",

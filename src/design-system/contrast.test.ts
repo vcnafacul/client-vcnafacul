@@ -313,3 +313,24 @@ describe("palette.ts espelha os primitivos do CSS", () => {
     },
   );
 });
+
+// Cards do menu da dash: cores de antes do design system, mantidas por decisão (tickets/059, exceção
+// à R26 de 2026-11-23). Várias não chegam a 4,5:1 com o branco; o teste só trava as razões medidas,
+// para que uma troca de cor apareça aqui.
+describe("identity-* (cards do menu da dash): exceção registrada", () => {
+  const medidas: [string, number][] = [
+    ["cursinho", 3.67],
+    ["projeto", 7.93],
+    ["admin", 3.03],
+    ["linguagens", 4.93],
+    ["natureza", 11.63],
+    ["humanas", 2.87],
+    ["matematica", 2.41],
+    ["estudos", 1.87],
+  ];
+  it.each(medidas)("identity-foreground sobre identity-%s = %s:1", (n, razao) => {
+    expect(contraste(raiz, "identity-foreground", `identity-${n}`).toFixed(2)).toBe(
+      razao.toFixed(2),
+    );
+  });
+});

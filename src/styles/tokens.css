@@ -142,6 +142,18 @@
   --chart-5: var(--yellow-500);
   --chart-6: var(--blue-500);
 
+  /* identity: the dash menu cards keep the colors they had before tickets/059 (exception to R26,
+     decided 2026-11-23). Not palette primitives; several fail 4.5:1 with white (see contrast.test). */
+  --identity-foreground: 0 0% 100%;
+  --identity-cursinho: 20 79.2% 49%;        /* #E05C1A Cursinho */
+  --identity-projeto: 257.7 43% 43.3%;        /* #5B3F9E Projeto */
+  --identity-admin: 176.4 100% 32.5%;         /* #00A69C Admin */
+  --identity-linguagens: 335.7 74.7% 48%;     /* #D61F69 Linguagens */
+  --identity-natureza: 211.4 54.6% 23.3%;       /* #1B3A5C Natureza */
+  --identity-humanas: 136.3 49.1% 45.5%;        /* #3BAD5A Humanas */
+  --identity-matematica: 79.6 100% 36.1%;     /* #7CB800 Matemática */
+  --identity-estudos: 45 100% 47.1%;        /* #F0B400 Meus Estudos */
+
   --sidebar-background: 0 0% 100%;
   --sidebar-foreground: var(--marine-900);
   --sidebar-primary: var(--marine-900);

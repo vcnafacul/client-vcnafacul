@@ -117,6 +117,24 @@ de `var()` até o hex e confere o contraste WCAG 2.x:
 | `input` e `ring` sobre `background` | 3:1 |
 | Cada `chart-*` sobre `background` | 3:1 |
 
+## Identidade: `identity-*`
+
+Fundo sólido dos cards do menu da dash, com as cores que eles tinham antes do design system, e texto
+`identity-foreground` (branco). **É uma exceção decidida** (tickets/059, 2026-11-23): os cards mantêm a cara
+de antes, e várias dessas cores ficam abaixo de 4,5:1 com o branco. Vale só para esse menu. Em outros
+lugares, cor categórica continua sendo `chart-*` como ponto, borda ou chip.
+
+| Token | Cor | Card | Branco sobre ela |
+|---|---|---|---|
+| `identity-cursinho` | `#E05C1A` | Cursinho | 3,7:1 |
+| `identity-projeto` | `#5B3F9E` | Projeto | 7,9:1 |
+| `identity-admin` | `#00A69C` | Admin | 3,0:1 |
+| `identity-linguagens` | `#D61F69` | Linguagens | 4,9:1 |
+| `identity-natureza` | `#1B3A5C` | Natureza | 11,6:1 |
+| `identity-humanas` | `#3BAD5A` | Humanas | 2,9:1 |
+| `identity-matematica` | `#7CB800` | Matemática | 2,4:1 |
+| `identity-estudos` | `#F0B400` | Meus Estudos | 1,9:1 |
+
 ## Temas por seção: `[data-theme]`
 
 Os temas da home e das seções públicas **só reapontam tokens semânticos**. O `.dark` virá depois.
