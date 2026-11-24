@@ -16,7 +16,7 @@ const twMerge = extendTailwindMerge({
       z: [
         { z: ["base", "raised", "sticky", "header", "overlay", "popover", "toast"] },
       ],
-      "max-w": [{ "max-w": ["prose-content", "form", "page"] }],
+      "max-w": [{ "max-w": ["prose-content", "form", "page", "page-wide"] }],
     },
   },
 })

@@ -1,3 +1,4 @@
+import { PageShell } from "@/components/ui/page-header";
 import { Inbox } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import { FiltroSelect } from "@/components/dashV2/FiltroSelect";
@@ -332,8 +333,7 @@ export function DashListTemplate<T>({
   const totalDeRegistros = entities.length;
 
   return (
-    <div className="min-h-[calc(100vh-theme(spacing.header))] bg-page">
-      <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
+    <PageShell>
         {/*
           ⚠️ Toolbar e filtros num bloco só. As duas peças trazem `border-b`
           próprio; soltas com `gap-4` virariam duas faixas flutuantes com uma
@@ -432,8 +432,7 @@ export function DashListTemplate<T>({
             />
           ) : null}
         </div>
-      </div>
-    </div>
+    </PageShell>
   );
 }
 

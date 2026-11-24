@@ -82,7 +82,7 @@ export default {
         popover: "50",
         toast: "60",
       },
-      maxWidth: { "prose-content": "720px", form: "560px", page: "1200px" },
+      maxWidth: { "prose-content": "720px", form: "560px", page: "1200px", "page-wide": "1400px" },
       height: { header: "var(--header-h)" },
       spacing: { header: "var(--header-h)" },
       container: {

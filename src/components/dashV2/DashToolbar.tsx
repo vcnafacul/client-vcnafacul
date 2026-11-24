@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { controlRing } from "@/components/ui/input";
+import { PageHeaderBar } from "@/components/ui/page-header";
 import {
   Popover,
   PopoverContent,
@@ -139,29 +140,24 @@ export function DashToolbar({
 
   return (
     <TooltipProvider delayDuration={200}>
-      <div
+      {/* O mesmo cabeçalho das outras páginas da dash (ui/page-header). */}
+      <PageHeaderBar
         data-testid="dash-toolbar"
-        className="flex flex-wrap items-center justify-between gap-3 border-b border-border bg-card px-4 py-3"
-      >
-        <div className="flex min-w-0 items-center gap-2">
-          {backButton}
-          <div className="min-w-0">
-            {/* O título da lista é o h1 da página (um por página, tickets/059 §6). */}
-            <h1 className="truncate text-h3 font-semibold text-foreground">{title}</h1>
-            {subtitle ? (
-              <div className="truncate text-body text-muted-foreground">{subtitle}</div>
-            ) : null}
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2">
-          {noMenu.length > 0 ? <MenuOverflow acoes={noMenu} /> : null}
-          {naBarra.map((acao) => (
-            <Botao key={acao.id} acao={acao} variante="secondary" />
-          ))}
-          {primary ? <Botao acao={primary} variante="primary" /> : null}
-        </div>
-      </div>
+        title={title}
+        subtitle={subtitle}
+        backButton={backButton}
+        actions={
+          noMenu.length > 0 || naBarra.length > 0 || primary ? (
+            <>
+              {noMenu.length > 0 ? <MenuOverflow acoes={noMenu} /> : null}
+              {naBarra.map((acao) => (
+                <Botao key={acao.id} acao={acao} variante="secondary" />
+              ))}
+              {primary ? <Botao acao={primary} variante="primary" /> : null}
+            </>
+          ) : undefined
+        }
+      />
     </TooltipProvider>
   );
 }

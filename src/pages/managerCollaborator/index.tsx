@@ -1,3 +1,4 @@
+import { PageHeader, PageShell } from "@/components/ui/page-header";
 import { useModals } from "@/hooks/useModal";
 import { useToastAsync } from "@/hooks/useToastAsync";
 import { getMaterias, MateriaDto } from "@/services/content/getMaterias";
@@ -521,18 +522,14 @@ export default function ManagerCollaborator() {
   // Ex-membros: a mesma moldura do Dash V2, sem a tabela de colaboradores.
   if (aba === "ex-membros") {
     return (
-      <div className="min-h-[calc(100vh-theme(spacing.header))] bg-page">
-        <div className="mx-auto flex w-full max-w-[1400px] flex-col gap-4 px-4 py-6">
-          <div className="rounded-md border border-border bg-card px-4 py-3">
-            <h1 className="text-h3 font-semibold text-foreground">
-              Colaboradores
-            </h1>
-          </div>
+      <>
+        <PageShell>
+          <PageHeader title="Colaboradores" />
           {abas}
           <ListaDeExMembros />
-        </div>
+        </PageShell>
         {modais}
-      </div>
+      </>
     );
   }
 
